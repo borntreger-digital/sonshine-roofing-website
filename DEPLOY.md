@@ -40,6 +40,14 @@ The connected repository is `borntreger-digital/sonshine-roofing-website`, branc
 - Build: `npm run build:vinext`
 - Deploy: `npm run deploy:cloudflare`
 
+Cloudflare selects Node from `.nvmrc` and npm from `package.json`'s exact
+`packageManager` pin, then installs the locked dependencies automatically. Leave
+`NODE_VERSION`, `NPM_VERSION`, and `SKIP_DEPENDENCY_INSTALL` unset; no npm bootstrap
+or dependency install belongs in the build command. GitHub CI reads the same
+pins and installs dependencies once before its checks. Docker's historical
+compatibility toolchain must match these pins; `npm ci` enforces the exact
+`devEngines` declarations.
+
 The locked `cf` CLI deploys the verified `.cloudflare/output/v0/` artifact with
 `--prebuilt`. This project uses `cloudflare.config.ts`; do not substitute the
 older `npx wrangler deploy` command. `npm run build` and the Docker validation

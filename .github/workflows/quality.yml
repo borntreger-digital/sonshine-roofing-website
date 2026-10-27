@@ -27,11 +27,17 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
-          # npm 12 is installed below; avoid querying bundled npm against devEngines.
+          # Select the repository npm before querying it against devEngines.
           package-manager-cache: false
-      - name: Pin npm
+      - name: Use repository npm version
         working-directory: ${{ runner.temp }}
-        run: npm install --global npm@12.2.1
+        env:
+          TOOLCHAIN_PACKAGE_JSON: ${{ github.workspace }}/package.json
+        run: |
+          package_manager="$(node -p 'require(process.env.TOOLCHAIN_PACKAGE_JSON).packageManager')"
+          if [ "$(npm --version)" != "${package_manager#npm@}" ]; then
+            npm install --global "$package_manager"
+          fi
       - name: Install dependencies
         run: npm ci
       - name: Lint
