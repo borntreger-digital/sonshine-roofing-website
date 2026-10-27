@@ -1,11 +1,11 @@
-import { readFileSync } from 'node:fs';
+import { readDeploymentText } from './deployment-files.mjs';
 import type { TermLite } from './project-types';
 import type { VideoFiltersInput, VideoItem, VideoSearchResult, VideoSnapshot } from './video-types';
 
 export function readVideoSnapshot(filename: string): VideoSnapshot {
   let snapshot: VideoSnapshot;
   try {
-    snapshot = JSON.parse(readFileSync(filename, 'utf8')) as VideoSnapshot;
+    snapshot = JSON.parse(readDeploymentText(filename)) as VideoSnapshot;
   } catch {
     throw new Error('Video snapshot is unavailable. Run the credentialed prebuild before starting the frontend.');
   }

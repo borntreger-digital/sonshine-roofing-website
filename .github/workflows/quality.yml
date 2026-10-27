@@ -104,3 +104,5 @@ jobs:
         run: npm run verify:editorial-pipeline && npm run verify:deployment-contract
       - name: Verify synthetic production deployments without runtime CMS access
         run: npm run verify:deployment-builds
+      - name: Verify Workers analytics policy and immutable releases
+        run: npm run verify:vinext-analytics-policy && npm run verify:vinext-releases

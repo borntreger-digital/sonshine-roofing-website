@@ -63,3 +63,8 @@ next-env.d.ts
 
 # Build-only published CMS snapshot (packaged privately with each deployment)
 /.generated/
+/dist/
+.vinext/
+.cloudflare/
+/output/playwright/
+/.playwright-cli/

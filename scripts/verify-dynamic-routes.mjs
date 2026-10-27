@@ -22,7 +22,10 @@ function loader(overrides = {}) {
     filename = resolve(root, filename);
     if (cache.has(filename)) return cache.get(filename).exports;
     const loaded = { exports: {} }; cache.set(filename, loaded);
-    const source = ts.transpileModule(readFileSync(filename, 'utf8'), { fileName: filename,
+    // .mjs forces ESM output even when CommonJS is requested. This isolated
+    // loader evaluates every module through localRequire, including the new
+    // deployment-file adapter, so give JS inputs a neutral extension.
+    const source = ts.transpileModule(readFileSync(filename, 'utf8'), { fileName: filename.replace(/\.mjs$/, '.js'),
       compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
     const localRequire = id => {
       if (Object.hasOwn(overrides, id)) return overrides[id];

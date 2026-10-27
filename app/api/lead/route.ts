@@ -293,6 +293,21 @@ async function verifyTurnstile(token: string, remoteip?: string | null) {
 }
 
 async function forwardToN8n(payload: LeadForwardPayloadV2) {
+  // Preview delivery requires matching build/runtime switches and the exact
+  // sandbox receiver. It can never fall back to the production lead router.
+  if (process.env.NEXT_PUBLIC_ISOLATED_PREVIEW === '1' && !isProdEnv()) {
+    if (process.env.NEXT_PUBLIC_PREVIEW_INTEGRATIONS === '1') {
+      if (process.env.SONSHINE_PREVIEW_DELIVERY !== 'sandbox' ||
+        N8N_WEBHOOK_URL !== 'https://n8n.borntregerdigital.com/webhook/sonshine-workers-preview') {
+        return { ok: false, status: 503, error: 'Preview sandbox delivery is not configured' } as const;
+      }
+    } else {
+      if (process.env.SONSHINE_PREVIEW_DISCARD_LEADS !== '1') {
+        return { ok: false, status: 503, error: 'Preview submissions are disabled' } as const;
+      }
+      return { ok: true } as const;
+    }
+  }
   if (!N8N_WEBHOOK_URL || !N8N_WEBHOOK_SECRET) {
     console.error('forwardToN8n: missing webhook configuration');
     return { ok: false, status: 500, error: 'Server misconfigured (n8n webhook)' } as const;

@@ -1,6 +1,98 @@
 # Deployment Runbook
 
-## Coolify production deployment
+## Current production: Cloudflare Workers
+
+Verified October 27, 2026 after the owner-authorized DNS switchover.
+`sonshine-roofing-website` serves `sonshineroofing.com` and
+`www.sonshineroofing.com` through enabled production Custom Domains, with version
+previews disabled. The original cutover application version was
+`91f4d275-7fb0-41df-888f-79c4baf23f87`. Cloudflare manages the two proxied website
+DNS records. The integration preview remains separate and unchanged.
+
+The apex is canonical. HTTPS www redirects to HTTPS apex in the Worker. The
+zone's single redirect rule `sonshine_website_https` upgrades HTTP on exactly
+these two hostnames directly to HTTPS apex, preserving paths and query strings.
+Its reviewed definition is `workers/production-https-rule.json`; it is a zone
+rule, not automatically deployed by `cf deploy`. The zone-wide HTTPS setting
+and unrelated rules were not changed. Keep this rule when rebuilding the Worker.
+The production domain declarations are recorded in `cloudflare.config.ts` and
+are omitted from preview configuration. This config-only cutover update did not
+rebuild or modify the retained application artifact.
+
+Run `node scripts/verify-vinext-live.mjs` for safe live acceptance. It verifies
+HTTP/HTTPS canonical redirects, indexing, all 448 packaged routes, ten sitemaps,
+real image resizing/cache and rejected form requests. It never sends a valid
+lead or QuickQuote submission. Native forms verify Turnstile server-side before
+n8n forwarding. The browser received a real Turnstile token on the live contact
+page; successful production lead delivery was not exercised. Owner acceptance
+of analytics is recorded; QuickQuote remains owner testing.
+
+The original deployable release, frozen content and source archive are retained
+privately in `.cloudflare/retained/production-20261027-91f4d275/`. The recovered
+Workers source is now the release source for GitHub `main`. See
+`docs/vinext-feasibility.md` for the migration history and checks.
+
+### GitHub and Workers Builds
+
+The connected repository is `borntreger-digital/sonshine-roofing-website`, branch
+`main`, root `/`. Use these commands in Workers Builds:
+
+- Build: `npm run build:vinext`
+- Deploy: `npm run deploy:cloudflare`
+
+The locked `cf` CLI deploys the verified `.cloudflare/output/v0/` artifact with
+`--prebuilt`. This project uses `cloudflare.config.ts`; do not substitute the
+older `npx wrangler deploy` command. `npm run build` and the Docker validation
+remain available for the historical Next.js application and compatibility checks.
+
+Configure `DIRECTUS_URL` and `DIRECTUS_CLIENT_SLUG=sonshine-roofing` as build
+variables and `DIRECTUS_TOKEN` as an encrypted build secret. Optional
+`YOUTUBE_API_KEY` enrichment is also a build secret. Production public settings
+include `NEXT_PUBLIC_ENV=production`, `NEXT_PUBLIC_BASE_URL` and
+`NEXT_PUBLIC_SITE_URL` set to `https://sonshineroofing.com`, the production
+`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, and the existing `NEXT_PUBLIC_GTM_ID`,
+`NEXT_PUBLIC_META_PIXEL_ID` and `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY`. Do not enable
+isolated-preview flags for production. Build settings are separate from runtime
+bindings. Keep the four existing runtime secret bindings `N8N_WEBHOOK_URL`,
+`N8N_WEBHOOK_SECRET`, `TURNSTILE_SECRET_KEY` and `ALLOWED_ORIGIN`; do not copy them
+into the build environment. Preserve the Images and Assets bindings.
+
+Every ordinary Workers build runs the existing prebuild checks, captures fresh
+CMS content, produces the Worker artifact and checks that private build inputs
+are absent from it. Run `npm run verify:vinext-runtime` against that artifact for
+isolated route, image and synthetic lead checks. CI's
+`npm run verify:vinext-releases` exercises two synthetic releases and rollback
+without CMS credentials. After the authorized main push, verify the corresponding
+Workers build and deployment and run `node scripts/verify-vinext-live.mjs`.
+
+### Rollback to the retained Coolify site
+
+The original Coolify container remains running and healthy at `187.77.18.204`,
+with unchanged image and start time. Direct-origin HTTPS with the website Host
+and TLS SNI still returns apex 200 and www 308. Preserve the application,
+container, image, runtime settings and storage until the owner retires them.
+
+1. Confirm the retained origin still passes trusted HTTPS using
+   `curl --resolve sonshineroofing.com:443:187.77.18.204 https://sonshineroofing.com/`
+   and the equivalent www request. Inspect Coolify health before changing traffic.
+2. Detach only the apex and www Custom Domains from `sonshine-roofing-website`.
+   Do not remove the legacy wp/next domains or any other Worker mappings.
+3. Restore the two saved website DNS records: apex `A` → `187.77.18.204`, www
+   `CNAME` → `sonshineroofing.com`, both **proxied**, TTL **Auto** (`1`). Exact
+   pre-cutover metadata is retained privately in `logs/cutover-before.json`.
+4. Keep the scoped HTTP-to-HTTPS rule; it works with the proxied Coolify origin
+   too. Verify public TLS, apex 200, www/HTTP redirects, pages and form rejection
+   after restoration. No rollback was performed during acceptance.
+
+The DNS-only/Vercel instructions below are historical and are superseded by this
+recovery procedure. Remote Worker-version rollback has not been rehearsed.
+Before syncing website source, account for any retained Coolify GitHub build
+trigger so an automatic build does not replace the preserved rollback image.
+For the October 27 recovered-source main push, the owner explicitly chose to
+leave SonShine's existing automatic-deployment trigger enabled. Check the actual
+retained image after that push; do not assume the earlier image is still running.
+
+## Historical Coolify deployment configuration
 
 - Deployment target:
   - One production Coolify application.

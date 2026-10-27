@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readDeploymentText } from './deployment-files.mjs';
 import { createHash } from 'node:crypto';
 import type { LocationSnapshot } from './location-types';
 
@@ -6,8 +6,8 @@ export function readLocationSnapshot(filename: string, projectFilename: string):
   let value: LocationSnapshot;
   let projects: string;
   try {
-    value = JSON.parse(readFileSync(filename, 'utf8')) as LocationSnapshot;
-    projects = readFileSync(projectFilename, 'utf8');
+    value = JSON.parse(readDeploymentText(filename)) as LocationSnapshot;
+    projects = readDeploymentText(projectFilename);
   } catch {
     throw new Error('Location snapshot is unavailable. Run the credentialed prebuild.');
   }

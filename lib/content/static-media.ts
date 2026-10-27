@@ -1,12 +1,12 @@
 import 'server-only';
-import { readFileSync } from 'node:fs';
+import { readDeploymentText } from './deployment-files.mjs';
 import { join } from 'node:path';
 import type { PublicImage } from './public-image';
 
 let snapshot: Record<string, PublicImage> | undefined;
 export function staticImage(key: string): PublicImage {
   if (!snapshot) {
-    const data = JSON.parse(readFileSync(join(process.cwd(), '.generated/static-media.json'), 'utf8'));
+    const data = JSON.parse(readDeploymentText(join(process.cwd(), '.generated/static-media.json')));
     if (data.version !== 1 || data.clientSlug !== 'sonshine-roofing' || !data.images) throw new Error('Missing or invalid deployment static media snapshot');
     snapshot = data.images;
   }

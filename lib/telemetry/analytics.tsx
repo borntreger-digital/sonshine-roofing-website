@@ -3,11 +3,15 @@
 import { useEffect } from 'react';
 import { useHydrated } from '@/lib/ui/use-hydrated';
 import Script from 'next/script';
-import { envFlagTrue, isProdEnv, isSiteHost } from '@/lib/seo/site';
+import { isProdEnv, isSiteHost } from '@/lib/seo/site';
 import type { GtmWindow } from '@/lib/telemetry/gtm';
 
 const GTM = (process.env.NEXT_PUBLIC_GTM_ID || '').trim();
 const META_PIXEL_ID = (process.env.NEXT_PUBLIC_META_PIXEL_ID || '').trim();
+// Client environment values need static references for both Next and Vite.
+const PREVIEW_ENABLED = ['true', '1', 'yes'].includes(
+  (process.env.NEXT_PUBLIC_ENABLE_GTM_PREVIEW || '').toLowerCase(),
+);
 
 if (isProdEnv() && typeof console !== 'undefined' && typeof console.error === 'function') {
   if (!GTM) console.error('[env] Missing required environment variable: NEXT_PUBLIC_GTM_ID');
@@ -43,9 +47,13 @@ export default function AnalyticsScripts({ enabled }: { enabled: boolean }) {
   // Static HTML cannot know its eventual browser hostname. Hydrate the same
   // empty boundary first, then enable tracking only on the actual allowed host.
   const hydrated = useHydrated();
-  const HOST_ALLOWED = hydrated && isSiteHost(window.location.hostname);
+  const previewOrigin = process.env.NEXT_PUBLIC_PREVIEW_ORIGIN;
+  const previewAllowed = process.env.NEXT_PUBLIC_ISOLATED_PREVIEW === '1' &&
+    process.env.NEXT_PUBLIC_PREVIEW_INTEGRATIONS === '1' &&
+    hydrated && window.location.origin === previewOrigin;
+  const HOST_ALLOWED = hydrated && (isSiteHost(window.location.hostname) || previewAllowed);
   const ENABLED =
-    enabled && HOST_ALLOWED && (isProdEnv() || envFlagTrue('NEXT_PUBLIC_ENABLE_GTM_PREVIEW'));
+    enabled && HOST_ALLOWED && (isProdEnv() || PREVIEW_ENABLED);
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const win = window as GtmWindow;

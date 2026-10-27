@@ -62,11 +62,21 @@
     "verify:audit-policy": "node --test scripts/audit-policy.test.mjs",
     "verify:landing-conversions": "node scripts/verify-landing-conversions.mjs",
     "verify:react-readiness": "node scripts/verify-react-readiness.mjs",
-    "verify:lead-runtime": "node scripts/verify-lead-runtime.mjs"
+    "verify:lead-runtime": "node scripts/verify-lead-runtime.mjs",
+    "dev:vinext": "vite dev --port 3001",
+    "build:vinext": "node scripts/build-vinext.mjs",
+    "deploy:cloudflare": "cf deploy --prebuilt",
+    "start:vinext": "vite preview",
+    "check:vinext": "vinext check",
+    "verify:vinext-artifact": "node scripts/verify-vinext-artifact.mjs",
+    "verify:vinext-runtime": "node scripts/verify-vinext-runtime.mjs",
+    "verify:vinext-analytics-policy": "node scripts/verify-vinext-analytics-policy.mjs",
+    "verify:vinext-releases": "node scripts/verify-vinext-releases.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.5.0",
     "@tailwindcss/typography": "^0.5.20",
+    "@vinext/cloudflare": "1.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel": "^8.6.0",
@@ -77,10 +87,12 @@
     "next": "16.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "react-server-dom-webpack": "19.3.1",
     "sanitize-html": "2.18.1",
     "tailwind-merge": "3.7.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "2.0.0-beta.v.5",
     "@electric-sql/pglite": "0.5.10",
     "@eslint-react/eslint-plugin": "5.28.6",
     "@eslint/js": "10.0.1",
@@ -93,17 +105,24 @@
     "@typescript-eslint/eslint-plugin": "8.72.0",
     "@typescript-eslint/parser": "8.72.0",
     "@typescript/native": "npm:typescript@7.0.2",
+    "@vitejs/plugin-react": "6.1.2",
+    "@vitejs/plugin-rsc": "0.5.38",
     "babel-plugin-react-compiler": "1.0.0",
+    "cf": "1.0.0-beta.23",
     "eslint": "10.13.0",
     "eslint-plugin-import-x": "4.17.1",
     "eslint-plugin-jsx-a11y-x": "0.2.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "14.0.0",
     "jsdom": "^30.1.3",
+    "miniflare": "5.20261023.0-beta",
     "postcss": "8.5.31",
     "prettier": "^3.9.10",
     "tailwindcss": "4.3.3",
-    "typescript": "npm:@typescript/typescript6@6.0.2"
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "vinext": "1.3.1",
+    "vite": "8.3.5",
+    "vite-css-modules": "1.16.1"
   },
   "overrides": {
     "minimatch@3": {
@@ -115,6 +134,9 @@
     "postcss": "8.5.31",
     "@tailwindcss/typography": {
       "postcss-selector-parser": "7.1.7"
+    },
+    "satori": {
+      "fflate": "0.7.5"
     }
   },
   "engines": {
@@ -136,6 +158,8 @@
   },
   "allowScripts": {
     "fsevents@2.3.3": false,
-    "unrs-resolver@1.12.2": false
-  }
+    "unrs-resolver@1.12.2": false,
+    "workerd@1.20261023.1": true
+  },
+  "type": "module"
 }

@@ -99,17 +99,14 @@ production fixture test and a credentialed production Turbopack build. The real
 build/runtime test verified 460 routes, RSC/resource results, unknown-slug 404s,
 closed inventories, retired revalidation and cold restarts without CMS access.
 
-The remaining npm audit chain is Next's development-only lint plugin → fast-glob
-→ micromatch → braces. No patched braces version is available in the reviewed
-registry. Do not accept audit's suggested downgrade to the Next 14 lint plugin.
-The production-only dependency audit has no reported vulnerabilities. The
-`audit:policy` gate accepts only advisory GHSA-vfj7-8cjw-p6xm with the reviewed
-four dependency entries, exact installed paths/versions, incoming edges, trusted
-ESLint configuration and Docker boundary. Runtime exposure, new advisories,
-changed consumers or audit outages fail. Its recorded review expires November 22,
-2026. `verify:audit-policy` includes mutation tests proving those failures. Review
-supported upstream releases and remove the exception once a fix is available;
-never patch/fork braces locally or lower the audit threshold.
+The prior exception for GHSA-vfj7-8cjw-p6xm was removed during the October 27
+Workers source promotion. GitHub withdrew that advisory on October 23 because
+it was not practically exploitable:
+https://github.com/advisories/GHSA-vfj7-8cjw-p6xm. Fresh complete and production-only
+npm audits reported zero vulnerabilities. The audit gate now accepts no advisory
+exceptions and fails on any reported finding, inconsistent counts or audit outage.
+Its tests include rejection of the former exception if it reappears. No dependency
+downgrade, fork or audit-threshold relaxation was used.
 
 The follow-up's production-mode lead verifier uses an isolated receiver and
 Cloudflare's documented pass/fail/spent test keys. CI substitutes only the

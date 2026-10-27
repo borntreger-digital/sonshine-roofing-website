@@ -3,8 +3,9 @@
 This repository is the production-facing SonShine Roofing Next.js application.
 It owns public routes, lead capture, attribution and consent behavior, SEO,
 structured data, sitemaps, analytics integration, and Directus content captured
-in deployment snapshots. Coolify builds the standalone Docker image on Node 24.22.1
-and serves it on port 3000.
+in deployment snapshots. Production runs through vinext on Cloudflare Workers.
+Read `DEPLOY.md` before changing build commands, release settings or recovery;
+it separates Workers production from the historical Coolify/Docker path.
 
 ## Sources of Truth
 
@@ -67,7 +68,10 @@ versions; it records compatibility gates and the rendering experiment decisions.
   `verify:directus-fetch-policy`,
   `verify:security-input-handling`, `verify:request-body-limits`, or
   `verify:json-ld` script.
-- Full confidence: run a credentialed `npm run build`.
+- Workers release: run a credentialed `npm run build:vinext`, then
+  `npm run verify:vinext-runtime`. Use `npm run verify:vinext-releases` for
+  synthetic release/rollback coverage without CMS credentials.
+- Historical Next/Docker compatibility: run a credentialed `npm run build`.
 - Sandboxed Codex build: use `npm run build:codex` when its proxy contract is
   required.
 

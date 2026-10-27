@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readDeploymentText } from '@/lib/content/deployment-files.mjs';
 import { join } from 'node:path';
 import { NextResponse } from 'next/server';
 import { SITE_ORIGIN, sitemapEnabled, sitemapPreviewHeaders } from '@/lib/seo/site';
@@ -19,7 +19,7 @@ export async function GET() {
   if (!SITEMAPS_ENABLED) return NextResponse.json({ ok: true, note: 'sitemap disabled' }, { status: 404 });
 
   const origin = SITE_ORIGIN;
-  const manifest = JSON.parse(readFileSync(join(process.cwd(), 'public/__sitemaps/static-routes.json'), 'utf8')) as StaticManifest;
+  const manifest = JSON.parse(readDeploymentText(join(process.cwd(), 'public/__sitemaps/static-routes.json'))) as StaticManifest;
 
   const head = [
     `<?xml version="1.0" encoding="UTF-8"?>`,

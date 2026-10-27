@@ -12,7 +12,7 @@ import SitePhoneLink from '@/components/utils/SitePhoneLink';
 const QUICKQUOTE_TARGET_ID = 'quickquote-web-form';
 const QUICKQUOTE_CONTRACTOR_ID = 'd9d4c0ba-e0cc-4f1c-a12e-5c30d9b2ce8d';
 const QUICKQUOTE_API_BASE = 'https://quickquote-api-628343900656.us-central1.run.app';
-const QUICKQUOTE_LOADER_SRC = `https://qq.leadsbyquickquote.com/roofs/integration?target=${QUICKQUOTE_TARGET_ID}&contractorId=${QUICKQUOTE_CONTRACTOR_ID}`;
+const QUICKQUOTE_CORE_SRC = 'https://storage.googleapis.com/qq-framework/quickquote.iife.js';
 
 const ATTRIBUTION_FIELDS: AttributionQueryField[] = [
   'utm_campaign',
@@ -112,7 +112,7 @@ function getQuickQuoteLeadId(event: DataLayerEvent): string {
   return cleanString(event.lead_id) ?? getFallbackLeadId();
 }
 
-function buildQuickQuoteRenderConfig() {
+function buildQuickQuoteRenderConfig(configOverride: DataLayerEvent) {
   return {
     vertical: 'roofs',
     mode: 'inline',
@@ -122,9 +122,11 @@ function buildQuickQuoteRenderConfig() {
     apiBase: QUICKQUOTE_API_BASE,
     verticalOptions: {
       apiBase: QUICKQUOTE_API_BASE,
-    },
-    options: {
-      apiBase: QUICKQUOTE_API_BASE,
+      // The current vendor loader ignores top-level contractor IDs when it
+      // creates the form. Supply the verified public contractor configuration
+      // through the widget's supported options, including on SPA remounts.
+      configOverride,
+      nativeReportBaseUrl: 'https://app.leadsbyquickquote.com',
     },
   };
 }
@@ -296,64 +298,45 @@ function installQuickQuoteDataLayerBridge() {
   dataLayer.forEach(handleDataLayerItem);
 }
 
-function renderExistingQuickQuote(onReady: () => void, onError: () => void): boolean {
-  if (typeof window === 'undefined') return false;
-  const win = window as QuickQuoteWindow;
+let quickQuoteCore: Promise<void> | undefined;
+let quickQuoteConfig: Promise<DataLayerEvent> | undefined;
 
-  if (typeof win.QuickQuote?.render !== 'function') return false;
-  if (!document.getElementById(QUICKQUOTE_TARGET_ID)) return false;
-
-  try {
-    const result = win.QuickQuote.render(buildQuickQuoteRenderConfig());
-    Promise.resolve(result).then(
-      () => {
-        window.requestAnimationFrame(onReady);
-      },
-      () => {
-        onError();
-      },
-    );
-  } catch {
-    onError();
+function loadQuickQuoteCore(): Promise<void> {
+  if (typeof (window as QuickQuoteWindow).QuickQuote?.render === 'function') {
+    return Promise.resolve();
   }
-
-  return true;
+  if (quickQuoteCore) return quickQuoteCore;
+  const script = document.createElement('script');
+  script.src = QUICKQUOTE_CORE_SRC;
+  script.async = true;
+  script.dataset.autoRender = 'false';
+  quickQuoteCore = new Promise<void>((resolve, reject) => {
+    script.addEventListener('load', () => resolve(), { once: true });
+    script.addEventListener('error', () => reject(new Error('QuickQuote failed to load')), { once: true });
+    document.head.appendChild(script);
+  }).catch((error: unknown) => {
+    script.remove();
+    quickQuoteCore = undefined;
+    throw error;
+  });
+  return quickQuoteCore;
 }
 
-function loadQuickQuoteScript(onError: () => void): () => void {
-  if (typeof document === 'undefined') return () => {};
-
-  const existing = document.querySelector<HTMLScriptElement>(
-    "script[data-ss-quickquote-loader='true']",
-  );
-  if (existing) {
-    if (existing.dataset.ssQuickquoteLoadError === 'true') {
-      onError();
-      return () => {};
+function loadQuickQuoteConfig(): Promise<DataLayerEvent> {
+  quickQuoteConfig ??= fetch(
+    `${QUICKQUOTE_API_BASE}/api/contractor-config?vertical=roofs&contractorId=${QUICKQUOTE_CONTRACTOR_ID}`,
+  ).then(async (response) => {
+    if (!response.ok) throw new Error('QuickQuote configuration failed to load');
+    const config: unknown = await response.json();
+    if (!isRecord(config) || config.contractorID !== QUICKQUOTE_CONTRACTOR_ID) {
+      throw new Error('QuickQuote contractor configuration did not match');
     }
-
-    existing.addEventListener('error', onError, { once: true });
-    return () => {
-      existing.removeEventListener('error', onError);
-    };
-  }
-
-  const script = document.createElement('script');
-  script.src = QUICKQUOTE_LOADER_SRC;
-  script.async = true;
-  script.dataset.ssQuickquoteLoader = 'true';
-
-  const handleError = () => {
-    script.dataset.ssQuickquoteLoadError = 'true';
-    onError();
-  };
-
-  script.addEventListener('error', handleError, { once: true });
-  document.head.appendChild(script);
-
-  return () => {
-    script.removeEventListener('error', handleError);
-  };
+    return config;
+  }).catch((error: unknown) => {
+    quickQuoteConfig = undefined;
+    throw error;
+  });
+  return quickQuoteConfig;
 }
 
 function QuickQuoteLoadError() {
@@ -369,6 +352,18 @@ function QuickQuoteLoadError() {
 }
 
 export default function QuickQuoteWebForm() {
+  if (process.env.NEXT_PUBLIC_ISOLATED_PREVIEW === '1' && process.env.NEXT_PUBLIC_PREVIEW_INTEGRATIONS !== '1') {
+    return (
+      <div className="mx-auto max-w-xl rounded-xl border border-amber-200 bg-amber-50 p-8 text-amber-950">
+        <p className="font-semibold">QuickQuote is disabled in this preview.</p>
+        <p className="mt-2">This form connects directly to the live quoting service. You can test the website&apos;s contact and financing forms instead; preview submissions are discarded.</p>
+      </div>
+    );
+  }
+  return <LiveQuickQuoteWebForm />;
+}
+
+function LiveQuickQuoteWebForm() {
   const [loadStatus, setLoadStatus] = useState<QuickQuoteLoadStatus>('loading');
   const isLoading = loadStatus === 'loading';
 
@@ -396,19 +391,21 @@ export default function QuickQuoteWebForm() {
     };
 
     const cleanupWatcher = watchQuickQuoteTarget(markReady);
-    let cleanupScript = () => {};
-
     hydrateQuickQuoteAttributionUrl();
     installQuickQuoteDataLayerBridge();
 
-    if (!renderExistingQuickQuote(markReady, markError)) {
-      cleanupScript = loadQuickQuoteScript(markError);
-    }
+    void Promise.all([loadQuickQuoteCore(), loadQuickQuoteConfig()])
+      .then(([, config]) => {
+        if (!active || !document.getElementById(QUICKQUOTE_TARGET_ID)) return;
+        const render = (window as QuickQuoteWindow).QuickQuote?.render;
+        if (!render) throw new Error('QuickQuote render API unavailable');
+        return render(buildQuickQuoteRenderConfig(config));
+      })
+      .catch(markError);
 
     return () => {
       active = false;
       cleanupWatcher();
-      cleanupScript();
       if (readyFrame) {
         window.cancelAnimationFrame(readyFrame);
       }

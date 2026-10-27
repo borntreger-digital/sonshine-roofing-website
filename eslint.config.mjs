@@ -29,7 +29,7 @@ const jsxTextPlugin = {
 const tsFiles = ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts', '**/*.d.ts'];
 const tsRecommended = tsPlugin.configs['flat/recommended'];
 const config = [
-  { ignores: ['.next/**', 'node_modules/**', 'next-env.d.ts'] },
+  { ignores: ['.next/**', '.cloudflare/**', 'dist/**', 'node_modules/**', 'next-env.d.ts'] },
   {
     name: 'sonshine/base',
     languageOptions: {

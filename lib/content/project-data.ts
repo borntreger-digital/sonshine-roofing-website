@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readDeploymentText } from './deployment-files.mjs';
 import type { ProjectFull, ProjectSnapshot, ProjectSummary, ProjectsArchiveFilters, ProjectSearchResult } from './project-types';
 import type { VideoItem } from './video-types';
 
@@ -12,7 +12,7 @@ export function projectServiceLabel(description: string | null): string {
 export function readProjectSnapshot(filename: string): ProjectSnapshot {
   let snapshot: Omit<ProjectSnapshot, 'projects'> & { projects: (Omit<ProjectFull, 'video'> & { videoId: string | null })[]; videos: VideoItem[] };
   try {
-    snapshot = JSON.parse(readFileSync(filename, 'utf8')) as typeof snapshot;
+    snapshot = JSON.parse(readDeploymentText(filename)) as typeof snapshot;
   } catch {
     throw new Error('Project snapshot is unavailable. Run the credentialed prebuild before starting the frontend.');
   }
