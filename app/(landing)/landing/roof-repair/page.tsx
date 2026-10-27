@@ -104,7 +104,7 @@ export default function RoofRepairLandingPage() {
           We assess the affected area, explain what we find, and recommend the next step. 
           When a repair is appropriate, we handle the details so you can rest easy.
         </p>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-6 sm:grid-cols-1 lg:grid-cols-3">
           {REPAIR_CONCERNS.map(({ imageKey, title, description }) => (
             <article
               key={title}
