@@ -37,18 +37,18 @@ inventories and generated sitemaps retain the same exclusion rules.
 ESLint 10 uses supported React, import and accessibility replacements. The
 contract is covered by `verify:lint-contract` with negative/positive fixtures.
 
-| Previous check | Current owner |
-| --- | --- |
-| React keys, display names and JSX comment text | `@eslint-react` explicit rules |
-| Children props and children with inner HTML | `@eslint-react` explicit rules |
-| Deprecated DOM rendering APIs | `@eslint-react` DOM rules and React 19 types |
-| Class lifecycle/state safety | Function components enforced by `no-class-component`; none existed in the application |
-| Duplicate/undefined JSX props or components; string refs | TypeScript checks, including failing contract fixtures |
-| JSX variable references | ESLint 10's JSX scope support |
-| Unescaped JSX text | Small local rule preserving the previous check |
-| Anonymous default exports | `eslint-plugin-import-x` |
-| All six configured accessibility rules and Next Image alt mapping | `eslint-plugin-jsx-a11y-x`, with failing fixtures for each |
-| Rules of Hooks and exhaustive dependencies | `eslint-plugin-react-hooks`, retaining prior severities |
+| Previous check                                                    | Current owner                                                                         |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| React keys, display names and JSX comment text                    | `@eslint-react` explicit rules                                                        |
+| Children props and children with inner HTML                       | `@eslint-react` explicit rules                                                        |
+| Deprecated DOM rendering APIs                                     | `@eslint-react` DOM rules and React 19 types                                          |
+| Class lifecycle/state safety                                      | Function components enforced by `no-class-component`; none existed in the application |
+| Duplicate/undefined JSX props or components; string refs          | TypeScript checks, including failing contract fixtures                                |
+| JSX variable references                                           | ESLint 10's JSX scope support                                                         |
+| Unescaped JSX text                                                | Small local rule preserving the previous check                                        |
+| Anonymous default exports                                         | `eslint-plugin-import-x`                                                              |
+| All six configured accessibility rules and Next Image alt mapping | `eslint-plugin-jsx-a11y-x`, with failing fixtures for each                            |
+| Rules of Hooks and exhaustive dependencies                        | `eslint-plugin-react-hooks`, retaining prior severities                               |
 
 The standard parser handles JavaScript and CommonJS. The private Next Babel
 parser is no longer required. The previous disabled prop-types, legacy React
@@ -129,9 +129,9 @@ project gallery remembers its opening button explicitly, so Safari pointer click
 restore focus correctly even when the browser did not focus that button on click.
 
 Build-secret setup and the required per-capture cache ID are documented in
-[DEPLOY.md](../DEPLOY.md#buildkit-secret-migration-required-before-deploying-this-branch).
-The Docker migration must not be deployed until the matching build-system inputs
-are provisioned. No deployment/control-plane changes are part of this PR.
+[DEPLOY.md](../DEPLOY.md#local-docker-compatibility-checks).
+Credentialed local/CI Docker checks require those inputs. Production release and
+recovery use the Workers procedure in that guide.
 
 The follow-up also passed 458 public prerendered routes in the committed Linux
 image with networking disabled, a private-value scan of image configuration,

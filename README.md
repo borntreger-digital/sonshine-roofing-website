@@ -6,7 +6,8 @@ the frontend adapters and deployment snapshots for Directus.
 
 ## Architecture
 
-- Next.js 16 runs as a Node 24.22.1 standalone image on Coolify.
+- The Next.js application runs through vinext on Cloudflare Workers. The
+  standalone Docker path is retained for local/CI compatibility checks.
 - Directus is the primary content platform. It owns shared site content, fixed
   page and service SEO, blog posts, FAQs, people, roofing glossary terms,
   sponsor features, projects, videos/categories, reviews and review-carousel settings, special
@@ -118,8 +119,8 @@ original inline-script failure.
 - [docs/media-provenance.md](docs/media-provenance.md): retained image approvals and rights evidence.
 - [CONTENT.md](CONTENT.md): content ownership, Directus authoring rules, and
   publication behavior.
-- [DEPLOY.md](DEPLOY.md): Coolify configuration, environment variables, cache
-  behavior, and deployment smoke checks.
+- [DEPLOY.md](DEPLOY.md): Workers Builds, application inputs, Cloudflare recovery,
+  cache behavior, and deployment smoke checks.
 - [OPS.md](OPS.md): public lead ingress and the normalized v2 payload contract.
 - [SEO.md](SEO.md): robots, sitemap, metadata, and structured-data behavior.
 - [docs/gtm-datalayer.md](docs/gtm-datalayer.md): Google Ads conversion events,
@@ -127,7 +128,7 @@ original inline-script failure.
 - [SECURITY.md](SECURITY.md): private reporting and safe-testing expectations.
 - [AGENTS.md](AGENTS.md): repository-specific automation and maintenance rules.
 
-Directus, Cloudflare, n8n, Coolify, analytics, and production lead
+Directus, Cloudflare, n8n, analytics, and production lead
 flows are external control planes. Do not mutate or deploy them without explicit
 authorization for that action.
 

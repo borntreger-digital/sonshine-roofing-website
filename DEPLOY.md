@@ -65,113 +65,85 @@ isolated route, image and synthetic lead checks. CI's
 without CMS credentials. After the authorized main push, verify the corresponding
 Workers build and deployment and run `node scripts/verify-vinext-live.mjs`.
 
-### Rollback to the retained Coolify site
+### Cloudflare recovery
 
-The original Coolify container remains running and healthy at `187.77.18.204`,
-with unchanged image and start time. Direct-origin HTTPS with the website Host
-and TLS SNI still returns apex 200 and www 308. Preserve the application,
-container, image, runtime settings and storage until the owner retires them.
+WEB-VPS and Coolify were retired on October 27, 2026. The former origin is no longer a recovery target.
 
-1. Confirm the retained origin still passes trusted HTTPS using
-   `curl --resolve sonshineroofing.com:443:187.77.18.204 https://sonshineroofing.com/`
-   and the equivalent www request. Inspect Coolify health before changing traffic.
-2. Detach only the apex and www Custom Domains from `sonshine-roofing-website`.
-   Do not remove the legacy wp/next domains or any other Worker mappings.
-3. Restore the two saved website DNS records: apex `A` → `187.77.18.204`, www
-   `CNAME` → `sonshineroofing.com`, both **proxied**, TTL **Auto** (`1`). Exact
-   pre-cutover metadata is retained privately in `logs/cutover-before.json`.
-4. Keep the scoped HTTP-to-HTTPS rule; it works with the proxied Coolify origin
-   too. Verify public TLS, apex 200, www/HTTP redirects, pages and form rejection
-   after restoration. No rollback was performed during acceptance.
+For an authorized rollback:
 
-The DNS-only/Vercel instructions below are historical and are superseded by this
-recovery procedure. Remote Worker-version rollback has not been rehearsed.
-Before syncing website source, account for any retained Coolify GitHub build
-trigger so an automatic build does not replace the preserved rollback image.
-For the October 27 recovered-source main push, the owner explicitly chose to
-leave SonShine's existing automatic-deployment trigger enabled. Check the actual
-retained image after that push; do not assume the earlier image is still running.
+1. Pause Workers Builds and wait for any in-progress deployment to finish. Select the
+   accepted prior version of the production `sonshine-roofing-website` Worker,
+   not the separate integration preview or legacy redirect Worker.
+2. Match the version to its reviewed source and sealed content. Verify that its
+   Images/Assets bindings and lead-delivery configuration remain compatible
+   with the current external services before selecting **Rollback** in the
+   Worker's **Deployments** tab.
+3. Keep apex/www Custom Domains, DNS and the scoped HTTP-to-HTTPS rule in place.
+   Confirm the selected version is active, then run
+   `node scripts/verify-vinext-live.mjs`. Successful lead delivery and QuickQuote
+   submissions require separate authorization.
+4. Correct or revert source in a new reviewed commit before resuming automatic
+   builds. A fresh `npm run build:vinext` captures current CMS content; rebuilding
+   an older commit does not reproduce its previous content snapshot.
 
-## Historical Coolify deployment configuration
-
-- Deployment target:
-  - One production Coolify application.
-  - GitHub App source, branch `main`.
-  - Build pack: Dockerfile.
-  - Exposed port: `3000`.
-  - Health check path: `/robots.txt`.
-  - Domains:
-    - `https://sonshineroofing.com`
-    - `https://www.sonshineroofing.com`
-- Runtime:
-  - The Docker image uses Next standalone output and runs `node server.js`.
-  - Container defaults:
-    - `NODE_ENV=production`
-    - `HOSTNAME=0.0.0.0`
-    - `PORT=3000`
-- Legacy Cloudflare cutover notes:
-  - These describe the original hosting migration. Confirm the current DNS and
-    rollback targets outside this repository before using them as instructions.
-  - Keep records DNS-only, not proxied.
-  - Point apex `A` record to the Coolify server IPv4.
-  - Point `www` to the apex with a `CNAME`, or use a matching `A` record.
-  - Lower TTL before production cutover.
-  - Ensure ports `80` and `443` reach Coolify/Traefik for Let's Encrypt.
-- Legacy rollback:
-  - The original migration plan kept Vercel live until Coolify passed smoke
-    checks and used DNS for rollback.
-  - Do not assume Vercel remains a valid DNS rollback target without external
-    verification.
+See [Cloudflare rollbacks](https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/).
+The synthetic `verify:vinext-releases` check covers local release/rollback
+behavior; it does not establish a rehearsed remote Worker rollback. This
+frontend procedure does not restore Directus data or external media. Retain
+referenced media and keep CMS recovery within its separately authorized OPS-VPS
+backup procedure.
 
 ## Environments
 
 - `NEXT_PUBLIC_ENV=production` enables production behavior.
 - Any other value, including the conventional `staging`, is non-production.
 
-## Coolify environment variables
+## Application environment variables
 
-Verified against Coolify key names and flags on September 22, 2026: production
-has the 15 keys below. Preview has the same keys plus the GTM preview flag.
-Coolify currently marks every configured key for both build time and runtime;
-the table describes where the application consumes each value.
+The table describes application inputs. The [Workers Builds section](#github-and-workers-builds)
+owns production build variables and runtime secret bindings; a key listed here
+is not an instruction to add it to both environments. The retained Dockerfile
+is for local/CI compatibility checks, not an active Coolify deployment.
 
-| Key | Application use |
-| --- | --- |
-| `NEXT_PUBLIC_ENV` | Build-time environment gate; use `production` for production. |
-| `NEXT_PUBLIC_BASE_URL` | Public site origin used during the build. |
-| `NEXT_PUBLIC_SITE_URL` | Retained origin fallback; prefer `NEXT_PUBLIC_BASE_URL`. |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Public form widget configuration, baked into the build. |
-| `NEXT_PUBLIC_GTM_ID` | Public GTM ID, baked into the build. |
-| `NEXT_PUBLIC_META_PIXEL_ID` | Public Meta Pixel ID, baked into the build. |
-| `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY` | Public map embed configuration, baked into the build. |
-| `DIRECTUS_URL` | Build-time CMS endpoint. |
-| `DIRECTUS_CLIENT_SLUG` | Build-time tenant scope. |
-| `DIRECTUS_TOKEN` | Server-only build credential. |
-| `YOUTUBE_API_KEY` | Optional server-only metadata enrichment during the build; currently configured. |
-| `N8N_WEBHOOK_URL` | Runtime lead-delivery endpoint. |
-| `N8N_WEBHOOK_SECRET` | Runtime lead-delivery credential. |
-| `TURNSTILE_SECRET_KEY` | Runtime form-token verification credential. |
-| `ALLOWED_ORIGIN` | Runtime comma-separated browser-origin allowlist. |
+| Key                                 | Application use                                                                  |
+| ----------------------------------- | -------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_ENV`                   | Build-time environment gate; use `production` for production.                    |
+| `NEXT_PUBLIC_BASE_URL`              | Public site origin used during the build.                                        |
+| `NEXT_PUBLIC_SITE_URL`              | Fallback public-site URL; prefer `NEXT_PUBLIC_BASE_URL`.                         |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY`    | Public form widget configuration, baked into the build.                          |
+| `NEXT_PUBLIC_GTM_ID`                | Public GTM ID, baked into the build.                                             |
+| `NEXT_PUBLIC_META_PIXEL_ID`         | Public Meta Pixel ID, baked into the build.                                      |
+| `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY` | Public map embed configuration, baked into the build.                            |
+| `DIRECTUS_URL`                      | Build-time CMS endpoint.                                                         |
+| `DIRECTUS_CLIENT_SLUG`              | Build-time tenant scope.                                                         |
+| `DIRECTUS_TOKEN`                    | Server-only build credential.                                                    |
+| `YOUTUBE_API_KEY`                   | Optional server-only metadata enrichment during the build; currently configured. |
+| `N8N_WEBHOOK_URL`                   | Runtime lead-delivery endpoint.                                                  |
+| `N8N_WEBHOOK_SECRET`                | Runtime lead-delivery credential.                                                |
+| `TURNSTILE_SECRET_KEY`              | Runtime form-token verification credential.                                      |
+| `ALLOWED_ORIGIN`                    | Runtime comma-separated browser-origin allowlist.                                |
 
-`NEXT_PUBLIC_ENABLE_GTM_PREVIEW` remains configured only for preview builds.
+`NEXT_PUBLIC_ENABLE_GTM_PREVIEW` is a preview-only option.
 It permits analytics on an allowed non-production host when Directus also
 enables site analytics. Keep its Docker build argument for those builds.
 
 The standalone application reads its sealed content bundle and needs no
 Directus credential or YouTube metadata request to serve it. Public build
 values require a new build when changed. Runtime lead-delivery configuration
-must remain available to the deployed container.
+must remain available through the production Worker bindings.
 
 WordPress connection/authentication, sitemap-preview and revalidation keys are
-retired from the Coolify setup. The Dockerfile no longer passes WordPress or
+retired from the application configuration. The Dockerfile no longer passes WordPress or
 sitemap-preview arguments. Sitemaps remain disabled outside production in this
 configuration. The retained `/api/revalidate` compatibility endpoint returns
 401 for GET and POST without a configured secret and never invalidates content.
 Publish CMS changes with a successful build and deployment.
 
-## BuildKit secret migration (required before deploying this branch)
+## Local Docker compatibility checks
 
-The committed Dockerfile requires a BuildKit secret named `build_env`, containing
+The committed Dockerfile is retained for local and CI compatibility checks.
+Production uses Workers Builds as documented above. Docker checks require a
+BuildKit secret named `build_env`, containing
 `DIRECTUS_TOKEN` and optionally `YOUTUBE_API_KEY` in dotenv format. Its loader
 imports only those two keys into the build subprocess. Do not configure private
 credentials as Docker build arguments. Public URLs, tenant scope and
@@ -195,13 +167,10 @@ docker buildx build --secret id=build_env,src=/protected/build.env \
   --build-arg NEXT_PUBLIC_META_PIXEL_ID --build-arg NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY .
 ```
 
-**Rollout dependency:** configure the owning Coolify builder to deliver this
-secret mount and a fresh capture ID before merging/deploying the Docker change.
-A build-argument-only integration is insufficient. Validate its generated Docker
-command in a nonproduction build; if the installed Coolify version cannot expose
-BuildKit secrets, use a supported external image-build pipeline before rollout.
-No Coolify configuration is changed by this maintenance PR. Keep the current
-image for rollback; restoring that complete image also restores its content.
+Use the required secret mount and fresh content-capture ID for credentialed
+Docker checks. A build-argument-only integration is insufficient; never expose
+the private credentials as build arguments. Docker image retention is not the
+production recovery path.
 
 The manual `Credentialed Docker validation` workflow uses the same Dockerfile
 and `--secret` contract without pushing an image. It requires the protected
@@ -235,7 +204,7 @@ for an untrusted pull-request revision.
 - next.config.mjs adds security headers for all requests.
 - CSP is read from `site_settings.content_security_policy` and enforced with `Content-Security-Policy`.
 - Production builds fail when Directus is unavailable, the client record is not unique, or CSP is empty.
-- If something breaks after the Coolify cutover, check browser console CSP violations first.
+- If scripts fail after a release, check browser console CSP violations first.
 - `/instant-quote` embeds QuickQuote with contractor id `d9d4c0ba-e0cc-4f1c-a12e-5c30d9b2ce8d`.
 - QuickQuote CSP dependencies:
   - Loader/runtime scripts: `qq.leadsbyquickquote.com`, `storage.googleapis.com`
@@ -264,17 +233,18 @@ for an untrusted pull-request revision.
   declarations and validators. The tests verify changed/new/removed content across releases,
   cold restarts, no runtime network reads, complete page inventories and fail-closed
   bundle validation. CI runs this without CMS credentials.
-- For release acceptance, use Node 24.22.1, run all applicable `verify:*` checks, then
-  `NEXT_PUBLIC_ENV=production npm run build` and
-  `npm run verify:deployment-runtime`. The latter requires production sitemaps to
-  be enabled in the build and runs an isolated copy of the standalone artifact.
-- After an authorized main push, verify the successful Coolify deployment and
-  running image commit. Check its bundle and prerender manifests, public routes,
+- For Workers release acceptance, use the build/runtime/live checks in
+  [GitHub and Workers Builds](#github-and-workers-builds). For local standalone
+  compatibility, `NEXT_PUBLIC_ENV=production npm run build` followed by
+  `npm run verify:deployment-runtime` checks an isolated Next artifact with
+  production sitemaps enabled; it does not deploy or verify the production Worker.
+- After an authorized main push, verify the successful Workers build, active
+  version and source commit. Check its sealed content, public routes,
   metadata, blog resource results, sitemaps and unknown-slug 404s. Compare content
   hashes with the reviewed candidate, accounting explicitly for commit-based
   static-sitemap timestamps and any intervening CMS edits.
-- Failed builds leave the current deployment intact. Roll back by restoring the
-  prior complete application image with its matching bundle; rebuilding an old
+- Failed builds leave the current deployment intact. Use [Cloudflare recovery](#cloudflare-recovery)
+  to restore an accepted version with its matching content; rebuilding an old
   Git commit against today's CMS is not a content rollback.
 - Existing remote-media delivery and clock-based behavior remain documented
   exceptions. Keep old media files and upload new replacements under new IDs.
@@ -285,7 +255,7 @@ for an untrusted pull-request revision.
 ## Project releases and rollback
 
 - Before a production release, use Node 24.22.1 to run `npm ci`, lint, the project and
-  applicable verification scripts, and a credentialed `npm run build`. Preview
+  applicable verification scripts, and a credentialed `npm run build:vinext`. Preview
   that production build locally and check detail pages, full galleries, filters,
   pagination, videos, testimonials, SEO, and project/image/video sitemaps. Rebuild
   if content or code changes after verification.
@@ -294,12 +264,13 @@ for an untrusted pull-request revision.
   list and explicitly expands all ordered gallery entries. Missing configuration,
   empty projects, invalid relations, missing image descriptions, or failed CMS
   reads stop the build and remove any stale project snapshot.
-- Deploy the verified revision through Coolify. Project edits and new slugs stay
+- Publish the verified revision through the Workers Builds pipeline. Project edits and new slugs stay
   invisible until that release; `/api/revalidate` cannot publish them.
-- Keep the prior deployment and its referenced media until acceptance. A frontend
-  rollback must match the database schema; old images that request retired columns
-  cannot be rebuilt against the reduced schema. Restore a compatible revision or
-  recover the matching database through the existing VPS backup system.
+- Keep the prior Worker version and its referenced media until acceptance.
+  Rebuilding old source must remain compatible with the current CMS schema;
+  a Worker rollback restores its sealed frontend snapshot, not the database.
+  Follow [Cloudflare recovery](#cloudflare-recovery); database recovery belongs
+  to a separately authorized OPS-VPS operation.
 - Future uploads use the active Unified Image pipeline. File-description metadata
   remains independent of binary optimization; preserve rights and attribution.
 - Canonical scope triggers remain in `scripts/sql/roofing-project-scope.sql`.
@@ -324,13 +295,14 @@ for an untrusted pull-request revision.
 - [docs/gtm-datalayer.md](docs/gtm-datalayer.md) is the canonical browser event,
   conversion-value, and deduplication reference.
 
-## Coolify smoke checks
+## Production smoke checks
 
 - Before promoting a build:
   - App boots and `/robots.txt` returns 200.
   - `/`, `/contact-us`, `/sitemap_index`, `/sitemap_index/static`, one Directus
     blog post, and one Directus-backed location hub render.
-  - `www.sonshineroofing.com` redirects to `sonshineroofing.com` once both domains point at Coolify.
+  - The production www and HTTP hostnames redirect to HTTPS apex through the
+    existing Cloudflare rule.
   - Legacy redirects and configured 410 routes still behave correctly.
   - A deprecated static landing-page URL returns 404 without redirecting.
   - `/api/revalidate` returns 401 for GET and POST with the current secret-free
