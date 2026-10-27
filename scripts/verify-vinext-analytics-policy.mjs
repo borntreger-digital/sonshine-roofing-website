@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { analyticsPolicy } from '../workers/analytics-policy.mjs';
 
-// Use the actual captured policy, including its separate script-src-elem.
-const snapshot = JSON.parse(readFileSync('.generated/editorial.json', 'utf8'));
-const policy = snapshot.buildSettings.contentSecurityPolicy;
+// This source check runs before any credentialed capture in CI. The artifact
+// runtime suite separately checks the actual captured policy on served pages.
+const policy = "default-src 'self'; script-src 'self' https://scripts.example.test; script-src-elem 'self' https://elements.example.test; connect-src 'self' https://collector.example.test; img-src 'self' data: https:; frame-src https://frames.example.test";
 const updated = analyticsPolicy(policy);
 const parse = value => new Map(value.split(';').map(part => part.trim()).filter(Boolean)
   .map(part => { const [name, ...sources] = part.split(/\s+/); return [name, sources]; }));
