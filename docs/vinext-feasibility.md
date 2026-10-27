@@ -1,8 +1,8 @@
 # Live vinext deployment on Cloudflare Workers
 
 Status: production DNS cutover completed October 27, 2026. Both website
-hostnames now serve `sonshine-roofing-website`; Coolify remains running for
-rollback. The owner will test QuickQuote separately. The owner recovered the
+hostnames now serve `sonshine-roofing-website`. WEB-VPS and Coolify were retired
+on October 27; [DEPLOY.md](../DEPLOY.md#cloudflare-recovery) owns current recovery. The owner will test QuickQuote separately. The owner recovered the
 accidentally pruned `sonshine-roofing-vinext` worktree and authorized promoting
 this release to GitHub `main`. The recovered migration is reconciled with
 `981fe1e`, preserving the newer roof-repair landing-page grid edit. The current
@@ -44,10 +44,10 @@ token issuance succeed. No policy was broadened to suppress those diagnostics.
 Owner analytics acceptance is complete; QuickQuote and successful production
 native-lead delivery remain outside this acceptance.
 
-The original Coolify container's identity, image, start time and health are
-unchanged, and post-cutover direct-origin trusted HTTPS still passes. The exact
-rollback DNS records and recovery procedure are in `DEPLOY.md`; retain Coolify
-until the owner explicitly retires it. The frozen application artifact remains
+At the initial cutover, the original Coolify container's identity, image, start
+time and health were unchanged and direct-origin HTTPS passed. That temporary
+retention ended with the October 27 retirement; the former DNS rollback
+procedure is obsolete. The frozen application artifact remains
 under `.cloudflare/retained/production-20261027-91f4d275/`; routing/config evidence
 is separate from that immutable application release.
 
@@ -121,8 +121,8 @@ artifact for the safe hosted checks; it sends only blocked empty lead requests.
 
 At that stage, the next step was to authorize apex/www attachment and verify TLS, redirects,
 indexing and controlled native lead delivery immediately afterward. The owner
-will test QuickQuote after switchover. Keep Coolify available for rollback;
-remote Worker-version rollback has not been rehearsed. No GitHub source push,
+will test QuickQuote after switchover. The temporary Coolify rollback window
+was later closed; remote Worker-version rollback was not rehearsed in this stage. No GitHub source push,
 commit or merge was performed in this task.
 
 ## Independent review follow-up
@@ -438,16 +438,16 @@ MINIFLARE_REGISTRY_PATH=/private/tmp/sonshine-vinext-registry \
   npm run start:vinext -- --host 127.0.0.1 --port 4179
 ```
 
-## Production boundary
+## Historical preview-stage boundary
 
 The separate production Worker is deployed without custom domains or routes;
 production cutover remains separately authorized. Production lead/CAPTCHA
 configuration and build separation are complete. Controlled production-host
 integration acceptance, request CPU/traffic observation and a remote version
 rollback check remain. Analytics is owner-confirmed, and the owner accepted
-QuickQuote verification after switchover. Retain the previous artifacts and
-frozen snapshots, keep Coolify available for recovery, and account for other
-WEB-VPS consumers before retiring it.
+QuickQuote verification after switchover. This stage retained previous
+artifacts and frozen snapshots and deferred host retirement. The later October 27
+retirement supersedes that boundary; current recovery uses Cloudflare versions.
 
 The integration task updated the named preview Worker, created its separate Turnstile widget,
 published the selected sandbox listener, and updated the shared context. It did not change DNS, production routes,

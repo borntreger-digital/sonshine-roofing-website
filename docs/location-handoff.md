@@ -27,14 +27,14 @@ September 15 frozen implementation: `4a4c5f6a7aed9dccd383c6de2c1be4c8fdbf6ba2`.
 The current candidate includes subsequent export, CI and FAQ changes. The reviewed September 16 completion commit and build digests are recorded in
 private `execution-2026-09-16/verification/completion-manifest.json`.
 
-| State | Result |
-| --- | --- |
-| Implemented | Common location hubs, deterministic local/nearby selection, deployment snapshots, navigation/FAQ/SEO/sitemaps, model/privacy and repeatable migration/enrichment. Manual review isolation replaces the abandoned workflow work. |
-| Migrated | Five canonical page owners, 87 original unique neighborhoods, 91 immutable files, one added taxonomy-only area and 39 junctions. All 53 project/job/ZIP enrichments and the SonShine-only required constraint are applied. |
-| Published in CMS | All five location page owners are published with overviews and the existing SEO/date sets. There are 113 published neighborhoods, including the 25 approved release additions; Arroyo Vista remains archived. The 72 manual location reviews remain published. Added 25 local FAQs; the prior 45 FAQs are unchanged. |
-| Deployment | PR #29 released `4967397` on September 17; Coolify reports healthy and public acceptance passed. Directus now owns the five hubs. `0271ec7` remains the retained rollback baseline. See the dated execution record. |
-| Verified | September 15 import/readback and release-candidate checks remain historical evidence. September 16 export/CI/FAQ changes pass Node 22 lint, typecheck, Tailwind, all nine location verifiers plus export tests, and 14 dynamic-route contract groups. The integrated build generates 456 pages, validates 443 route owners, and serves all five hubs with 13 matching visible/schema FAQs. |
-| Completion | All 25 additions and 28 project connections are applied. Eleven project relations retain documented empty exceptions. Final-head and main-push Quality/CodeQL, rebuilt snapshots, independent review and public desktop/mobile acceptance passed. Source branches and private recovery remain retained. |
+| State            | Result                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Implemented      | Common location hubs, deterministic local/nearby selection, deployment snapshots, navigation/FAQ/SEO/sitemaps, model/privacy and repeatable migration/enrichment. Manual review isolation replaces the abandoned workflow work.                                                                                                                                                            |
+| Migrated         | Five canonical page owners, 87 original unique neighborhoods, 91 immutable files, one added taxonomy-only area and 39 junctions. All 53 project/job/ZIP enrichments and the SonShine-only required constraint are applied.                                                                                                                                                                 |
+| Published in CMS | All five location page owners are published with overviews and the existing SEO/date sets. There are 113 published neighborhoods, including the 25 approved release additions; Arroyo Vista remains archived. The 72 manual location reviews remain published. Added 25 local FAQs; the prior 45 FAQs are unchanged.                                                                       |
+| Deployment       | PR #29 released `4967397` on September 17; Coolify was healthy and public acceptance passed then. Directus owns the five hubs. `0271ec7` was that release's historical rollback baseline. WEB-VPS is now retired; use [current Cloudflare recovery](../DEPLOY.md#cloudflare-recovery).                                                                                                     |
+| Verified         | September 15 import/readback and release-candidate checks remain historical evidence. September 16 export/CI/FAQ changes pass Node 22 lint, typecheck, Tailwind, all nine location verifiers plus export tests, and 14 dynamic-route contract groups. The integrated build generates 456 pages, validates 443 route owners, and serves all five hubs with 13 matching visible/schema FAQs. |
+| Completion       | All 25 additions and 28 project connections are applied. Eleven project relations retain documented empty exceptions. Final-head and main-push Quality/CodeQL, rebuilt snapshots, independent review and public desktop/mobile acceptance passed. Source branches and private recovery remain retained.                                                                                    |
 
 ## September 16–17 content and code update
 
@@ -91,14 +91,14 @@ September 16 task. See [enrichment](location-enrichment.md).
 
 ## Exact applied artifacts
 
-| Artifact | Hash |
-| --- | --- |
-| Original 219-operation location plan | `a86b32efe0f8066a0c3feb3ba51d6b7883918a4e401fc723b44407bd62fde710` |
-| 53-project enrichment plan | `7b74818c99e51db4da303bfb5a07428e335dce67904dcdc9a7627cdebc2912b2` |
+| Artifact                                | Hash                                                               |
+| --------------------------------------- | ------------------------------------------------------------------ |
+| Original 219-operation location plan    | `a86b32efe0f8066a0c3feb3ba51d6b7883918a4e401fc723b44407bd62fde710` |
+| 53-project enrichment plan              | `7b74818c99e51db4da303bfb5a07428e335dce67904dcdc9a7627cdebc2912b2` |
 | 85-neighborhood/five-SEO editorial plan | `6f5c09a7d21efe5a8a6c2efc236c1a326bb199fe2936ddafb7ec6a734b71cbd5` |
-| University Park/Arroyo Vista increment | `d55cf23d47b5bd1b3e4fbbbc9dd26ef0d898021bb48e80604f0e9bbb7eb0500c` |
-| Independent disposition readback | `a4d6585b344b37095519ed2be35c94a62e090fe85374ee8351e810bc7aa630d2` |
-| Applied static 72-review plan | `aedc1100fb1061fc34e5be806d63cdee137aa9cec9a236f73cbd96af638a031a` |
+| University Park/Arroyo Vista increment  | `d55cf23d47b5bd1b3e4fbbbc9dd26ef0d898021bb48e80604f0e9bbb7eb0500c` |
+| Independent disposition readback        | `a4d6585b344b37095519ed2be35c94a62e090fe85374ee8351e810bc7aa630d2` |
+| Applied static 72-review plan           | `aedc1100fb1061fc34e5be806d63cdee137aa9cec9a236f73cbd96af638a031a` |
 
 The fresh no-operation rerun plan is
 `fa58a1cff9ecb32a83d402908f922c97b2a377deb31fe325c5452b662b790070`.

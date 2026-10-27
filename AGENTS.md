@@ -5,7 +5,7 @@ It owns public routes, lead capture, attribution and consent behavior, SEO,
 structured data, sitemaps, analytics integration, and Directus content captured
 in deployment snapshots. Production runs through vinext on Cloudflare Workers.
 Read `DEPLOY.md` before changing build commands, release settings or recovery;
-it separates Workers production from the historical Coolify/Docker path.
+it separates Workers production and recovery from local Docker compatibility checks.
 
 ## Sources of Truth
 
@@ -43,10 +43,11 @@ it separates Workers production from the historical Coolify/Docker path.
 - `lib/content`: Directus adapters, deployment snapshots, shared types and HTML sanitizers.
 - `lib/seo` and `lib/telemetry`: metadata/schema and analytics behavior.
 - `scripts`: generated artifacts, content verification, and current schema tooling.
-- `next.config.mjs`, `proxy.ts`, and `Dockerfile`: platform redirects, legacy
-  responses, headers, standalone output, build behavior, and Coolify runtime.
-- Read `DEPLOY.md` before changing Docker build arguments, Coolify environment
-  configuration, or deployment checks; it records the current key inventory.
+- `cloudflare.config.ts`: production Worker domains, assets, Images and runtime
+  bindings. `next.config.mjs` and `proxy.ts` retain application routing/headers;
+  `Dockerfile` retains local standalone compatibility checks.
+- Read `DEPLOY.md` before changing build inputs, runtime bindings or recovery.
+  WEB-VPS and Coolify are retired; use accepted Cloudflare versions for rollback.
 
 ## Validation
 
@@ -109,7 +110,7 @@ removed; use the active `verify:*` commands in `package.json`.
 
 ## Deployment Boundary
 
-Directus, Cloudflare, n8n, Coolify, analytics, revalidation, and production lead
+Directus, Cloudflare, n8n, analytics, revalidation, and production lead
 flows are external control planes. Do not mutate, deploy, redeploy, publish,
 revalidate production, submit real leads, or run migration apply commands
 without explicit authorization for that exact action.

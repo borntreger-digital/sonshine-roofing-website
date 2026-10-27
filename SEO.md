@@ -8,9 +8,8 @@
 
 ## Robots
 
-- Non-production `robots.txt` uses `Disallow: /`. The current Coolify preview
-  configuration leaves sitemap endpoints disabled; there is no host-wide
-  staging header.
+- Non-production `robots.txt` uses `Disallow: /`. Preview hosting and its
+  indexing controls are documented in [the deployment runbook](DEPLOY.md).
 - Production: `Allow: /` with sitemap at `/sitemap_index`.
 - Page-level robots overrides:
   - `noindex, nofollow`: `/thank-you`, `/tell-us-why`, `/truck-for-sale`, and
@@ -35,9 +34,8 @@
   whose own `noindex` value is false. The business policy keeps glossary terms
   noindex, so the child sitemap should remain empty while the archive stays
   indexable.
-- The retired sitemap-preview flag is absent from Coolify and the Dockerfile.
-  With this configuration, sitemap endpoints return 404 outside production;
-  see [the environment inventory](DEPLOY.md#coolify-environment-variables).
+- The retired sitemap-preview flag is absent from the Dockerfile. Sitemap
+  endpoints return 404 outside production; see [the application inputs](DEPLOY.md#application-environment-variables).
 - After releases that touch image content, resubmit `/sitemap_index/image` in Search Console.
 
 ## Structured data
