@@ -76,6 +76,8 @@ jobs:
         run: npm run verify:review-carousel
       - name: Verify all dynamic route contracts
         run: npm run verify:dynamic-routes
+      - name: Verify interrupted build-time CMS requests
+        run: npm run verify:build-fetch
       - name: Verify Directus fetch policy
         run: npm run verify:directus-fetch-policy
       - name: Verify legacy media redirect behavior

@@ -71,7 +71,8 @@
     "verify:vinext-artifact": "node scripts/verify-vinext-artifact.mjs",
     "verify:vinext-runtime": "node scripts/verify-vinext-runtime.mjs",
     "verify:vinext-analytics-policy": "node scripts/verify-vinext-analytics-policy.mjs",
-    "verify:vinext-releases": "node scripts/verify-vinext-releases.mjs"
+    "verify:vinext-releases": "node scripts/verify-vinext-releases.mjs",
+    "verify:build-fetch": "node --test scripts/verify-build-fetch.mjs scripts/verify-build-cms-requests.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.5.0",

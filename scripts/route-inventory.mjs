@@ -1,3 +1,4 @@
+import { fetchBuildGet } from '../lib/content/build/fetch-build-get.mjs';
 // Full, verified route ownership inventory. Explicit count and stable IDs make
 // truncated pages and changing inventories fail the build instead of hiding routes.
 export async function readRouteCollection({ collection, fields, directusUrl, directusToken, clientSlug, fetcher = fetch, pageSize = 500 }) {
@@ -11,9 +12,16 @@ export async function readRouteCollection({ collection, fields, directusUrl, dir
     url.searchParams.set('page', String(page));
     url.searchParams.set('sort', 'id');
     url.searchParams.set('meta', 'filter_count');
-    const response = await fetcher(url, { headers: { Accept: 'application/json', Authorization: 'Bearer ' + directusToken }, cache: 'no-store' });
-    if (!response.ok) throw new Error(`[route-manifest] Directus ${collection} request failed with HTTP ${response.status}.`);
-    const payload = await response.json();
+    const payload = await fetchBuildGet(url, {
+      fetcher, headers: { Accept: 'application/json', Authorization: 'Bearer ' + directusToken },
+      operation: 'route-validator:collection',
+    }, async response => {
+      if (!response.ok) {
+        await response.body?.cancel().catch(() => {});
+        throw new Error(`[route-manifest] Directus ${collection} request failed with HTTP ${response.status}.`);
+      }
+      return response.json();
+    });
     if (!Array.isArray(payload.data) || payload.errors?.length) throw new Error(`[route-manifest] Directus ${collection} returned an invalid payload.`);
     const count = payload.meta?.filter_count;
     if (!Number.isSafeInteger(count) || count < 0) throw new Error('[route-manifest] Missing verified inventory count.');

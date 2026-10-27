@@ -23,6 +23,19 @@ snapshot, empty-inventory or live-CMS recovery path. Server startup validates th
 whole bundle. Keep these artifacts private, ignored by Git, and packaged together
 with the standalone application; do not change them inside a running deployment.
 
+Build-time Directus GETs retry transient connection failures and interrupted
+response bodies, including the collection readers shared by editorial, projects,
+videos, locations, site settings and redirects, the static-file metadata batches,
+and the standalone route inventory. Each read gets up to three 20-second attempts
+with bounded backoff (at most 62 seconds including waits). Every attempt preserves
+the original authorization, client/publication filters and no-store policy.
+Authentication/HTTP errors, invalid JSON, TLS errors and inventory/normalization
+failures still fail immediately. Exhausted retries stop capture; they cannot seal
+partial content or reuse a prior snapshot. Diagnostics include only an allowlisted
+operation, error code, attempt and elapsed time. `npm run verify:build-fetch`
+checks the real readers, pagination, deadlines and failed-capture seal removal.
+External YouTube metadata requests and runtime lead submissions are unchanged.
+
 Content pages and sitemaps have no ISR. Every CMS detail route disables dynamic
 fallback, so a slug absent from its deployment returns 404. Runtime resource APIs
 remain interactive but read local snapshots. Both authenticated revalidation
