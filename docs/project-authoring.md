@@ -1,6 +1,6 @@
 # SonShine Roofing project upload procedure
 
-Version 5 — October 29, 2026. This procedure applies to the frontend that uses project descriptions for narrative copy and independently authored Directus video records. Publication rules and retained migration fields are documented in `CONTENT.md`.
+Version 6 — October 29, 2026. This procedure applies to the frontend that uses project descriptions for narrative copy and independently authored Directus video records. Publication rules and retained migration fields are documented in `CONTENT.md`.
 
 Every post should let a homeowner understand what work SonShine completed, where it happened, which roof system was installed, and what was distinctive about the job. Write every field from one verified set of facts.
 
@@ -38,7 +38,7 @@ Do not guess the product, color, homeowner motivation, storm damage, installatio
 | `job_id` | Required for SonShine, including drafts, after the verified backfill on 2026-09-15. Use the verified AccuLynx job ID; never use a placeholder. This private field is excluded from website/public access. |
 | `zip` | Required verified postal ZIP for SonShine. It remains private and cannot establish neighborhood membership by itself. |
 | `neighborhood` | Optional canonical neighborhood within the selected service area. Assign only with independent verification; leave null when uncertain. |
-| `roof_color` | Choose material first, then select a verified official color belonging to that material and client. If you change material, clear or replace the previous color before saving. Leave it empty when genuinely unknown or inapplicable; explain a verified unpainted finish in the copy. Do not invent a color to satisfy the form. |
+| `roof_color` | Choose material first, then select a verified color or finish belonging to that material and client. Use `Unpainted` under Metal for a verified unpainted metal finish. If you change material, clear or replace the previous color before saving. Leave it empty when genuinely unknown or inapplicable. Do not invent a color to satisfy the form. |
 | `description` | Plain text, usually about 75–125 words. Use less if the job has fewer verified facts; do not pad it. |
 
 If the authoring form does not expose the private job reference, use the approved administrative content-write path to supply the verified value when creating the draft. Do not put it in another field or weaken the required-field constraint.
