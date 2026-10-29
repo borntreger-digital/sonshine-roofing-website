@@ -13,6 +13,8 @@ assert.equal(projectServiceLabel(null), 'Roofing Project');
 
 const config = { url: 'https://cms.example.test', clientSlug: 'fixture-client' };
 const term = (slug, name = slug) => ({ id: slug, slug, name, status: 'published', client: { slug: config.clientSlug } });
+const color = (slug, material, name = slug) => ({ ...term(slug, name), material_type: term(material) });
+const colorTerm = (slug, material, name = slug) => ({ name, slug, materialTypeSlug: material });
 const file = (id) => ({ id, type: 'image/webp', description: `A described roof ${id}`, width: 2000, height: 1500 });
 const source = {
   id: 'one', scope_key: 'fixture-client:blue-roof',
@@ -45,17 +47,25 @@ for (const patch of [
   { featured_image: { ...file('hero'), description: '' } },
   { featured_image: { ...file('hero'), type: 'video/mp4' } },
   { material_type: { ...term('metal'), status: 'draft' } },
+  { roof_color: term('bronze') },
+  { roof_color: color('bronze', 'tile') },
+  { roof_color: { ...color('bronze', 'metal'), status: 'draft' } },
+  { roof_color: { ...color('bronze', 'metal'), client: { slug: 'another-client' } } },
+  { roof_color: { ...color('bronze', 'metal'), material_type: { ...term('metal'), status: 'draft' } } },
+  { roof_color: { ...color('bronze', 'metal'), material_type: { ...term('metal'), client: { slug: 'another-client' } } } },
   { service_area: { ...term('sarasota'), client: { slug: 'another-client' } } },
   { gallery: [{ sort: 1, directus_files_id: file('a') }, { sort: 1, directus_files_id: file('b') }] },
   { gallery: null }, { product_links: [{ label: 'Unsafe', href: 'javascript:alert(1)' }] },
   { primary_focus_keyword: 'roof', focus_keywords: ['wrong', 'roof'] },
 ]) assert.throws(() => mapDirectusProject({ ...source, ...patch }, config));
 
-const snapshot = { version: 2, clientSlug: config.clientSlug, videos: [], projects: [
+assert.deepEqual(mapDirectusProject({ ...source, roof_color: color('bronze', 'metal', 'Bronze') }, config).roofColors, [colorTerm('bronze', 'metal', 'Bronze')]);
+
+const snapshot = { version: 3, clientSlug: config.clientSlug, videos: [], projects: [
   project,
-  { ...project, slug: 'tile-roof', title: 'Tile roof', materialTypes: [term('tile')], roofColors: [term('red')], serviceAreas: [term('venice')], projectDescription: 'Courtyard' },
-  { ...project, slug: 'another-metal', title: 'Another metal roof', roofColors: [term('red')], projectDescription: 'Courtyard' },
-], terms: { materials: [term('metal'), term('tile')], roofColors: [term('red')], serviceAreas: [term('sarasota'), term('venice'), term('unused')] } };
+  { ...project, slug: 'tile-roof', title: 'Tile roof', materialTypes: [term('tile')], roofColors: [colorTerm('red', 'tile', 'Sunset Red')], serviceAreas: [term('venice')], projectDescription: 'Courtyard' },
+  { ...project, slug: 'another-metal', title: 'Another metal roof', roofColors: [colorTerm('bronze', 'metal', 'Bronze')], projectDescription: 'Courtyard' },
+], terms: { materials: [term('metal'), term('tile')], roofColors: [colorTerm('red', 'tile', 'Sunset Red'), colorTerm('bronze', 'metal', 'Bronze')], serviceAreas: [term('sarasota'), term('venice'), term('unused')] } };
 assert.equal(queryProjectSnapshot(snapshot, { first: 1 }).pageInfo.endCursor, '1');
 assert.deepEqual(queryProjectSnapshot(snapshot, { first: 1, after: '1' }).items.map((row) => row.slug), ['tile-roof']);
 assert.deepEqual(queryProjectSnapshot(snapshot, { filters: { materialTypeSlugs: ['metal', 'tile'], serviceAreaSlugs: ['venice'], roofColorSlugs: ['red'] } }).items.map((row) => row.slug), ['tile-roof']);
@@ -68,7 +78,7 @@ assert.equal(descriptionOnly.meta.fullTotal, 3);
 assert.deepEqual(descriptionOnly.pageInfo, { hasNextPage: true, endCursor: '1' });
 assert.deepEqual(descriptionOnly.facets.map((facet) => facet.buckets.map(({ slug, count }) => ({ slug, count }))), [
   [{ slug: 'metal', count: 1 }, { slug: 'tile', count: 1 }],
-  [{ slug: 'red', count: 2 }],
+  [{ slug: 'red', count: 1 }, { slug: 'bronze', count: 1 }],
   [{ slug: 'sarasota', count: 1 }, { slug: 'venice', count: 1 }, { slug: 'unused', count: 0 }],
 ]);
 const nextDescriptionPage = queryProjectSnapshot(snapshot, { first: 1, after: descriptionOnly.pageInfo.endCursor, filters: { search: 'Courtyard' } });
@@ -88,12 +98,18 @@ assert.equal(tileSearch.total, 1);
 assert.equal(tileSearch.meta.overallTotal, 1);
 assert.equal(tileSearch.facets.find((facet) => facet.taxonomy === 'material_type').buckets.find((bucket) => bucket.slug === 'metal').count, 0);
 assert.equal(queryProjectSnapshot(snapshot, { filters: { serviceAreaSlugs: ['unused'] } }).total, 0);
-const facetResult = queryProjectSnapshot(snapshot, { filters: { materialTypeSlugs: ['metal'], roofColorSlugs: ['red'] } });
+const facetResult = queryProjectSnapshot(snapshot, { filters: { materialTypeSlugs: ['metal'], roofColorSlugs: ['bronze'] } });
 assert.equal(facetResult.total, 1);
 assert.deepEqual(facetResult.facets.find((facet) => facet.taxonomy === 'material_type').buckets.map(({ slug, count }) => ({ slug, count })), [{ slug: 'metal', count: 1 }, { slug: 'tile', count: 0 }]);
 assert.equal(facetResult.meta.fullTotal, 3);
 assert.equal('contentHtml' in facetResult.items[0], false, 'resource responses contain summaries only');
 
+assert.equal(queryProjectSnapshot(snapshot, { filters: { search: '  SUNSET RED  ' } }).total, 1, 'official color names are searchable as phrases');
+assert.equal(queryProjectSnapshot(snapshot, { filters: { search: 'sunset missing red' } }).total, 0, 'search is not tokenized');
+assert.equal(queryProjectSnapshot(snapshot, { filters: { search: 'venice' } }).total, 1, 'location labels are searchable without appearing in prose');
+assert.equal(queryProjectSnapshot(snapshot, { filters: { materialTypeSlugs: ['metal'], roofColorSlugs: ['red'] } }).total, 0, 'conflicting filters never broaden results');
+assert.equal(queryProjectSnapshot(snapshot, { filters: { roofColorSlugs: ['red', 'bronze'] } }).total, 2, 'existing color arrays retain OR semantics');
+assert.equal(queryProjectSnapshot(snapshot, { filters: { roofColorSlugs: ['red'] } }).total, queryProjectSnapshot(snapshot, { filters: { materialTypeSlugs: ['tile'], roofColorSlugs: ['red'] } }).total, 'adding inferred parent preserves color-only results');
 const directory = await mkdtemp(join(tmpdir(), 'project-snapshot-test-'));
 const originalFetch = globalThis.fetch;
 try {
@@ -105,6 +121,12 @@ try {
   source.title = 'An unpublished later CMS change';
   assert.equal(queryProjectSnapshot(deployed).items[0].title, 'Blue roof & sunny day');
   assert.equal(deployed.projects.find((row) => row.slug === 'new-cms-slug'), undefined);
+  await writeFile(filename, JSON.stringify({ ...snapshot, version: 2 }));
+  assert.throws(() => readProjectSnapshot(filename), /invalid/u, 'old snapshots require a fresh build');
+  await writeFile(filename, JSON.stringify({ ...snapshot, terms: { ...snapshot.terms, roofColors: [term('red')] } }));
+  assert.throws(() => readProjectSnapshot(filename), /catalog is invalid/u);
+  await writeFile(filename, JSON.stringify({ ...snapshot, projects: snapshot.projects.map((row) => row.slug === 'tile-roof' ? { ...row, roofColors: [colorTerm('bronze', 'metal')] } : row) }));
+  assert.throws(() => readProjectSnapshot(filename), /inconsistent/u);
   await writeFile(filename, '{}');
   assert.throws(() => readProjectSnapshot(filename), /invalid/u);
 } finally {
@@ -125,13 +147,15 @@ const full = await fetchDirectusProjectSnapshot(env, async (url, options) => {
   const collection = url.pathname.split('/').at(-1);
   if (collection === 'roofing_projects') {
     const fields = url.searchParams.get('fields').split(',');
+    assert.ok(fields.includes('roof_color.material_type.client.slug') && fields.includes('roof_color.material_type.status'));
     assert.ok(fields.includes('description'), 'project search requires the description');
     assert.ok(!fields.includes('body') && !fields.some((field) => field.includes('*')), 'project fetches must work after body schema removal');
   }
+  if (collection === 'roofing_roof_colors') assert.ok(url.searchParams.get('fields').includes('material_type.slug'));
   const page = Number(url.searchParams.get('page'));
   const data = collection === 'roofing_projects'
     ? (page === 1 ? Array.from({ length: 100 }, (_, i) => ({ ...source, id: String(i), slug: `roof-${i}` })) : [{ ...source, id: 'last', slug: 'last-roof' }])
-    : [{ id: collection, ...term(collection.replaceAll('_', '-')) }];
+    : collection === 'roofing_roof_colors' ? [color('bronze', 'metal')] : collection === 'roofing_material_types' ? [term('metal')] : [term('sarasota')];
   return { ok: true, json: async () => ({ data, meta: { filter_count: collection === 'roofing_projects' ? 101 : 1 } }) };
 });
 assert.equal(full.projects.length, 101, 'top-level pagination must include every published project');

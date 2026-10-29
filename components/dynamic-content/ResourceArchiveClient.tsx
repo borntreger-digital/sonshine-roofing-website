@@ -8,7 +8,8 @@ import type { PageResult, ResourceKind } from '@/lib/ui/pagination';
 import {
   archiveLocationKey,
   archivePayloadInput,
-  isArchiveFilterEnabled,
+  archiveFilterView,
+  changeArchiveSelection,
   normalizeArchiveFilters,
   readArchiveFilters,
   writeArchiveFilters,
@@ -82,6 +83,7 @@ export default function ResourceArchiveClient<Item>({
   const loading = needsRequest && !settled;
   const error = settled && outcome.error;
   const [legacyNotice, setLegacyNotice] = useState(false);
+  const [selectionAnnouncement, setSelectionAnnouncement] = useState('');
   const appliedKeyRef = useRef(JSON.stringify(draft));
   const locationKey = archiveLocationKey(new URLSearchParams(paramsString), groups, searchParamKey);
   const [lastLocation, setLastLocation] = useState<string | null>(null);
@@ -121,7 +123,7 @@ export default function ResourceArchiveClient<Item>({
 
   useEffect(() => {
     const restored = readArchiveFilters(new URLSearchParams(paramsString), groups, minSearchLength, searchParamKey);
-    if (restored.adjustedLegacyLink) publishUrl(restored.filters, true);
+    if (restored.adjustedLegacyLink || restored.inferredParent) publishUrl(restored.filters, true);
   }, [paramsString, groups, minSearchLength, searchParamKey, publishUrl]);
 
   useEffect(() => {
@@ -170,15 +172,11 @@ export default function ResourceArchiveClient<Item>({
   };
   const clearFilters = () => applyFilters({ search: '', selections: {} });
   const changeSelection = (key: string, value: string) => {
-    setDraft((previous) => ({
-      // Changing a dependent field affects only the form, never the displayed results.
-      ...normalizeArchiveFilters(
-        { ...previous, selections: { ...previous.selections, [key]: value } },
-        groups,
-        minSearchLength,
-      ),
-      search: previous.search,
-    }));
+    const cleared = groups.filter((group) => group.dependsOn?.key === key && draft.selections[group.key]);
+    setSelectionAnnouncement(cleared.length && draft.selections[key] !== value
+      ? `${cleared.map((group) => group.label).join(' and ')} cleared.` : '');
+    // Dependent changes affect only the form, never the displayed results.
+    setDraft((previous) => changeArchiveSelection(previous, groups, key, value, minSearchLength));
   };
   const appliedSummary = [
     ...(applied.filters.search ? [`Search: “${applied.filters.search}”`] : []),
@@ -223,49 +221,50 @@ export default function ResourceArchiveClient<Item>({
         >
           <div className={`grid gap-4 ${groups.length > 1 ? 'md:grid-cols-3' : ''}`}>
             {groups.map((group) => {
-              const enabled = isArchiveFilterEnabled(group, draft);
+              const view = archiveFilterView(group, draft, groups);
               return (
                 <div key={group.key} className="min-w-0">
                   <label
                     htmlFor={`${kind}-${group.key}`}
                     className="mb-2 block text-sm font-medium text-slate-700"
                   >
-                    {group.label}
+                    {view.label}
                   </label>
                   <select
                     id={`${kind}-${group.key}`}
                     name={group.paramKey}
                     value={draft.selections[group.key] ?? ''}
-                    disabled={!enabled}
+                    disabled={!view.enabled}
                     onChange={(event) => changeSelection(group.key, event.target.value)}
                     aria-describedby={
-                      group.enabledWhen ? `${kind}-project-filters-help` : undefined
+                      view.conflict ? `${kind}-${group.key}-conflict` : group.helpText ? `${kind}-${group.key}-help` : undefined
                     }
                     className={controlClass}
                   >
-                    <option value="">
-                      All{' '}
-                      {group.label === 'Topic'
-                        ? 'topics'
-                        : group.label === 'Category'
-                          ? 'categories'
-                          : `${group.label.toLowerCase()}s`}
-                    </option>
-                    {group.options.map((option) => (
+                    <option value="">{view.placeholder}</option>
+                    {view.conflict && view.selected && (
+                      <option value={view.selected.slug} disabled>{view.selected.label} (different material)</option>
+                    )}
+                    {view.options.map((option) => (
                       <option key={option.slug} value={option.slug}>
                         {option.label}
                       </option>
                     ))}
                   </select>
+                  {group.helpText && <p id={`${kind}-${group.key}-help`} className="mt-2 text-sm text-slate-500">{group.helpText}</p>}
+                  {view.conflict && (
+                    <div id={`${kind}-${group.key}-conflict`} role="alert" className="mt-2 text-sm text-amber-900">
+                      <p>This saved search combines a {group.label.toLowerCase()} with a different material. Choose a matching {group.label.toLowerCase()} or clear it, then select Search.</p>
+                      <button type="button" onClick={() => changeSelection(group.key, '')} className="mt-2 min-h-12 rounded-lg border border-amber-400 px-3 underline focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan)">
+                        Clear {group.label.toLowerCase()}
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
-          {groups.some((group) => group.enabledWhen) && (
-            <p id={`${kind}-project-filters-help`} className="text-sm text-slate-500">
-              Material and location apply to roofing-project videos.
-            </p>
-          )}
+          <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">{selectionAnnouncement}</p>
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
             <div className="min-w-0">
               <label

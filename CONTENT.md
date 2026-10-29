@@ -265,8 +265,11 @@ runtime and two-release acceptance gates.
   unpublished WordPress records remain excluded.
 - Internal `job_id` is the private AccuLynx reference; populated values are unique within the client. The verified 53-project backfill and SonShine-only job ID/ZIP requirement were applied on 2026-09-15. Unrelated clients keep optional fields. Actual public/website permissions exclude job ID and ZIP; neither is fetched or packaged by the website. Neighborhood stays optional and its label disappears when absent. See [enrichment evidence](docs/location-enrichment-evidence.md).
 - Select one published material and one published service area from the reusable
-  managed lists. Roof color is optional and single-select. Preserve existing
-  names/slugs because archive URLs use `mt`, `rc`, and `sa` query parameters.
+  managed lists. Roof color is optional and single-select. Each published
+  `roofing_roof_colors` record requires a published `material_type` parent from
+  the same client. A project's selected color must match its material and client;
+  leave color empty when unknown. Preserve existing color identities and names/slugs
+  because archive URLs use `mt`, `rc`, and `sa` query parameters.
 - Order all gallery entries explicitly with `roofing_projects_files.sort`.
   Every gallery image appears; no default connection limit truncates the list.
   Shared featured/gallery assets can reference the same Directus file.
@@ -292,9 +295,16 @@ runtime and two-release acceptance gates.
 - `published_at` retains original publication; `modified_at` records public-facing
   content edits. Both appear on detail pages. Audit housekeeping and deployments
   preserve these dates; see [editorial dates](docs/editorial-dates.md).
-- Archive search matches the title plus plain-text description, without case
-  sensitivity. Results, totals, pagination, and all filter counts use that same
+- Archive search matches the title, plain-text description, and managed material,
+  color, and location labels as a case-insensitive phrase. Results, totals, pagination, and all filter counts use that same
   matching set, including when material, color, and service-area filters combine.
+- Project archive controls appear in Location → Material → Color order. Location
+  stays independent. Material enables its color choices immediately; changing or
+  clearing material resets only the draft color. Search applies the draft, while
+  Clear all applies immediately. A color-only saved URL infers its parent and is
+  replaced without a new history entry. Conflicting saved material/color pairs
+  retain both criteria until explicitly repaired; API arrays keep OR within a
+  dimension and AND between dimensions.
 - All project views use one build-generated dataset, including archive search,
   facets, pagination, homepage/location cards, video-library selections, metadata,
   and sitemaps. Save CMS changes, run a successful frontend production build,
@@ -350,7 +360,12 @@ runtime and two-release acceptance gates.
   pages are not video-byte URLs. Playback preserves muted viewport autoplay,
   looping and reduced-motion click activation. Their player starts paused until
   activation. Dedicated watch-page eligibility is not implied.
-- Projects and videos share the private `.generated/projects.json` artifact.
+- Projects and videos share the private `.generated/projects.json` v3 artifact.
+  Each color term includes `materialTypeSlug`; the build validates published,
+  same-client parents and matching project assignments. Project/video readers,
+  route ownership, the deployment seal, and location consumers require v3.
+  The independent location artifact remains v1. Regenerate the complete bundle
+  when upgrading; an old project/video snapshot cannot serve the new controls.
   Save CMS changes, complete a successful build, and deploy it to publish.
   The library, player lookup, resources API, project players, and video sitemap
   have no ISR, runtime CMS refresh, or WordPress fallback. Revalidation cannot

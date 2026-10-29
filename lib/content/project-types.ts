@@ -5,6 +5,8 @@ import type { VideoItem } from './video-types';
 export type ProjectImage = { url: string; altText: string; width?: number | null; height?: number | null };
 export type TermLite = { name: string; slug: string };
 
+export type RoofColorTerm = TermLite & { materialTypeSlug: string };
+
 export type ProductLink = { productName: string; productLink: string | null };
 
 export type ProjectTestimonial = {
@@ -33,7 +35,7 @@ export type ProjectSummary = {
   /** Optional taxonomy terms to enable client-side filtering */
   materialTypes?: TermLite[];
   /** Additional taxonomies for client-side filtering */
-  roofColors?: TermLite[];
+  roofColors?: RoofColorTerm[];
   serviceAreas?: TermLite[];
 };
 
@@ -52,7 +54,7 @@ export type ProjectFull = ProjectSummary & {
   productLinks: ProductLink[];
   projectImages: ProjectImage[];
   materialTypes: TermLite[];
-  roofColors: TermLite[];
+  roofColors: RoofColorTerm[];
   serviceAreas: TermLite[];
   /** Hydrated from the same deployed video inventory; draft videos are null. */
   video: VideoItem | null;
@@ -92,8 +94,8 @@ export type ProjectSearchResult = {
   meta: { overallTotal: number; fullTotal: number };
 };
 export type ProjectSnapshot = {
-  version: 2;
+  version: 3;
   clientSlug: string;
   projects: ProjectFull[];
-  terms: { materials: TermLite[]; roofColors: TermLite[]; serviceAreas: TermLite[] };
+  terms: { materials: TermLite[]; roofColors: RoofColorTerm[]; serviceAreas: TermLite[] };
 };

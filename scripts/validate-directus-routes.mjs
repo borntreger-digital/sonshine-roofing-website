@@ -136,7 +136,7 @@ export async function validateRouteOwners({ clientSlug, readCollection, snapshot
 
   if (clientSlug === "sonshine-roofing") {
     const projectSnapshot = snapshots.projects;
-    if (!projectSnapshot || projectSnapshot.version !== 2 || projectSnapshot.clientSlug !== clientSlug
+    if (!projectSnapshot || projectSnapshot.version !== 3 || projectSnapshot.clientSlug !== clientSlug
       || !Array.isArray(projectSnapshot.projects) || !Array.isArray(projectSnapshot.videos)
       || !Array.isArray(projectSnapshot.categories)) {
       throw new Error("[route-manifest] Combined content snapshot has an invalid client, version, or inventory.");

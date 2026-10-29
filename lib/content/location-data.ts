@@ -12,7 +12,7 @@ export function readLocationSnapshot(filename: string, projectFilename: string):
     throw new Error('Location snapshot is unavailable. Run the credentialed prebuild.');
   }
   const source = JSON.parse(projects) as { version: number; clientSlug: string };
-  if (value.version !== 1 || value.contractVersion !== 'location-v3' || source.version !== 2 || value.clientSlug !== source.clientSlug
+  if (value.version !== 1 || value.contractVersion !== 'location-v3' || source.version !== 3 || value.clientSlug !== source.clientSlug
     || value.projectSnapshotHash !== createHash('sha256').update(JSON.stringify(source)).digest('hex')
     || !value.siteShell?.settings || !Array.isArray(value.siteShell.services)
     || value.featuredOffer === undefined

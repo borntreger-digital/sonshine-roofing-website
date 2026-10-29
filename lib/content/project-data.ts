@@ -16,11 +16,24 @@ export function readProjectSnapshot(filename: string): ProjectSnapshot {
   } catch {
     throw new Error('Project snapshot is unavailable. Run the credentialed prebuild before starting the frontend.');
   }
-  if (snapshot.version !== 2 || !snapshot.clientSlug || !Array.isArray(snapshot.projects) || !snapshot.terms || !Array.isArray(snapshot.videos)) {
+  if (snapshot.version !== 3 || !snapshot.clientSlug || !Array.isArray(snapshot.projects) || !snapshot.terms || !Array.isArray(snapshot.videos)) {
     throw new Error('Project snapshot is invalid. Regenerate it with the credentialed prebuild.');
   }
+  if (!Array.isArray(snapshot.terms.materials) || !Array.isArray(snapshot.terms.roofColors) || !Array.isArray(snapshot.terms.serviceAreas)) {
+    throw new Error('Project color catalog is invalid. Regenerate it with the credentialed prebuild.');
+  }
+  const materialSlugs = new Set(snapshot.terms.materials.map((term) => term.slug));
+  if (snapshot.terms.roofColors.some((color) => !color.materialTypeSlug || !materialSlugs.has(color.materialTypeSlug))) {
+    throw new Error('Project color catalog is invalid. Regenerate it with the credentialed prebuild.');
+  }
+  const colors = new Map(snapshot.terms.roofColors.map((color) => [color.slug, color]));
   const videos = new Map(snapshot.videos.map((video) => [video.id, video]));
   const projects = snapshot.projects.map((project) => {
+    if (!Array.isArray(project.roofColors) || !Array.isArray(project.materialTypes)
+      || project.roofColors.some((color) => !color.materialTypeSlug || colors.get(color.slug)?.materialTypeSlug !== color.materialTypeSlug
+        || !project.materialTypes.some((material) => material.slug === color.materialTypeSlug))) {
+      throw new Error('Project material/color snapshot is inconsistent. Regenerate it with the credentialed prebuild.');
+    }
     const { videoId, ...fields } = project;
     const video = videoId ? videos.get(videoId) : null;
     if (videoId && (!video || video.projectSlug !== project.slug)) {
@@ -28,7 +41,7 @@ export function readProjectSnapshot(filename: string): ProjectSnapshot {
     }
     return { ...fields, video: video ?? null };
   });
-  return { version: 2, clientSlug: snapshot.clientSlug, projects, terms: snapshot.terms };
+  return { version: 3, clientSlug: snapshot.clientSlug, projects, terms: snapshot.terms };
 }
 
 export function projectSummary(project: ProjectSummary): ProjectSummary {
@@ -48,7 +61,12 @@ export function queryProjectSnapshot(snapshot: ProjectSnapshot, {
     { key: 'serviceAreas', filter: 'serviceAreaSlugs', taxonomy: 'service_area', terms: snapshot.terms.serviceAreas },
   ] as const;
   const matches = (project: ProjectFull) => {
-    const searchable = `${project.title} ${project.projectDescription ?? ''}`.toLocaleLowerCase('en-US');
+    const searchable = [
+      project.title, project.projectDescription ?? '',
+      ...project.materialTypes.map((term) => term.name),
+      ...project.roofColors.map((term) => term.name),
+      ...project.serviceAreas.map((term) => term.name),
+    ].join(' ').toLocaleLowerCase('en-US');
     if (search && !searchable.includes(search)) return false;
     return dimensions.every(({ key, filter }) => {
       const selected = filters[filter]?.map((slug) => slug.trim().toLowerCase()).filter(Boolean) ?? [];

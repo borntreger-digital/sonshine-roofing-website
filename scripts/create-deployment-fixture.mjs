@@ -62,7 +62,7 @@ const project = mapDirectusProject(
     neighborhood: null,
     material_type: term('metal'),
     service_area: term('fixture-city'),
-    roof_color: null,
+    roof_color: { ...term('fixture-bronze'), material_type: term('metal') },
     product_links: [],
     noindex: true,
   },
@@ -86,14 +86,14 @@ const videos = ['sonshine-roofing-best-of-the-best-2023', 'sonshine-roofing-intr
   }),
 );
 const projects = {
-  version: 2,
+  version: 3,
   clientSlug: config.clientSlug,
   projects: [project],
   videos,
   categories: [],
   terms: {
     materials: [{ slug: 'metal', name: 'Metal' }],
-    roofColors: [],
+    roofColors: [{ slug: 'fixture-bronze', name: 'fixture-bronze', materialTypeSlug: 'metal' }],
     serviceAreas: [{ slug: 'fixture-city', name: 'Fixture city' }],
   },
 };

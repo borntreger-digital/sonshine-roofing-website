@@ -38,7 +38,7 @@ export type VideoFiltersInput = {
 };
 
 export type VideoSnapshot = {
-  version: 2;
+  version: 3;
   clientSlug: string;
   videos: VideoItem[];
   categories: VideoCategory[];
