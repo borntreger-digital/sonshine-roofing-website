@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ArrowUp, Search } from 'lucide-react';
+import { ArrowUp, ChevronDown, Search } from 'lucide-react';
 import type { FacetGroup } from '@/lib/content/project-types';
 import type { PageResult, ResourceKind } from '@/lib/ui/pagination';
 import {
@@ -230,27 +230,34 @@ export default function ResourceArchiveClient<Item>({
                   >
                     {view.label}
                   </label>
-                  <select
-                    id={`${kind}-${group.key}`}
-                    name={group.paramKey}
-                    value={draft.selections[group.key] ?? ''}
-                    disabled={!view.enabled}
-                    onChange={(event) => changeSelection(group.key, event.target.value)}
-                    aria-describedby={
-                      view.conflict ? `${kind}-${group.key}-conflict` : group.helpText ? `${kind}-${group.key}-help` : undefined
-                    }
-                    className={controlClass}
-                  >
-                    <option value="">{view.placeholder}</option>
-                    {view.conflict && view.selected && (
-                      <option value={view.selected.slug} disabled>{view.selected.label} (different material)</option>
-                    )}
-                    {view.options.map((option) => (
-                      <option key={option.slug} value={option.slug}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                      id={`${kind}-${group.key}`}
+                      name={group.paramKey}
+                      value={draft.selections[group.key] ?? ''}
+                      disabled={!view.enabled}
+                      onChange={(event) => changeSelection(group.key, event.target.value)}
+                      aria-describedby={
+                        view.conflict ? `${kind}-${group.key}-conflict` : group.helpText ? `${kind}-${group.key}-help` : undefined
+                      }
+                      className={`${controlClass} peer appearance-none pr-10 forced-colors:appearance-auto`}
+                    >
+                      <option value="">{view.placeholder}</option>
+                      {view.conflict && view.selected && (
+                        <option value={view.selected.slug} disabled>{view.selected.label} (different material)</option>
+                      )}
+                      {view.options.map((option) => (
+                        <option key={option.slug} value={option.slug}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      aria-hidden="true"
+                      focusable="false"
+                      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600 peer-disabled:text-slate-400 forced-colors:hidden"
+                    />
+                  </div>
                   {group.helpText && <p id={`${kind}-${group.key}-help`} className="mt-2 text-sm text-slate-500">{group.helpText}</p>}
                   {view.conflict && (
                     <div id={`${kind}-${group.key}-conflict`} role="alert" className="mt-2 text-sm text-amber-900">
