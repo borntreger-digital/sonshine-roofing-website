@@ -124,7 +124,14 @@ includes microsecond preservation.
 Private recovery files are on OPS under
 `/root/sonshine-project-colors-20261029/`, with a working copy under
 `/private/tmp/sonshine-project-colors-20261029/` on the Mac. These paths contain
-scoped identifiers/metadata and must stay outside Git. Unsaved editor behavior
+scoped identifiers/metadata and must stay outside Git. The protected OPS directory
+also contains a concrete `reverse.sql` for this exact migration. It compares all
+affected records, fields, relations, constraints and the permission row with the
+captured after-images before restoring the original database/editor/permission
+state. Its read-only preflight passed against live state; the complete reversal
+passed in disposable local PostgreSQL. The reversal was **not** executed live
+and requires separate rollback authorization plus Directus cache invalidation
+and reader verification afterward. Unsaved editor behavior
 could not be visually verified: the in-app browser reached Directus sign-in and
 had no authenticated editor session. No production synthetic records, service
 restart, frontend deployment or unrelated tenant changes were performed.
