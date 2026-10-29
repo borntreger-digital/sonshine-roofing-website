@@ -22,7 +22,7 @@ export function projectArchiveGroups(terms: ProjectSnapshot['terms']): ArchiveFi
       key: 'roof',
       label: 'Color',
       paramKey: 'rc',
-      dependsOn: { key: 'material', disabledPlaceholder: 'Choose a material first' },
+      dependsOn: { key: 'material', disabledPlaceholder: 'Choose a material' },
       options: terms.roofColors
         .map((term) => ({ slug: term.slug, label: term.name, parentSlug: term.materialTypeSlug }))
         .sort((a, b) => a.label.localeCompare(b.label)),
