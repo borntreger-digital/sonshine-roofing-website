@@ -78,16 +78,16 @@ const Archive = loadSource(
 ).default;
 const options = (...values) =>
   values.map((value) => ({ slug: value, label: value[0].toUpperCase() + value.slice(1) }));
-const groups = [
-  {
-    key: 'material',
-    label: 'Material',
-    paramKey: 'mt',
-    options: options('metal', 'tile', 'shingle'),
-  },
-  { key: 'roof', label: 'Color', paramKey: 'rc', options: options('charcoal', 'bronze') },
-  { key: 'area', label: 'Location', paramKey: 'sa', options: options('sarasota', 'venice') },
-];
+const { projectArchiveGroups } = loadSource(resolve(root, 'lib/ui/project-filters.ts'));
+const groups = projectArchiveGroups({
+  materials: options('metal', 'tile', 'shingle').map(({ slug, label }) => ({ slug, name: label })),
+  roofColors: [
+    { slug: 'charcoal', name: 'Charcoal', materialTypeSlug: 'shingle' },
+    { slug: 'sunset-red', name: 'Sunset Red', materialTypeSlug: 'tile' },
+    { slug: 'bronze', name: 'Bronze', materialTypeSlug: 'metal' },
+  ],
+  serviceAreas: options('sarasota', 'venice').map(({ slug, label }) => ({ slug, name: label })),
+});
 const videoGroups = [
   {
     key: 'bucket',
@@ -277,6 +277,7 @@ await test('superseded responses cannot replace newer results or clear their loa
 await test('failed searches keep prior results and retry the submitted criteria', async () => {
   await mount();
   await choose('project-material', 'metal');
+  await choose('project-roof', 'bronze');
   await submit();
   await act(async () => requests[0].fail());
   assert.match(document.querySelector('[role="alert"]').textContent, /previous results/);
@@ -284,6 +285,7 @@ await test('failed searches keep prior results and retry the submitted criteria'
   await choose('project-material', 'tile');
   await click('Retry search');
   assert.deepEqual(requests[1].body.filters.selections.material, ['metal']);
+  assert.deepEqual(requests[1].body.filters.selections.roof, ['bronze'], 'retry uses submitted color even after a draft material change clears it');
   await finish(requests[1], page('Retry result', 6));
   assert.equal(rendered.result.total, 6);
 });
@@ -385,6 +387,107 @@ await test('zero results suggest checking filters and offer the same Clear all a
   await click('Clear all');
   await finish(requests.at(-1), page('All again', 53));
   assert.equal(rendered.result.total, 53);
+});
+
+
+await test('Location, Material, Color order and material dependency preserve independent draft choices', async () => {
+  await mount();
+  assert.deepEqual([...document.querySelectorAll('select')].map((element) => element.name), ['sa', 'mt', 'rc']);
+  const color = document.getElementById('project-roof');
+  assert.equal(color.disabled, true);
+  assert.equal(color.options[0].textContent, 'Choose a material first');
+  await choose('project-area', 'venice');
+  assert.equal(color.disabled, true);
+  await choose('project-material', 'shingle');
+  assert.equal(color.disabled, false);
+  assert.equal(document.querySelector('label[for="project-roof"]').textContent, 'Shingle color');
+  assert.deepEqual([...color.options].map((option) => option.textContent), ['All shingle colors', 'Charcoal']);
+  await choose('project-roof', 'charcoal');
+  await choose('project-area', 'sarasota');
+  assert.equal(color.value, 'charcoal');
+  assert.equal(document.getElementById('project-material').value, 'shingle');
+  assert.doesNotMatch(document.body.textContent, /Material and location apply to roofing-project videos/);
+  await submit();
+  await finish(requests.at(-1), page('Charcoal', 3));
+  assert.match(document.body.textContent, /Location: Sarasota · Material: Shingle · Color: Charcoal/);
+  await type('pending search');
+  await choose('project-material', 'metal');
+  assert.equal(color.value, '');
+  assert.equal(document.querySelector('.sr-only[role="status"]').textContent, 'Color cleared.');
+  assert.equal(document.getElementById('project-area').value, 'sarasota');
+  assert.equal(document.getElementById('project-search').value, 'pending search');
+  assert.equal(requests.length, 1);
+  assert.match(document.body.textContent, /Material: Shingle · Color: Charcoal/);
+  assert.deepEqual([...color.options].map((option) => option.textContent), ['All metal colors', 'Bronze']);
+  await choose('project-roof', 'bronze');
+  await choose('project-material', '');
+  assert.equal(color.value, '');
+  assert.equal(color.disabled, true);
+  assert.equal(document.getElementById('project-area').value, 'sarasota');
+});
+
+await test('color-only links infer their parent before normalization and replace history', async () => {
+  const before = window.history.length;
+  await mount('?rc=charcoal&sa=venice&utm_source=test#results', groups, true);
+  assert.equal(window.history.length, before, 'canonicalization must not add a Back step');
+  assert.equal(document.getElementById('project-material').value, 'shingle');
+  assert.equal(document.getElementById('project-roof').value, 'charcoal');
+  assert.equal(new URLSearchParams(window.location.search).get('mt'), 'shingle');
+  assert.equal(new URLSearchParams(window.location.search).get('utm_source'), 'test');
+  assert.equal(window.location.hash, '#results');
+  const active = requests.filter((request) => !request.signal.aborted);
+  assert.equal(active.length, 1);
+  assert.deepEqual(active[0].body.filters.selections, { area: ['venice'], material: ['shingle'], roof: ['charcoal'] });
+  await finish(active[0], page('Legacy charcoal', 3));
+  await choose('project-material', 'metal');
+  await submit();
+  await finish(requests.at(-1), page('Metal', 6));
+  await historyBack();
+  assert.equal(document.getElementById('project-material').value, 'shingle');
+  assert.equal(document.getElementById('project-roof').value, 'charcoal');
+  await finish(requests.at(-1), page('Restored charcoal', 3));
+});
+
+await test('conflicting saved links retain both dimensions until an explicit draft repair', async () => {
+  await mount('?mt=metal&rc=charcoal&utm_source=test#results');
+  assert.equal(document.getElementById('project-roof').value, 'charcoal');
+  assert.deepEqual(requests.at(-1).body.filters.selections, { area: [], material: ['metal'], roof: ['charcoal'] });
+  assert.match(document.querySelector('[role="alert"]').textContent, /different material/);
+  assert.equal(new URLSearchParams(window.location.search).get('rc'), 'charcoal');
+  await finish(requests.at(-1), page('Conflict', 0));
+  await click('Clear color');
+  assert.equal(document.getElementById('project-roof').value, '');
+  assert.equal(document.querySelector('[role="alert"]'), null);
+  assert.equal(requests.length, 1, 'repair remains a draft until Search');
+  assert.equal(new URLSearchParams(window.location.search).get('rc'), 'charcoal');
+  await submit();
+  assert.deepEqual(requests.at(-1).body.filters.selections, { area: [], material: ['metal'], roof: [] });
+  await finish(requests.at(-1), page('Repaired metal', 6));
+  assert.equal(rendered.result.total, 6);
+});
+
+
+await test('shared dependency help is opt-in and blog controls stay independent', async () => {
+  const conditional = [
+    videoGroups[0],
+    { ...groups.find((group) => group.key === 'material'), enabledWhen: { key: 'bucket', values: ['roofing-project'] }, helpText: 'Material applies to roofing-project videos.' },
+  ];
+  await mount('', conditional);
+  assert.equal(document.getElementById('project-material').disabled, true);
+  assert.match(document.getElementById('project-material-help').textContent, /roofing-project videos/);
+  assert.equal(document.getElementById('project-material').getAttribute('aria-describedby'), 'project-material-help');
+  await choose('project-bucket', 'roofing-project');
+  await choose('project-material', 'metal');
+  await choose('project-bucket', 'commercials');
+  assert.equal(document.getElementById('project-material').value, '');
+  await mount('', [{ key: 'topic', label: 'Topic', paramKey: 'tp', options: options('maintenance', 'roofing') }]);
+  const topic = document.getElementById('project-topic');
+  assert.equal(topic.disabled, false);
+  assert.equal(topic.options[0].textContent, 'All topics');
+  assert.doesNotMatch(document.body.textContent, /roofing-project videos|Choose a material first/);
+  await choose('project-topic', 'maintenance');
+  await submit();
+  assert.deepEqual(requests.at(-1).body.filters.selections, { topic: ['maintenance'] });
 });
 
 await act(async () => mountedRoot.unmount());

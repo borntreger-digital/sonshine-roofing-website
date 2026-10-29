@@ -134,7 +134,7 @@ await check('complete route inventory validates >500 records, scope and paginati
 });
 await check('route ownership catches collisions, bad slugs and missing tenant scope keys', async () => {
   const fixtures = { website_pages: [{ id: 'home', path: '/', scope_key: 'sonshine-roofing:/' }], services: [], blog_posts: [{ id: 'post', slug: 'post', scope_key: 'sonshine-roofing:post' }], special_offers: [], persons: [], roofing_glossary_terms: [] };
-  const snapshots = { projects: { version: 2, clientSlug: 'sonshine-roofing', projects: [], videos: [], categories: [] }, locations: { version: 1, clientSlug: 'sonshine-roofing', pages: [{ id: 'area', slug: 'city', scopeKey: 'sonshine-roofing:city' }] } };
+  const snapshots = { projects: { version: 3, clientSlug: 'sonshine-roofing', projects: [], videos: [], categories: [] }, locations: { version: 1, clientSlug: 'sonshine-roofing', pages: [{ id: 'area', slug: 'city', scopeKey: 'sonshine-roofing:city' }] } };
   const run = () => validateRouteOwners({ clientSlug: 'sonshine-roofing', readCollection: async collection => fixtures[collection], snapshots });
   assert.equal((await run()).length, 3);
   fixtures.website_pages.push({ id: 'collision', path: '/post/', scope_key: 'sonshine-roofing:/post' });

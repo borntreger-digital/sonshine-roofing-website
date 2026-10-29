@@ -3,14 +3,13 @@
 import { useMemo } from 'react';
 
 import InfiniteList from '@/components/dynamic-content/InfiniteList';
-import ResourceArchiveClient, {
-  type FilterGroupConfig,
-} from '@/components/dynamic-content/ResourceArchiveClient';
-import type { ProjectSearchResult, TermLite } from '@/lib/content/project-types';
+import ResourceArchiveClient from '@/components/dynamic-content/ResourceArchiveClient';
+import { projectArchiveGroups } from '@/lib/ui/project-filters';
+import type { ProjectSearchResult, RoofColorTerm, TermLite } from '@/lib/content/project-types';
 
 type FilterTerms = {
   materials: TermLite[];
-  roofColors: TermLite[];
+  roofColors: RoofColorTerm[];
   serviceAreas: TermLite[];
 };
 
@@ -47,33 +46,7 @@ export default function ProjectArchiveClient({
   pageSize,
   initialFilters,
 }: Props) {
-  const groups = useMemo<FilterGroupConfig[]>(
-    () => [
-      {
-        key: 'material',
-        label: 'Material',
-        paramKey: 'mt',
-        options: filterTerms.materials.map((term) => ({ slug: term.slug, label: term.name })),
-      },
-      {
-        key: 'roof',
-        label: 'Color',
-        paramKey: 'rc',
-        options: filterTerms.roofColors
-          .map((term) => ({ slug: term.slug, label: term.name }))
-          .sort((a, b) => a.label.localeCompare(b.label)),
-      },
-      {
-        key: 'area',
-        label: 'Location',
-        paramKey: 'sa',
-        options: filterTerms.serviceAreas
-          .map((term) => ({ slug: term.slug, label: term.name }))
-          .sort((a, b) => a.label.localeCompare(b.label)),
-      },
-    ],
-    [filterTerms],
-  );
+  const groups = useMemo(() => projectArchiveGroups(filterTerms), [filterTerms]);
 
   return (
     <ResourceArchiveClient

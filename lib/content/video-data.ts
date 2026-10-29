@@ -9,12 +9,12 @@ export function readVideoSnapshot(filename: string): VideoSnapshot {
   } catch {
     throw new Error('Video snapshot is unavailable. Run the credentialed prebuild before starting the frontend.');
   }
-  if (snapshot.version !== 2 || !snapshot.clientSlug || !Array.isArray(snapshot.videos) || !Array.isArray(snapshot.categories)
+  if (snapshot.version !== 3 || !snapshot.clientSlug || !Array.isArray(snapshot.videos) || !Array.isArray(snapshot.categories)
     || snapshot.videos.some((video) => !video.id || !video.slug || !video.youtubeId || !Array.isArray(video.legacyIds) || !Array.isArray(video.categories))
     || new Set(snapshot.videos.map((video) => video.id)).size !== snapshot.videos.length) {
     throw new Error('Video snapshot is invalid. Regenerate it with the credentialed prebuild.');
   }
-  return { version: 2, clientSlug: snapshot.clientSlug, videos: snapshot.videos, categories: snapshot.categories };
+  return { version: 3, clientSlug: snapshot.clientSlug, videos: snapshot.videos, categories: snapshot.categories };
 }
 
 export function findVideoInSnapshot(snapshot: VideoSnapshot, selection: string): VideoItem | null {

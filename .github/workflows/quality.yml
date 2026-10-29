@@ -70,6 +70,8 @@ jobs:
         run: npm run verify:request-body-limits
       - name: Verify project pipeline
         run: npm run verify:project-pipeline
+      - name: Verify material and color integrity in PostgreSQL
+        run: npm run verify:project-color-model
       - name: Verify editorial date rules in PostgreSQL
         run: npm run verify:editorial-dates && node scripts/location-model/verify-sql.mjs
       - name: Verify video pipeline

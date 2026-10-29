@@ -20,7 +20,7 @@ const faq = { ...scope, id: 'faq', question: 'Local question?', answer: '<p>A ve
 const shellFixture = makeSiteShellFixture('fixture');
 const siteShell = { settings: normalizeSiteSettings(shellFixture.siteSettings[0], config), services: normalizeServiceSummaries(shellFixture.services, config) };
 const source = () => ({ siteShell, featuredOffers: [], areas: [area('sarasota'), area('bradenton', 'draft'), area('osprey', 'taxonomy_only')], neighborhoods: [], neighbors: [], reviews: [], sponsors: [], sponsorAreas: [], faqs: [faq], faqScopes: [{ id: 'faq', website_page: null, service: null, service_area: null }], faqUnavailable: [], navigation: [], coverage: [{ id: 'coverage', client, title: 'Coverage' }], coverageAreas: [] });
-const projects = { version: 2, clientSlug: 'fixture', projects: [], videos: [], categories: [], terms: {} };
+const projects = { version: 3, clientSlug: 'fixture', projects: [], videos: [], categories: [], terms: {} };
 const snapshot = normalizeLocationSnapshot(source(), config, projects);
 assert.deepEqual(snapshot.pages.map(page => page.slug), ['sarasota']);
 assert.equal(snapshot.areas[1].href, null);
@@ -148,6 +148,9 @@ try {
   const projectFile = join(directory, 'projects.json'); const locationFile = join(directory, 'locations.json');
   await writeFile(projectFile, JSON.stringify(projects)); await writeFile(locationFile, JSON.stringify(snapshot));
   assert.equal(readLocationSnapshot(locationFile, projectFile).pages.length, 1);
+  await writeFile(projectFile, JSON.stringify({ ...projects, version: 2 }));
+  assert.throws(() => readLocationSnapshot(locationFile, projectFile), /incompatible/u, 'location reader requires the shared v3 snapshot');
+  await writeFile(projectFile, JSON.stringify(projects));
   process.env.DIRECTUS_CLIENT_SLUG = 'different-fixture';
   assert.throws(() => readLocationSnapshot(locationFile, projectFile), /another client/u);
   process.env.DIRECTUS_CLIENT_SLUG = 'fixture';

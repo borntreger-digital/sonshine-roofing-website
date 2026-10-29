@@ -16,7 +16,7 @@ export const dynamic = "force-static";
 
 const PAGE_PATH = "/project";
 const PAGE_TITLE = "Roofing Project Gallery | SonShine Roofing";
-const PAGE_DESCRIPTION = "Browse photos and videos of our recent roof replacement projects in Sarasota and surrounding areas. Filter by material, color, and service area to find real projects like yours.";
+const PAGE_DESCRIPTION = "Browse photos and videos of our recent roof replacement projects in Sarasota and surrounding areas. Filter by location, material, and color to find real projects like yours.";
 const PAGE_IMAGE = "https://directus.borntregerdigital.com/assets/48416474-93d0-5ed5-a69c-28712329ca36";
 const PAGE_SIZE = 6;
 
@@ -66,7 +66,7 @@ export default async function ProjectArchivePage() {
       <Hero
         title="Roofing Project Gallery"
         eyelash="See Our Past Work"
-        subtitle="Explore our latest major roof replacements in Sarasota, Bradenton, Venice, North Port, and more. Filter by material (shingle, metal, tile), roof color, and service area — or search by phrase to find a specific project."
+        subtitle="Explore our latest major roof replacements in Sarasota, Bradenton, Venice, North Port, and more. Filter by location, material (shingle, metal, tile), and roof color — or search by phrase to find a specific project."
         imageSrc="https://directus.borntregerdigital.com/assets/6c766aeb-e715-5d95-b35f-5eed21000766"
         
       />

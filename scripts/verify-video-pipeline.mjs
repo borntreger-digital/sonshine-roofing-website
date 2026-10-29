@@ -193,6 +193,8 @@ try {
   assert.equal(await readFile(filename, 'utf8'), serialized, 'repeated successful refresh is deterministic');
   await writeFile(filename, JSON.stringify({ ...snapshot, projects: snapshot.projects.map((row, index) => index === 0 ? { ...row, videoId: 'missing' } : row) }));
   assert.throws(() => readProjectSnapshot(filename), /inconsistent/u);
+  await writeFile(filename, JSON.stringify({ ...snapshot, version: 2 }));
+  assert.throws(() => readVideoSnapshot(filename), /invalid/u);
   await writeFile(filename, '{}');
   assert.throws(() => readVideoSnapshot(filename), /invalid/u);
 } finally {

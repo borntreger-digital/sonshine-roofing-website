@@ -2,7 +2,10 @@ export type ArchiveFilterGroup = {
   key: string;
   label: string;
   paramKey: string;
-  options: Array<{ slug: string; label: string }>;
+  options: Array<{ slug: string; label: string; parentSlug?: string }>;
+  /** Restrict options to the selected parent, without changing request timing. */
+  dependsOn?: { key: string; disabledPlaceholder: string };
+  helpText?: string;
   enabledWhen?: { key: string; values: string[] };
 };
 
@@ -16,9 +19,52 @@ export function isArchiveFilterEnabled(
   filters: ArchiveFilters,
 ): boolean {
   return (
-    !group.enabledWhen ||
-    group.enabledWhen.values.includes(filters.selections[group.enabledWhen.key] ?? '')
+    (!group.dependsOn || Boolean(filters.selections[group.dependsOn.key])) &&
+    (!group.enabledWhen ||
+      group.enabledWhen.values.includes(filters.selections[group.enabledWhen.key] ?? ''))
   );
+}
+
+export function archiveFilterView(
+  group: ArchiveFilterGroup,
+  filters: ArchiveFilters,
+  groups: ArchiveFilterGroup[],
+) {
+  const enabled = isArchiveFilterEnabled(group, filters);
+  const parentKey = group.dependsOn?.key;
+  const parent = parentKey
+    ? groups.find((candidate) => candidate.key === parentKey)?.options.find(
+        (option) => option.slug === filters.selections[parentKey],
+      )
+    : undefined;
+  const label = parent ? `${parent.label} ${group.label.toLowerCase()}` : group.label;
+  const options = group.dependsOn
+    ? group.options.filter((option) => option.parentSlug === parent?.slug)
+    : group.options;
+  const selected = group.options.find((option) => option.slug === filters.selections[group.key]);
+  const conflict = Boolean(group.dependsOn && parent && selected && selected.parentSlug !== parent.slug);
+  return {
+    enabled, label, options, selected, conflict,
+    placeholder: !enabled && group.dependsOn
+      ? group.dependsOn.disabledPlaceholder
+      : `All ${label === 'Category' ? 'categories' : `${label.toLowerCase()}s`}`,
+  };
+}
+
+export function changeArchiveSelection(
+  filters: ArchiveFilters,
+  groups: ArchiveFilterGroup[],
+  key: string,
+  value: string,
+  minSearchLength = 2,
+): ArchiveFilters {
+  const selections = { ...filters.selections, [key]: value };
+  if (filters.selections[key] !== value) {
+    for (const group of groups) {
+      if (group.dependsOn?.key === key) selections[group.key] = '';
+    }
+  }
+  return { ...normalizeArchiveFilters({ ...filters, selections }, groups, minSearchLength), search: filters.search };
 }
 
 export function normalizeArchiveFilters(
@@ -47,7 +93,7 @@ export function readArchiveFilters(
   groups: ArchiveFilterGroup[],
   minSearchLength = 2,
   searchParamKey = 'q',
-): { filters: ArchiveFilters; adjustedLegacyLink: boolean } {
+): { filters: ArchiveFilters; adjustedLegacyLink: boolean; inferredParent: boolean } {
   const selections: Record<string, string> = {};
   let adjustedLegacyLink = false;
   for (const group of groups) {
@@ -61,6 +107,17 @@ export function readArchiveFilters(
       values.find((value) => group.options.some((option) => option.slug.toLowerCase() === value)) ??
       '';
   }
+  // Resolve color-only saved URLs before normalization disables dependent fields.
+  let inferredParent = false;
+  for (const group of groups) {
+    if (!group.dependsOn || selections[group.dependsOn.key]) continue;
+    const parentSlug = group.options.find((option) => option.slug === selections[group.key])?.parentSlug;
+    const parent = groups.find((candidate) => candidate.key === group.dependsOn?.key);
+    if (parentSlug && parent?.options.some((option) => option.slug === parentSlug)) {
+      selections[parent.key] = parentSlug;
+      inferredParent = true;
+    }
+  }
   return {
     filters: normalizeArchiveFilters(
       { search: params.get(searchParamKey) ?? '', selections },
@@ -68,6 +125,7 @@ export function readArchiveFilters(
       minSearchLength,
     ),
     adjustedLegacyLink,
+    inferredParent,
   };
 }
 

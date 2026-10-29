@@ -24,7 +24,7 @@ const area = slug => ({
   og_title: null, og_description: null, og_image_override: null,
 });
 const shell = makeSiteShellFixture('fixture');
-const projects = { version: 2, clientSlug: 'fixture', projects: [], videos: [], categories: [], terms: {} };
+const projects = { version: 3, clientSlug: 'fixture', projects: [], videos: [], categories: [], terms: {} };
 
 function matches(value, filter) {
   return Object.entries(filter).every(([key, expected]) => {
