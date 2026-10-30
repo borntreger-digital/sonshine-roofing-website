@@ -6,7 +6,13 @@ export type ArchiveFilterGroup = {
   /** Restrict options to the selected parent, without changing request timing. */
   dependsOn?: { key: string; disabledPlaceholder: string };
   helpText?: string;
-  enabledWhen?: { key: string; values: string[] };
+  enabledWhen?: {
+    key: string;
+    values: string[];
+    disabledPlaceholder?: string;
+    /** Infer a missing parent in saved links; preserve explicit conflicts for repair. */
+    savedParentValue?: string;
+  };
 };
 
 export type ArchiveFilters = {
@@ -45,8 +51,8 @@ export function archiveFilterView(
   const conflict = Boolean(group.dependsOn && parent && selected && selected.parentSlug !== parent.slug);
   return {
     enabled, label, options, selected, conflict,
-    placeholder: !enabled && group.dependsOn
-      ? group.dependsOn.disabledPlaceholder
+    placeholder: !enabled && (group.dependsOn?.disabledPlaceholder || group.enabledWhen?.disabledPlaceholder)
+      ? (group.dependsOn?.disabledPlaceholder ?? group.enabledWhen?.disabledPlaceholder)
       : `All ${label === 'Category' ? 'categories' : `${label.toLowerCase()}s`}`,
   };
 }
@@ -71,6 +77,7 @@ export function normalizeArchiveFilters(
   filters: ArchiveFilters,
   groups: ArchiveFilterGroup[],
   minSearchLength = 2,
+  preserveSavedConditions = false,
 ): ArchiveFilters {
   const search = filters.search.trim();
   const normalized: ArchiveFilters = {
@@ -83,7 +90,9 @@ export function normalizeArchiveFilters(
       group.options.find((option) => option.slug.toLowerCase() === value)?.slug ?? '';
   }
   for (const group of groups) {
-    if (!isArchiveFilterEnabled(group, normalized)) normalized.selections[group.key] = '';
+    if (!isArchiveFilterEnabled(group, normalized) && !(preserveSavedConditions && group.enabledWhen?.savedParentValue)) {
+      normalized.selections[group.key] = '';
+    }
   }
   return normalized;
 }
@@ -107,12 +116,15 @@ export function readArchiveFilters(
       values.find((value) => group.options.some((option) => option.slug.toLowerCase() === value)) ??
       '';
   }
-  // Resolve color-only saved URLs before normalization disables dependent fields.
+  // Resolve saved links before normalization disables dependent fields.
   let inferredParent = false;
   for (const group of groups) {
-    if (!group.dependsOn || selections[group.dependsOn.key]) continue;
-    const parentSlug = group.options.find((option) => option.slug === selections[group.key])?.parentSlug;
-    const parent = groups.find((candidate) => candidate.key === group.dependsOn?.key);
+    const parentKey = group.dependsOn?.key ?? group.enabledWhen?.key;
+    if (!parentKey || selections[parentKey] || !selections[group.key]) continue;
+    const parentSlug = group.dependsOn
+      ? group.options.find((option) => option.slug === selections[group.key])?.parentSlug
+      : group.enabledWhen?.savedParentValue;
+    const parent = groups.find((candidate) => candidate.key === parentKey);
     if (parentSlug && parent?.options.some((option) => option.slug === parentSlug)) {
       selections[parent.key] = parentSlug;
       inferredParent = true;
@@ -123,10 +135,17 @@ export function readArchiveFilters(
       { search: params.get(searchParamKey) ?? '', selections },
       groups,
       minSearchLength,
+      true,
     ),
     adjustedLegacyLink,
     inferredParent,
   };
+}
+
+/** Only saved, explicitly incompatible conditions can reach this state. */
+export function archiveConditionConflicts(filters: ArchiveFilters, groups: ArchiveFilterGroup[]) {
+  return groups.filter((group) => group.enabledWhen?.savedParentValue &&
+    filters.selections[group.key] && !isArchiveFilterEnabled(group, filters));
 }
 
 // Keep unrelated query parameters (including shared-video links) intact.

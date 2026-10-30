@@ -97,6 +97,17 @@ assert.deepEqual(findVideoInSnapshot(snapshot, 'clip-2').categories, [{ slug: 'o
 const overlap = queryVideoSnapshot(snapshot, { filters: { buckets: ['explainers', 'in-the-field'] } });
 assert.equal(overlap.total, 250, 'overlapping category matches must not duplicate videos');
 assert.equal(queryVideoSnapshot(snapshot, { filters: { buckets: ['in-the-field'], materialTypeSlugs: ['metal'], serviceAreaSlugs: ['sarasota'] } }).total, 1, 'project context filters work across any selected category');
+for (const filters of [
+  { materialTypeSlugs: ['metal'] },
+  { serviceAreaSlugs: ['sarasota'] },
+  { materialTypeSlugs: ['metal'], serviceAreaSlugs: ['sarasota'] },
+]) {
+  assert.deepEqual(
+    queryVideoSnapshot(snapshot, { filters }).items,
+    queryVideoSnapshot(snapshot, { filters: { ...filters, buckets: ['roofing-project'] } }).items,
+    'inferring Roofing Projects for a refinement-only saved link preserves the matched videos',
+  );
+}
 assert.equal(queryVideoSnapshot(snapshot, { filters: { buckets: ['roofing-project'] } }).total, 2);
 const empty = queryVideoSnapshot(snapshot, { filters: { q: 'no matching phrase', buckets: ['explainers'] } });
 assert.equal(empty.total, 0);
