@@ -9,6 +9,7 @@ import {
   archiveLocationKey,
   archivePayloadInput,
   archiveFilterView,
+  archiveConditionConflicts,
   changeArchiveSelection,
   normalizeArchiveFilters,
   readArchiveFilters,
@@ -27,6 +28,7 @@ type Props<Item> = {
   initialResult: ResourceArchiveResult<Item>;
   initialFilters: { search?: string; selections: Record<string, string[]> };
   groups: FilterGroupConfig[];
+  conditionNotice?: { message: string; clearLabel: string };
   labels: { itemSingular: string; itemPlural: string };
   minSearchLength?: number;
   searchParamKey?: string;
@@ -49,6 +51,7 @@ export default function ResourceArchiveClient<Item>({
   initialResult,
   initialFilters,
   groups,
+  conditionNotice,
   labels,
   minSearchLength = 2,
   searchParamKey = 'q',
@@ -89,6 +92,7 @@ export default function ResourceArchiveClient<Item>({
   const [lastLocation, setLastLocation] = useState<string | null>(null);
   const filtersRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const conditionConflicts = archiveConditionConflicts(draft, groups);
 
   const publishUrl = useCallback(
     (filters: ArchiveFilters, replace = false) => {
@@ -160,6 +164,8 @@ export default function ResourceArchiveClient<Item>({
   }, [requested, requestVersion, forceRequest, apiPath, pageSize, buildFiltersPayload]);
 
   const applyFilters = (filters: ArchiveFilters) => {
+    // Legacy conditions remain readable, but require explicit repair before a new search.
+    if (archiveConditionConflicts(filters, groups).length) return;
     const normalized = normalizeArchiveFilters(filters, groups, minSearchLength);
     setDraft(normalized);
     setRequested(normalized);
@@ -172,11 +178,21 @@ export default function ResourceArchiveClient<Item>({
   };
   const clearFilters = () => applyFilters({ search: '', selections: {} });
   const changeSelection = (key: string, value: string) => {
-    const cleared = groups.filter((group) => group.dependsOn?.key === key && draft.selections[group.key]);
-    setSelectionAnnouncement(cleared.length && draft.selections[key] !== value
+    const next = changeArchiveSelection(draft, groups, key, value, minSearchLength);
+    const cleared = groups.filter((group) => group.key !== key && draft.selections[group.key] && !next.selections[group.key]);
+    setSelectionAnnouncement(cleared.length
       ? `${cleared.map((group) => group.label).join(' and ')} cleared.` : '');
     // Dependent changes affect only the form, never the displayed results.
-    setDraft((previous) => changeArchiveSelection(previous, groups, key, value, minSearchLength));
+    setDraft(next);
+  };
+  const clearConditionConflicts = () => {
+    const parentKey = conditionConflicts[0]?.enabledWhen?.key;
+    const selections = { ...draft.selections };
+    for (const group of conditionConflicts) selections[group.key] = '';
+    setDraft({ ...draft, selections });
+    setSelectionAnnouncement(`${conditionConflicts.map((group) => group.label).join(' and ')} cleared.`);
+    // The repair button disappears; return focus to the controlling filter.
+    filtersRef.current?.querySelector<HTMLSelectElement>(`[id="${kind}-${parentKey}"]`)?.focus({ preventScroll: true });
   };
   const appliedSummary = [
     ...(applied.filters.search ? [`Search: “${applied.filters.search}”`] : []),
@@ -194,7 +210,7 @@ export default function ResourceArchiveClient<Item>({
       : applied.result.items.length);
   const listKey = useMemo(() => JSON.stringify(applied.payload), [applied.payload]);
   const pendingEdits =
-    JSON.stringify(normalizeArchiveFilters(draft, groups, minSearchLength)) !==
+    JSON.stringify(normalizeArchiveFilters(draft, groups, minSearchLength, true)) !==
     JSON.stringify(requested);
 
   return (
@@ -238,7 +254,8 @@ export default function ResourceArchiveClient<Item>({
                       disabled={!view.enabled}
                       onChange={(event) => changeSelection(group.key, event.target.value)}
                       aria-describedby={
-                        view.conflict ? `${kind}-${group.key}-conflict` : group.helpText ? `${kind}-${group.key}-help` : undefined
+                        conditionConflicts.some((item) => item.key === group.key) ? `${kind}-condition-conflict` :
+                          view.conflict ? `${kind}-${group.key}-conflict` : group.helpText ? `${kind}-${group.key}-help` : undefined
                       }
                       className={`${controlClass} peer appearance-none pr-10 forced-colors:appearance-auto`}
                     >
@@ -272,6 +289,14 @@ export default function ResourceArchiveClient<Item>({
             })}
           </div>
           <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">{selectionAnnouncement}</p>
+          {conditionConflicts.length > 0 && (
+            <div id={`${kind}-condition-conflict`} role="alert" className="text-sm text-amber-900">
+              <p>{conditionNotice?.message ?? 'This saved search uses unavailable filters. Change the category or clear those filters, then select Search.'}</p>
+              <button type="button" onClick={clearConditionConflicts} className="mt-2 min-h-12 rounded-lg border border-amber-400 px-3 underline focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan)">
+                {conditionNotice?.clearLabel ?? 'Clear unavailable filters'}
+              </button>
+            </div>
+          )}
           <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
             <div className="min-w-0">
               <label
@@ -296,7 +321,9 @@ export default function ResourceArchiveClient<Item>({
             </div>
             <button
               type="submit"
-              className="min-h-12 rounded-lg bg-(--brand-blue) px-5 py-2 font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan) focus:ring-offset-2"
+              disabled={conditionConflicts.length > 0}
+              aria-describedby={conditionConflicts.length > 0 ? `${kind}-condition-conflict` : undefined}
+              className="min-h-12 rounded-lg bg-(--brand-blue) px-5 py-2 font-semibold text-white focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan) focus:ring-offset-2 disabled:opacity-50"
             >
               Search
             </button>
@@ -308,7 +335,7 @@ export default function ResourceArchiveClient<Item>({
               Clear all
             </button>
           </div>
-          {pendingEdits && (
+          {pendingEdits && conditionConflicts.length === 0 && (
             <p className="text-sm text-slate-500">Select Search to apply your changes.</p>
           )}
         </form>

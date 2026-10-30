@@ -88,15 +88,12 @@ const groups = projectArchiveGroups({
   ],
   serviceAreas: options('sarasota', 'venice').map(({ slug, label }) => ({ slug, name: label })),
 });
-const videoGroups = [
-  {
-    key: 'bucket',
-    label: 'Category',
-    paramKey: 'bk',
-    options: options('roofing-project', 'commercials'),
-  },
-  ...groups.filter((group) => group.key !== 'roof'),
-];
+const { videoArchiveGroups, videoConditionNotice } = loadSource(resolve(root, 'lib/ui/video-filters.ts'));
+const videoGroups = videoArchiveGroups({
+  categories: [{ slug: 'roofing-project', label: 'Roofing Projects' }, ...options('commercials', 'explainers', 'in-the-field', 'other')],
+  materials: options('metal', 'tile', 'shingle').map(({ slug, label }) => ({ slug, name: label })),
+  serviceAreas: options('venice', 'sarasota').map(({ slug, label }) => ({ slug, name: label })),
+});
 const page = (name, total = 1) => ({
   items: total ? [{ name }] : [],
   total,
@@ -127,6 +124,7 @@ async function mount(query = '', customGroups = groups, strict = false) {
     apiPath: '/api/resources/project',
     pageSize: 6,
     groups: customGroups,
+    conditionNotice: customGroups === videoGroups ? videoConditionNotice : undefined,
     initialFilters: { search: '', selections: {} },
     initialResult: page('Initial', 53),
     labels: { itemSingular: 'project', itemPlural: 'projects' },
@@ -180,6 +178,12 @@ async function finish(request, result) {
 async function historyBack() {
   await act(async () => {
     window.history.back();
+    await new Promise((done) => window.addEventListener('popstate', done, { once: true }));
+  });
+}
+async function historyForward() {
+  await act(async () => {
+    window.history.forward();
     await new Promise((done) => window.addEventListener('popstate', done, { once: true }));
   });
 }
@@ -306,29 +310,181 @@ await test('Clear all resets pending and applied filters, URL and first page', a
   assert.equal(rendered.result.total, 53);
 });
 
-await test('video categories preserve material and location draft fields for overlapping assignments', async () => {
+await test('video refinements require Roofing Projects and category changes clear only draft criteria', async () => {
   await mount('', videoGroups);
-  await choose('project-material', 'metal');
-  await choose('project-area', 'venice');
-  assert.equal(
-    document.getElementById('project-bucket').value,
-    '',
-    'do not silently switch video type',
-  );
-  await choose('project-bucket', 'commercials');
-  for (const id of ['project-material', 'project-area']) {
-    assert.notEqual(document.getElementById(id).value, '');
-    assert.equal(document.getElementById(id).disabled, false);
+  assert.deepEqual([...document.querySelectorAll('select')].map((element) => element.name), ['bk', 'mt', 'sa']);
+  for (const category of ['', 'commercials', 'explainers', 'in-the-field', 'other']) {
+    await choose('project-bucket', category);
+    for (const id of ['project-material', 'project-area']) {
+      assert.equal(document.getElementById(id).disabled, true);
+      assert.equal(document.getElementById(id).options[0].textContent, 'Choose Roofing Projects');
+    }
   }
   assert.equal(requests.length, 0);
-  await submit();
-  assert.deepEqual(requests[0].body.filters.selections, {
-    bucket: ['commercials'],
-    material: ['metal'],
-    area: ['venice'],
-  });
+  assert.equal(document.querySelector('[role="alert"]'), null, 'ordinary use needs no compatibility notice');
   await choose('project-bucket', 'roofing-project');
+  for (const id of ['project-material', 'project-area']) assert.equal(document.getElementById(id).disabled, false);
+  await choose('project-material', 'metal');
+  await choose('project-area', 'venice');
+  await submit();
+  await finish(requests[0], page('Metal Venice', 3));
+  assert.match(document.body.textContent, /Category: Roofing Projects · Material: Metal · Location: Venice/);
+  await type('pending phrase');
+  await choose('project-bucket', 'commercials');
+  for (const id of ['project-material', 'project-area']) {
+    assert.equal(document.getElementById(id).value, '');
+    assert.equal(document.getElementById(id).disabled, true);
+  }
+  assert.equal(document.getElementById('project-search').value, 'pending phrase');
+  assert.equal(document.querySelector('.sr-only[role="status"]').textContent, 'Material and Location cleared.');
+  assert.equal(requests.length, 1, 'category editing does not submit');
+  assert.equal(rendered.result.total, 3);
+  assert.match(document.body.textContent, /Category: Roofing Projects · Material: Metal · Location: Venice/);
+  await submit();
+  assert.deepEqual(requests.at(-1).body.filters.selections, { bucket: ['commercials'], material: [], area: [] });
+  assert.equal(requests.at(-1).body.filters.search, 'pending phrase');
+  await finish(requests.at(-1), page('Commercials', 7));
+  await choose('project-bucket', 'roofing-project');
+  assert.equal(document.getElementById('project-material').value, '');
+  assert.equal(document.getElementById('project-area').value, '');
+  await choose('project-area', 'sarasota');
+  await choose('project-bucket', '');
+  assert.equal(document.querySelector('.sr-only[role="status"]').textContent, 'Location cleared.');
+});
+
+await test('video material and location can be used separately or together and survive zero results', async () => {
+  await mount('', videoGroups);
+  await choose('project-bucket', 'roofing-project');
+  for (const [material, area] of [['', ''], ['metal', ''], ['', 'venice'], ['tile', 'sarasota']]) {
+    await choose('project-material', material);
+    await choose('project-area', area);
+    await submit();
+    assert.deepEqual(requests.at(-1).body.filters.selections, {
+      bucket: ['roofing-project'], material: material ? [material] : [], area: area ? [area] : [],
+    });
+    await finish(requests.at(-1), page('Empty', 0));
+    assert.equal(document.getElementById('project-material').options.length, 4);
+    assert.equal(document.getElementById('project-area').options.length, 3);
+    assert.equal(document.getElementById('project-area').disabled, false);
+  }
+  await click('Clear all');
+  assert.deepEqual(requests.at(-1).body.filters.selections, { bucket: [], material: [], area: [] });
+  for (const id of ['project-material', 'project-area']) assert.equal(document.getElementById(id).disabled, true);
+  await finish(requests.at(-1), page('All', 79));
+});
+
+await test('video refinement-only saved links infer Roofing Projects without adding history', async () => {
+  for (const query of ['mt=metal', 'sa=venice', 'mt=metal&sa=venice']) {
+    const before = window.history.length;
+    await mount(`?${query}&q=roof&v=video-demo&utm_source=test#results`, videoGroups, true);
+    const params = new URLSearchParams(window.location.search);
+    assert.equal(params.get('bk'), 'roofing-project');
+    assert.equal(params.get('v'), 'video-demo');
+    assert.equal(params.get('utm_source'), 'test');
+    assert.equal(window.location.hash, '#results');
+    assert.equal(window.history.length, before);
+    assert.equal(document.getElementById('project-bucket').value, 'roofing-project');
+    assert.equal(document.getElementById('project-material').disabled, false);
+    const active = requests.filter((request) => !request.signal.aborted);
+    assert.equal(active.length, 1);
+    assert.deepEqual(active[0].body.filters.selections.bucket, ['roofing-project']);
+    assert.equal(active[0].body.filters.search, 'roof');
+    await finish(active[0], page('Saved project search', 3));
+  }
+});
+
+await test('conflicting video saved links preserve results and block submission until explicit repair', async () => {
+  await mount('?bk=commercials&mt=metal&sa=venice&v=video-demo#results', videoGroups, true);
+  const active = requests.filter((request) => !request.signal.aborted);
+  assert.equal(active.length, 1);
+  assert.deepEqual(active[0].body.filters.selections, { bucket: ['commercials'], material: ['metal'], area: ['venice'] });
+  await finish(active[0], page('Original overlap', 2));
+  assert.equal(document.querySelectorAll('[role="alert"]').length, 1);
+  assert.match(document.querySelector('[role="alert"]').textContent, /Choose Roofing Projects/);
+  assert.doesNotMatch(document.body.textContent, /different material|Select Search to apply your changes/);
+  assert.equal(document.querySelector('button[type="submit"]').disabled, true);
+  assert.equal(document.getElementById('project-material').value, 'metal');
+  assert.equal(document.getElementById('project-area').value, 'venice');
+  assert.equal(document.getElementById('project-material').disabled, true);
+  await type('new phrase');
+  const before = requests.length;
+  await submit(); // Also guard Enter/programmatic form submission.
+  assert.equal(requests.length, before);
+  await choose('project-bucket', 'roofing-project');
+  assert.equal(document.getElementById('project-material').value, 'metal');
+  assert.equal(document.getElementById('project-area').value, 'venice');
+  assert.equal(document.querySelector('[role="alert"]'), null);
+  assert.equal(document.querySelector('button[type="submit"]').disabled, false);
+  assert.equal(requests.length, before);
+  assert.equal(rendered.result.total, 2);
+  await submit();
+  assert.deepEqual(requests.at(-1).body.filters.selections, { bucket: ['roofing-project'], material: ['metal'], area: ['venice'] });
+  await finish(requests.at(-1), page('Repaired', 5));
+  await historyBack();
+  assert.equal(document.getElementById('project-bucket').value, 'commercials');
+  assert.equal(document.getElementById('project-material').disabled, true);
+  await finish(requests.at(-1), page('Original overlap again', 2));
+  await historyForward();
+  assert.equal(document.getElementById('project-bucket').value, 'roofing-project');
+  assert.equal(document.getElementById('project-material').value, 'metal');
+  assert.equal(document.querySelector('[role="alert"]'), null);
+  assert.equal(new URLSearchParams(window.location.search).get('v'), 'video-demo');
+  assert.equal(window.location.hash, '#results');
+  await finish(requests.at(-1), page('Forward repaired', 5));
+});
+
+await test('clearing legacy video refinements keeps the category and stays a draft until Search', async () => {
+  await mount('?bk=explainers&mt=metal&sa=venice&q=roof&v=video-demo#results', videoGroups);
+  await finish(requests[0], page('Overlap', 2));
+  await click('Clear project filters');
+  assert.equal(document.activeElement, document.getElementById('project-bucket'));
+  assert.equal(document.getElementById('project-bucket').value, 'explainers');
+  assert.equal(document.getElementById('project-search').value, 'roof');
+  assert.equal(document.querySelector('[role="alert"]'), null);
+  assert.equal(document.querySelector('button[type="submit"]').disabled, false);
+  assert.equal(document.getElementById('project-material').disabled, true);
+  assert.equal(document.getElementById('project-material').value, '');
+  assert.equal(document.getElementById('project-area').value, '');
+  assert.equal(requests.length, 1);
+  assert.equal(new URLSearchParams(window.location.search).get('mt'), 'metal');
+  await submit();
+  assert.deepEqual(requests.at(-1).body.filters.selections, { bucket: ['explainers'], material: [], area: [] });
+  assert.equal(new URLSearchParams(window.location.search).get('mt'), null);
+  assert.equal(new URLSearchParams(window.location.search).get('sa'), null);
+  assert.equal(new URLSearchParams(window.location.search).get('v'), 'video-demo');
+  assert.equal(window.location.hash, '#results');
+  await finish(requests.at(-1), page('All explainers', 17));
+});
+
+await test('video selection links and unknown refinements do not infer a category or disrupt drafts', async () => {
+  await mount('?mt=unknown&sa=unknown&v=video-demo', videoGroups);
+  assert.equal(document.getElementById('project-bucket').value, '');
+  assert.equal(document.getElementById('project-material').disabled, true);
+  assert.equal(requests.length, 0);
+  await choose('project-bucket', 'roofing-project');
+  await choose('project-material', 'metal');
+  await act(async () => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('v', 'another-video');
+    window.history.pushState(null, '', `?${params}`);
+  });
+  assert.equal(document.getElementById('project-material').value, 'metal');
   assert.equal(document.getElementById('project-material').disabled, false);
+  assert.equal(requests.length, 0);
+});
+
+await test('multi-value legacy video links retain the first valid selection and their explicit conflict', async () => {
+  await mount('?bk=explainers&mt=unknown,metal,tile&sa=venice&v=video-demo', videoGroups, true);
+  assert.equal(new URLSearchParams(window.location.search).get('mt'), 'metal');
+  assert.equal(new URLSearchParams(window.location.search).get('bk'), 'explainers');
+  assert.equal(document.getElementById('project-material').value, 'metal');
+  assert.match(document.body.textContent, /saved search included multiple selections/);
+  assert.equal(document.querySelector('button[type="submit"]').disabled, true);
+  await click('Clear all');
+  assert.deepEqual(requests.at(-1).body.filters.selections, { bucket: [], material: [], area: [] });
+  assert.equal(new URLSearchParams(window.location.search).get('v'), 'video-demo');
+  assert.equal(document.querySelector('[role="alert"]'), null);
+  await finish(requests.at(-1), page('All', 79));
 });
 
 await test('legacy deep links hydrate under StrictMode and browser Back restores the prior search', async () => {
@@ -395,7 +551,7 @@ await test('Location, Material, Color order and material dependency preserve ind
   assert.deepEqual([...document.querySelectorAll('select')].map((element) => element.name), ['sa', 'mt', 'rc']);
   const color = document.getElementById('project-roof');
   assert.equal(color.disabled, true);
-  assert.equal(color.options[0].textContent, 'Choose a material first');
+  assert.equal(color.options[0].textContent, 'Choose a material');
   await choose('project-area', 'venice');
   assert.equal(color.disabled, true);
   await choose('project-material', 'shingle');
@@ -484,7 +640,7 @@ await test('shared dependency help is opt-in and blog controls stay independent'
   const topic = document.getElementById('project-topic');
   assert.equal(topic.disabled, false);
   assert.equal(topic.options[0].textContent, 'All topics');
-  assert.doesNotMatch(document.body.textContent, /roofing-project videos|Choose a material first/);
+  assert.doesNotMatch(document.body.textContent, /roofing-project videos|Choose a material/);
   await choose('project-topic', 'maintenance');
   await submit();
   assert.deepEqual(requests.at(-1).body.filters.selections, { topic: ['maintenance'] });

@@ -328,10 +328,18 @@ test('client rendering the actual video route emits no executable-script warning
   assert.deepEqual(errors, []);
 });
 
-test('managed category names and cross-category material/location controls reach the archive', async () => {
+test('managed category names and project-only material/location controls reach the archive', async () => {
   await mount('?bk=explainers');
   assert.match(document.querySelector('label[for="video-bucket"]').textContent, /Category/);
   assert.match(document.getElementById('video-bucket').textContent, /Roofing Advice/);
+  assert.equal(document.getElementById('video-material').disabled, true);
+  assert.equal(document.getElementById('video-area').disabled, true);
+  assert.equal(document.getElementById('video-material').options[0].textContent, 'Choose Roofing Projects');
+  await act(async () => {
+    const category = document.getElementById('video-bucket');
+    category.value = 'roofing-project';
+    category.dispatchEvent(new Event('change', { bubbles: true }));
+  });
   assert.equal(document.getElementById('video-material').disabled, false);
   assert.equal(document.getElementById('video-area').disabled, false);
 });

@@ -342,6 +342,14 @@ runtime and two-release acceptance gates.
   Other (`other`) is derived when no relationship or published category exists.
   Those reserved slugs cannot be ordinary categories. Overlapping assignments
   match every assigned category without duplicating the video in the library.
+- The library presents Category, Material, then Location. Selecting Roofing
+  Projects enables both optional project refinements; leaving that category
+  clears their draft values. Search applies edits, while Clear all applies the
+  reset immediately. A saved material/location link without a category infers
+  Roofing Projects. A saved link with an explicit other category retains its
+  original criteria and results until the visitor chooses Roofing Projects or
+  clears the project refinements, then selects Search. The snapshot query API
+  continues to support overlapping categories for those legacy searches.
 - Video and project publication are independent. A published video linked to
   an unpublished project keeps its copy, selection link, and Roofing Projects
   classification; it exposes no project link, material, or location. Its sitemap

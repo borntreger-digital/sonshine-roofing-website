@@ -2,12 +2,11 @@
 
 import { useMemo } from 'react';
 
-import ResourceArchiveClient, {
-  type FilterGroupConfig,
-} from '@/components/dynamic-content/ResourceArchiveClient';
+import ResourceArchiveClient from '@/components/dynamic-content/ResourceArchiveClient';
 import type { FacetGroup, TermLite } from '@/lib/content/project-types';
 import type { VideoItem } from '@/lib/content/video-types';
 import type { PageResult } from '@/lib/ui/pagination';
+import { videoArchiveGroups, videoConditionNotice } from '@/lib/ui/video-filters';
 
 import InfiniteList from '@/components/dynamic-content/InfiniteList';
 import VideoPlayback from './VideoPlayback';
@@ -52,27 +51,8 @@ export default function VideoLibraryClient({
   pageSize,
   initialFilters,
 }: Props) {
-  const groups = useMemo<FilterGroupConfig[]>(
-    () => [
-      { key: 'bucket', label: 'Category', paramKey: 'bk', options: bucketOptions },
-      {
-        key: 'material',
-        label: 'Material',
-        paramKey: 'mt',
-        options: materialOptions.map((term) => ({
-          slug: term.slug.toLowerCase(),
-          label: term.name,
-        })),
-      },
-      {
-        key: 'area',
-        label: 'Location',
-        paramKey: 'sa',
-        options: serviceOptions
-          .map((term) => ({ slug: term.slug.toLowerCase(), label: term.name }))
-          .sort((a, b) => a.label.localeCompare(b.label)),
-      },
-    ],
+  const groups = useMemo(
+    () => videoArchiveGroups({ categories: bucketOptions, materials: materialOptions, serviceAreas: serviceOptions }),
     [bucketOptions, materialOptions, serviceOptions],
   );
 
@@ -93,6 +73,7 @@ export default function VideoLibraryClient({
             },
           }}
           groups={groups}
+          conditionNotice={videoConditionNotice}
           labels={{ itemSingular: 'video', itemPlural: 'videos' }}
           buildFiltersPayload={buildVideoFilters}
           renderResults={({ result, listFilters }) => (
