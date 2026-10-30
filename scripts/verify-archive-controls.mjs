@@ -317,7 +317,7 @@ await test('video refinements require Roofing Projects and category changes clea
     await choose('project-bucket', category);
     for (const id of ['project-material', 'project-area']) {
       assert.equal(document.getElementById(id).disabled, true);
-      assert.equal(document.getElementById(id).options[0].textContent, 'Choose Roofing Projects');
+      assert.equal(document.getElementById(id).options[0].textContent, 'Roofing Projects first');
     }
   }
   assert.equal(requests.length, 0);

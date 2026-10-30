@@ -19,7 +19,7 @@ export function videoArchiveGroups({
   const projectCondition = {
     key: 'bucket',
     values: ['roofing-project'],
-    disabledPlaceholder: 'Choose Roofing Projects',
+    disabledPlaceholder: 'Roofing Projects first',
     savedParentValue: 'roofing-project',
   };
   return [

@@ -334,7 +334,7 @@ test('managed category names and project-only material/location controls reach t
   assert.match(document.getElementById('video-bucket').textContent, /Roofing Advice/);
   assert.equal(document.getElementById('video-material').disabled, true);
   assert.equal(document.getElementById('video-area').disabled, true);
-  assert.equal(document.getElementById('video-material').options[0].textContent, 'Choose Roofing Projects');
+  assert.equal(document.getElementById('video-material').options[0].textContent, 'Roofing Projects first');
   await act(async () => {
     const category = document.getElementById('video-bucket');
     category.value = 'roofing-project';
