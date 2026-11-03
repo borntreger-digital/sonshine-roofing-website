@@ -189,13 +189,13 @@ export default function ProjectVideo({ title, videoId, className, posterUrl, pos
 
                 {/* Modal shell */}
                 <div
-                  className="absolute inset-0 flex items-center justify-center p-4"
+                  className="absolute inset-0 flex cursor-pointer items-center justify-center p-4"
                   onPointerDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
                   onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
                 >
                   <motion.div
                     ref={modalRef}
-                    className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl"
+                    className="relative aspect-video w-full cursor-auto overflow-hidden rounded-2xl bg-black shadow-2xl"
                     initial={A.modal.initial}
                     animate={A.modal.animate}
                     exit={A.modal.exit}

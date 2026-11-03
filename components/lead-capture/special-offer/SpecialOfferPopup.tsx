@@ -249,13 +249,13 @@ export default function SpecialOfferPopup({ offer }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-1000 bg-slate-950/60 px-2 sm:px-8 backdrop-blur-xs py-8"
+      className="fixed inset-0 z-1000 cursor-pointer bg-slate-950/60 px-2 sm:px-8 backdrop-blur-xs py-8"
       role="presentation"
       onPointerDown={(event) => {
         if (event.target === event.currentTarget) dismiss();
       }}
     >
-      <div className="flex min-h-full items-end justify-center sm:items-center">
+      <div className="flex min-h-full cursor-auto items-end justify-center sm:items-center">
         <div
           ref={dialogRef}
           role="dialog"

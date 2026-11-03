@@ -358,7 +358,7 @@ function InlineImageLightbox({ rootSelector, dialogLabel }: Required<BlogPostInl
                 />
 
                 <div
-                  className="absolute inset-0 flex items-center justify-center p-4"
+                  className="absolute inset-0 flex cursor-pointer items-center justify-center p-4"
                   onClick={(event) => {
                     if (event.target === event.currentTarget) {
                       event.preventDefault();
@@ -369,7 +369,7 @@ function InlineImageLightbox({ rootSelector, dialogLabel }: Required<BlogPostInl
                 >
                   <motion.div
                     ref={modalRef}
-                    className="relative flex w-full max-w-296 items-center justify-center md:px-12 lg:px-16"
+                    className="relative flex w-full max-w-296 cursor-auto items-center justify-center md:px-12 lg:px-16"
                     initial={{ opacity: 0, scale: 0.96, y: 8 }}
                     animate={{
                       opacity: 1,

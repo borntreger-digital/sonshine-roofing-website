@@ -126,6 +126,13 @@ function DesktopMenu({
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [enteredPanel, setEnteredPanel] = useState(false);
+  const menuRef = useRef<HTMLUListElement>(null);
+
+  const closeMenu = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setEnteredPanel(false);
+    setOpenIndex(null);
+  };
 
   const holdOpen = (i: number) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -135,22 +142,31 @@ function DesktopMenu({
     requestAnimationFrame(() => setEnteredPanel(true));
   };
   const scheduleClose = () => {
+    // Mouse movement must not dismiss a menu while its links have keyboard focus.
+    if (menuRef.current?.contains(document.activeElement)) return;
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    closeTimer.current = setTimeout(() => {
-      setEnteredPanel(false);
-      setOpenIndex(null);
-    }, HOVER_CLOSE_DELAY_MS);
+    closeTimer.current = setTimeout(closeMenu, HOVER_CLOSE_DELAY_MS);
   };
 
   return (
     <>
-      <ul className="hidden lg:flex items-center gap-4">
+      <ul ref={menuRef} className="hidden lg:flex items-center gap-4">
         {navigation.map((item, i) => (
           <li
             key={item.label}
             className="relative"
             onMouseEnter={() => holdOpen(i)}
             onMouseLeave={scheduleClose}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) closeMenu();
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== "Escape" || openIndex !== i) return;
+              event.preventDefault();
+              event.stopPropagation();
+              closeMenu();
+              event.currentTarget.querySelector<HTMLElement>("button, a")?.focus();
+            }}
           >
             {item.href ? (
               <SmartLink
@@ -188,12 +204,13 @@ function DesktopMenu({
               <button
                 type="button"
                 className={cn(
-                  "relative flex items-center whitespace-nowrap px-2 py-2 cursor-default transition-colors duration-200",
+                  "relative flex items-center whitespace-nowrap px-2 py-2 transition-colors duration-200",
                   item.children && "pr-5",
                   transparent ? "text-white hover:text-white/80" : "text-slate-700 hover:text-(--brand-blue)"
                 )}
                 aria-haspopup={item.children ? "menu" : undefined}
-                aria-expanded={openIndex === i || undefined}
+                aria-expanded={item.children ? openIndex === i : undefined}
+                onClick={item.children ? () => holdOpen(i) : undefined}
               >
                 <LabelWithIcon
                   label={item.label}
