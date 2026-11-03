@@ -107,6 +107,7 @@ function ConsentCard({
       <div id={`${name}-label`} className={cn(DEFAULT_CLASS_NAMES.label, classNames.label)}>{label}</div>
       <div className={cn(DEFAULT_CLASS_NAMES.options, classNames.options)}>
         <label
+          data-choice-label
           className={cn(
             DEFAULT_CLASS_NAMES.optionLabel,
             classNames.optionLabel,
@@ -133,6 +134,7 @@ function ConsentCard({
           </span>
         </label>
         <label
+          data-choice-label
           className={cn(
             DEFAULT_CLASS_NAMES.optionLabel,
             classNames.optionLabel,

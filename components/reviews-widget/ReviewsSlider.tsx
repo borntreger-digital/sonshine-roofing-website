@@ -215,10 +215,10 @@ export default function ReviewsSlider({ reviews, onReady, onError }: ReviewsSlid
         </div>
       ) : null}
       {selected && createPortal(
-        <div className="fixed inset-0 z-2147483647 grid place-items-center bg-black/45 px-4 py-8 md:p-16"
+        <div className="fixed inset-0 z-2147483647 grid cursor-pointer place-items-center bg-black/45 px-4 py-8 md:p-16"
           onClick={event => { if (event.target === event.currentTarget) closeModal(); }}>
           <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby={modalTitleId}
-            className="relative mx-auto flex max-h-[85dvh] w-full max-w-[720px] flex-col overflow-hidden rounded-3xl border border-blue-300 bg-white shadow-2xl">
+            className="relative mx-auto flex max-h-[85dvh] w-full max-w-[720px] cursor-auto flex-col overflow-hidden rounded-3xl border border-blue-300 bg-white shadow-2xl">
             <button ref={closeBtnRef} type="button" aria-label="Close review" onClick={closeModal}
               className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full text-red-600 hover:bg-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-brand-blue">
               <X className="h-6 w-6" aria-hidden="true" />

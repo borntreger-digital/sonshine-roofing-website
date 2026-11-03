@@ -27,7 +27,7 @@ let intersecting = false;
 const pageRequests = [];
 const cachedPages = [];
 const host = (tag) => ({ children, ...props }) => {
-  for (const key of ['initial','animate','exit','transition','layout','layoutId','whileInView','viewport','whileHover','whileTap','fill','priority','proseGuard','prefetch','crop','image','projectTitle']) delete props[key];
+  for (const key of ['initial','animate','exit','transition','layout','layoutId','whileInView','viewport','whileHover','whileTap','fill','priority','proseGuard','prefetch','crop','image','projectTitle','decorative']) delete props[key];
   return React.createElement(tag, props, children);
 };
 const cache = new Map();
@@ -49,6 +49,7 @@ function load(filename) {
     if (id === 'next/script') return { __esModule: true, default: ({id}) => React.createElement('i', { 'data-script': id }) };
     if (id === 'next/navigation') return { useSearchParams: () => new URLSearchParams(), usePathname: () => pathname };
     if (id === 'next/image') return { __esModule: true, default: host('img') };
+    if (id === '@/components/media/StaticImage') return { __esModule: true, default: host('img') };
     if (id === 'next/link' || id === '@/components/utils/SmartLink' || id === '@/components/utils/SitePhoneLink') return { __esModule: true, default: host('a') };
     if (id === '@/components/dynamic-content/project/ProjectTestimonial') return { __esModule: true, default: () => null };
     if (id === '@/components/lead-capture/Turnstile') return { __esModule: true, default: () => React.createElement('input', { type: 'hidden', name: 'cfToken', value: 'synthetic', readOnly: true }) };
@@ -163,5 +164,46 @@ try {
   await act(async () => mounted.render(React.createElement(Lightbox)));
   assert.equal(document.querySelector('[role="dialog"]'),null,'Route change closes prior image');
   await clean();
-  console.log('Analytics gates/queue, React hydration/clock, restored calculator, reduced motion, DOM headings and route-scoped lightbox checks passed.');
+
+  const { NavMenu } = load('components/global-nav/header/NavMenu.tsx');
+  await mount(NavMenu, { navigation: [
+    { label: 'Roofing Services', children: [{ label: 'Roof Repair', href: '/roof-repair' }] },
+    { label: 'About', href: '/about-sonshine-roofing' },
+  ] });
+  const desktop = document.querySelector('ul');
+  const menuTrigger = desktop.querySelector('button');
+  const menuItem = menuTrigger.closest('li');
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false');
+  await act(async () => menuTrigger.focus());
+  await click(menuTrigger);
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Button activation opens desktop submenu');
+  const submenuLink = desktop.querySelector('a[href="/roof-repair"]');
+  await act(async () => submenuLink.focus());
+  await act(async () => {
+    menuItem.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+    await new Promise(resolve => setTimeout(resolve, 150));
+  });
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Mouse leave preserves a keyboard-focused submenu');
+  await act(async () => submenuLink.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false', 'Escape closes desktop submenu');
+  assert.equal(document.activeElement, menuTrigger, 'Escape restores the heading button focus');
+  await act(async () => menuTrigger.blur());
+  await act(async () => menuItem.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: document.body })));
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Hover opening remains supported');
+  await click(menuTrigger);
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Click after hover keeps the menu open');
+  await act(async () => menuTrigger.focus());
+  await act(async () => desktop.querySelector('a[href="/about-sonshine-roofing"]').focus());
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false', 'Leaving the menu item closes its submenu');
+  await clean();
+
+  const ReviewsCatcher = load('components/reviews-catcher/ReviewsCatcher.tsx').default;
+  await mount(ReviewsCatcher);
+  const reviewLink = [...document.querySelectorAll('a')].find(node => node.textContent.includes('Review Us On Google'));
+  assert.ok(reviewLink);
+  assert.equal(reviewLink.closest('button'), null, 'Review CTA is one link, without an inert outer button');
+  assert.ok(reviewLink.classList.contains('px-6'), 'The link owns the full styled button padding');
+  assert.equal(reviewLink.getAttribute('target'), '_blank');
+  await clean();
+  console.log('Analytics gates/queue, React hydration/clock, restored calculator, reduced motion, DOM headings, route-scoped lightbox, desktop menu and review CTA checks passed.');
 } finally { await clean(); dom.window.close(); }

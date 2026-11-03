@@ -122,13 +122,13 @@ export default function VideoModal({ collectionUrl, video, isOpen, onClose }: Pr
 
           <div
             ref={modalRef}
-            className="absolute inset-0 flex items-center justify-center p-4"
+            className="absolute inset-0 flex cursor-pointer items-center justify-center p-4"
             onPointerDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
             onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
           >
             <motion.div
               key={videoKey}
-              className="relative max-h-[calc(100dvh-2rem)] w-full max-w-6xl overflow-y-auto rounded-2xl bg-black shadow-2xl"
+              className="relative max-h-[calc(100dvh-2rem)] w-full max-w-6xl cursor-auto overflow-y-auto rounded-2xl bg-black shadow-2xl"
               initial={ANIM.modal.initial}
               animate={ANIM.modal.animate}
               exit={ANIM.modal.exit}

@@ -39,7 +39,7 @@ export default function ReviewsCatcher() {
         <h2 className="mt-2 text-5xl md:mt-4 text-slate-700 md:text-8xl">
           How did we do?
         </h2>
-        <Button className="mt-8" variant="ghost" size="lg">
+        <Button asChild className="mt-8" variant="ghost" size="lg">
           <SmartLink
             href={GOOGLE_REVIEW_URL}
             target="_blank"

@@ -18,6 +18,29 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
+
+  /* Action cursors are shared across all layouts. Component utilities can
+     still express image zoom, disabled states, and non-clickable modal panels. */
+  :where(
+    a[href],
+    button,
+    summary,
+    select,
+    input:is([type='button'], [type='submit'], [type='reset'], [type='checkbox'], [type='radio']),
+    [role='button'],
+    [role='link'],
+    [role='tab'],
+    [role='checkbox'],
+    [role='radio'],
+    [role='switch'],
+    label[data-choice-label]:has(input:is([type='checkbox'], [type='radio']):enabled:not([aria-disabled='true']))
+  ):not(:where(:disabled, [aria-disabled='true'], [aria-disabled='true'] *, [inert], [inert] *)) {
+    cursor: pointer;
+  }
+
+  :where(:disabled, [aria-disabled='true'], [aria-disabled='true'] *, [inert], [inert] *) {
+    cursor: default;
+  }
 }
 
 /* ---------------------------------------
