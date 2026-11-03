@@ -4,7 +4,7 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import reactPlugin from '@eslint-react/eslint-plugin';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import importPlugin from 'eslint-plugin-import-x';
+import noAnonymousDefaultExport from 'eslint-plugin-import-x/rules/no-anonymous-default-export';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y-x';
 import nextPlugin from '@next/eslint-plugin-next';
 
@@ -39,7 +39,9 @@ const config = [
     },
     plugins: {
       '@next/next': nextPlugin,
-      'import-x': importPlugin,
+      // The full plugin imports makeRe(), removed in minimatch 11. Load the
+      // single enabled rule through the package's supported subpath export.
+      'import-x': { rules: { 'no-anonymous-default-export': noAnonymousDefaultExport } },
       '@eslint-react': reactPlugin,
       'react-hooks': reactHooksPlugin,
       'jsx-a11y-x': jsxA11yPlugin,
