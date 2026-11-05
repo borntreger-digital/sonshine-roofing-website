@@ -8,13 +8,23 @@ export type PublicImage = {
   focalPoint: { x: number; y: number } | null;
 };
 
-export function imagePosition(image: PublicImage, position?: string, fallback = '50% 50%') {
+type PositionedImage = {
+  width: number | null;
+  height: number | null;
+  focalPoint?: { x: number; y: number } | null;
+};
+
+export function imagePosition(image: PositionedImage, position?: string, fallback = '50% 50%') {
   if (position) return position;
-  if (image.focalPoint) return `${image.focalPoint.x / image.width * 100}% ${image.focalPoint.y / image.height * 100}%`;
+  if (image.focalPoint && image.width && image.height)
+    return `${(image.focalPoint.x / image.width) * 100}% ${(image.focalPoint.y / image.height) * 100}%`;
   return fallback;
 }
 
 /** Backgrounds are decorative; position precedence matches cropped image rendering. */
 export function imageBackground(image: PublicImage, position?: string, fallback = '50% 0%') {
-  return { backgroundImage: `url("${image.url}")`, backgroundPosition: imagePosition(image, position, fallback) };
+  return {
+    backgroundImage: `url("${image.url}")`,
+    backgroundPosition: imagePosition(image, position, fallback),
+  };
 }

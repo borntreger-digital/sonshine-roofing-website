@@ -17,11 +17,14 @@ export type PersonImage = {
   altText: string;
   width: number | null;
   height: number | null;
+  focalPoint?: { x: number; y: number } | null;
 };
 
 export type Person = {
   slug: string;
   title: string;
+  firstName: string;
+  howHelps: { text: string }[];
   contentHtml: string;
   contentPlain: string;
   featuredImage: PersonImage | null;
@@ -34,7 +37,7 @@ export type Person = {
   seo: PersonSeo;
 };
 
-export type PersonNavItem = Pick<Person, 'slug' | 'title' | 'positionTitle'>;
+export type PersonNavItem = Pick<Person, 'slug' | 'title' | 'positionTitle' | 'featuredImage'>;
 
 export type PersonSitemapEntry = {
   uri: string;

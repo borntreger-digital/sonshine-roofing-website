@@ -96,6 +96,8 @@ jobs:
         run: npm run verify:person-html
       - name: Verify sponsor HTML
         run: npm run verify:sponsor-html
+      - name: Verify person profiles
+        run: npm run verify:person-profiles
       - name: Verify person SEO
         run: npm run verify:person-seo
       - name: Verify JSON-LD serialization

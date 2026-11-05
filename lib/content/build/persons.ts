@@ -18,10 +18,13 @@ export const DIRECTUS_FIELDS = [
   'last_name',
   'title',
   'bio',
+  'how_helps',
   'profile_image.id',
   'profile_image.description',
   'profile_image.width',
   'profile_image.height',
+  'profile_image.focal_point_x',
+  'profile_image.focal_point_y',
   'sort',
   'show_on_team',
   'noindex',
@@ -69,12 +72,41 @@ export function directusImage(value: unknown, config: DirectusConfig): PersonIma
   }
   const width = typeof image?.width === 'number' ? image.width : null;
   const height = typeof image?.height === 'number' ? image.height : null;
+  const x = image?.focal_point_x;
+  const y = image?.focal_point_y;
+  const focalPoint =
+    typeof x === 'number' &&
+    Number.isFinite(x) &&
+    width &&
+    x >= 0 &&
+    x <= width &&
+    typeof y === 'number' &&
+    Number.isFinite(y) &&
+    height &&
+    y >= 0 &&
+    y <= height
+      ? { x, y }
+      : null;
   return {
     url: `${config.url}/assets/${encodeURIComponent(id)}`,
     altText: description,
     width,
     height,
+    focalPoint,
   };
+}
+
+export function normalizeHowHelps(value: unknown): { text: string }[] {
+  if (value == null) return [];
+  if (!Array.isArray(value)) throw new Error('[persons] how_helps must be a JSON array.');
+  return value.flatMap((row) => {
+    const item = asRecord(row);
+    if (!item || typeof item.text !== 'string') {
+      throw new Error('[persons] Each how_helps row must contain plain text.');
+    }
+    const text = item.text.trim();
+    return text ? [{ text }] : [];
+  });
 }
 
 export function focusKeywords(
@@ -117,6 +149,8 @@ export function mapDirectusPerson(item: UnknownRecord, config: DirectusConfig): 
   const personBase = {
     slug,
     title,
+    firstName: firstName || title,
+    howHelps: normalizeHowHelps(item.how_helps),
     contentHtml: biography.html,
     contentPlain: biography.text,
     featuredImage: directusImage(item.profile_image, config),

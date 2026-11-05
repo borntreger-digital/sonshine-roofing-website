@@ -65,6 +65,8 @@ await scenario('gallery deletion', `DELETE FROM roofing_projects_files WHERE id=
 await scenario('topic membership move', `UPDATE blog_posts_blog_topics SET blog_post='${id(2)}' WHERE id='${id(1)}'`, [['blog_posts', 1], ['blog_posts', 2]]);
 await scenario('topic visibility', `UPDATE blog_topics SET status='draft' WHERE id='${id(301)}'`, [['blog_posts', 1]]);
 await scenario('topic admin sort', 'UPDATE blog_topics SET sort=42', []);
+await scenario('person responsibilities only touch that profile', `UPDATE persons SET how_helps='[{"text":"Helps the team"}]' WHERE id='${id(201)}'`, [['persons', 201]]);
+await scenario('unchanged responsibilities preserve editorial dates', `UPDATE persons SET how_helps=how_helps, modified_at=now()`, []);
 await scenario('author name', `UPDATE persons SET first_name='Revised' WHERE id='${id(201)}'`, [['persons', 201], ['blog_posts', 1]]);
 await scenario('taxonomy label', `UPDATE roofing_material_types SET name='Revised' WHERE id='${id(401)}'`, [['roofing_projects', 1]]);
 await scenario('related file description', `UPDATE directus_files SET description='Revised' WHERE id='${id(101)}'`, [['blog_posts', 1], ['roofing_projects', 1], ['persons', 201]]);

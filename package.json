@@ -22,6 +22,7 @@
     "verify:legacy-media-redirects": "node ./scripts/verify-legacy-media-redirects.mjs",
     "verify:glossary-html": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types ./scripts/verify-glossary-html.mjs",
     "verify:glossary-policy": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types ./scripts/verify-glossary-policy.mjs",
+    "verify:person-profiles": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/verify-person-profiles.mjs",
     "verify:person-seo": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types ./scripts/verify-person-seo.mjs",
     "verify:json-ld": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types ./scripts/verify-json-ld-serialization.mjs",
     "verify:security-input-handling": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types ./scripts/verify-security-input-handling.mjs",

@@ -9,7 +9,10 @@ Blogs/projects display Published and Last modified on detail pages, including wh
 they share a calendar date. Semantic time values retain their timestamp; labels use
 America/New_York. The normalized values also drive applicable metadata, blog schema
 and sitemaps. Archive cards and other page layouts are unchanged. Person dates are
-for sitemap chronology; profiles gain no visible publication field.
+for sitemap chronology; profiles gain no visible publication field. Person
+`how_helps` bullet edits advance only the profile date, not author-linked blogs;
+unchanged values preserve dates. The focused additive trigger update is
+`scripts/sql/person-how-helps.sql`.
 
 `editorial-date-invariants.sql` compares explicit public scalar fields, topic and
 gallery assignments/order, rendered author and taxonomy fields, referenced image

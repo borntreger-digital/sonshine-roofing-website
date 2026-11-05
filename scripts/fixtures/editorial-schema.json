@@ -237,6 +237,10 @@
     {
       "field": "scope_key",
       "type": "character varying"
+    },
+    {
+      "field": "how_helps",
+      "type": "json"
     }
   ],
   "roofing_projects": [

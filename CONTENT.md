@@ -405,6 +405,24 @@ runtime and two-release acceptance gates.
   ordered/unordered lists, list items, and line breaks. The frontend sanitizer
   is authoritative; images, media, tables, code, classes, IDs, colors, inline
   styles, scripts, and arbitrary source HTML are unsupported.
+- `how_helps` is an optional JSON List/repeater of `{ "text": "One responsibility" }`
+  objects. Editors add, remove, and reorder rows. Values are plain text, not HTML;
+  the profile renders them as bullets under `How {first_name} helps`. Missing/null
+  values and empty lists omit the section; whitespace-only rows are skipped.
+  Invalid array/row shapes stop the build. Replace every bracketed starter prompt
+  before authorizing deployment; the website does not invent duties from titles.
+- Existing `bio` renders under `Meet {first_name}` and remains the team-card/SEO
+  fallback source. The template owns these headings. First names fall back to
+  the public display name when absent. Preserve publication and indexing status.
+- Person navigation follows ascending CMS order and uses the existing profile
+  images with their Directus focal points. Previous images fill the left edge;
+  Next images fill the right edge, including stacked mobile cards. Missing images
+  produce text-only cards. No extra thumbnail upload or CMS field is required.
+- `how_helps` participates in the person `modified_at` trigger. The focused,
+  idempotent change is `scripts/sql/person-how-helps.sql`; create the Directus
+  field first, then apply only under explicit CMS-change authorization. It does
+  not change other triggers or publication dates. Existing reader access must
+  cover the new field and profile-image focal coordinates before the build.
 - Person SEO is stored explicitly in Directus, including the independently
   reviewed focus keywords. Display name/role, cleaned biography text, and the
   described profile image remain fallback sources only.

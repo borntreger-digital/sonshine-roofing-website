@@ -19,7 +19,12 @@ export async function listTeamPersons(): Promise<Person[]> {
 export async function listPersonNav(limit?: number): Promise<PersonNavItem[]> {
   return deployedEditorial()
     .persons.slice(0, limit)
-    .map(({ slug, title, positionTitle }) => ({ slug, title, positionTitle }));
+    .map(({ slug, title, positionTitle, featuredImage }) => ({
+      slug,
+      title,
+      positionTitle,
+      featuredImage,
+    }));
 }
 export async function listPersonsBySlug(slug: string): Promise<Person | null> {
   return activeSlugSet.has(slug)
