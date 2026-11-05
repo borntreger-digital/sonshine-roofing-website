@@ -126,7 +126,7 @@ export default function Hero({
       <div aria-hidden="true" className="absolute inset-0 z-20 bg-black/70" />
 
       {/* Content */}
-      <div className="relative z-30 mx-auto max-w-[1440px] px-4 pb-32 pt-24 md:pt-32 not-prose">
+      <div className="relative z-30 mx-auto max-w-360 px-4 pb-32 pt-24 md:pt-32 not-prose">
         <div className="grid gap-10 items-start lg:grid-cols-[minmax(0,1fr)_minmax(360px,520px)]">
           <div className="max-w-3xl mx-auto text-center lg:pb-8 lg:text-left">
             <div>
