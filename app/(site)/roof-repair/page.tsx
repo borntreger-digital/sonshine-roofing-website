@@ -134,7 +134,7 @@ export default async function Page() {
       </Hero>
       <Section>
         <div className="grid gap-4 px-2 lg:grid-cols-[minmax(0,1fr)_320px] overflow-visible items-start">
-          <div id="article-root" className="prose min-w-0">
+          <div id="article-root" className="prose min-w-0 max-lg:max-w-none">
             {/* JSON-LD: WebPage + BreadcrumbList */}
             <JsonLd data={webPageLd} />
             <JsonLd data={breadcrumbsLd} />

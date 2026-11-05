@@ -160,7 +160,7 @@ export default async function HomeownerReferralProgramPage() {
 
       <Section>
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] overflow-visible items-start px-2">
-          <div id="article-root" className="prose min-w-0">
+          <div id="article-root" className="prose min-w-0 max-lg:max-w-none">
             <JsonLd data={webPageLd} />
             <JsonLd data={breadcrumbsLd} />
 

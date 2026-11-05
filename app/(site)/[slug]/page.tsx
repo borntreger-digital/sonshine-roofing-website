@@ -353,7 +353,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           {/* Article (single SSR block to avoid hydration mismatches) */}
           <article
             id="article-root"
-            className="px-2 prose"
+            className="px-2 prose max-lg:max-w-none"
             dangerouslySetInnerHTML={{ __html: articleHtml }}
           />
           <BlogPostInlineImageLightbox
