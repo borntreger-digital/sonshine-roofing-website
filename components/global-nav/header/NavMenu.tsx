@@ -2,6 +2,7 @@
 import SmartLink from "@/components/utils/SmartLink";
 import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 import {
   ChevronDown,
   ChevronRight,
@@ -125,38 +126,59 @@ function DesktopMenu({
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const enterFrame = useRef<number | null>(null);
   const [enteredPanel, setEnteredPanel] = useState(false);
   const menuRef = useRef<HTMLUListElement>(null);
+  const keyboardInteraction = useRef(true);
+
+  useEffect(() => () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    if (enterFrame.current) cancelAnimationFrame(enterFrame.current);
+  }, []);
 
   const closeMenu = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
+    if (enterFrame.current) cancelAnimationFrame(enterFrame.current);
     setEnteredPanel(false);
     setOpenIndex(null);
   };
 
   const holdOpen = (i: number) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
+    if (enterFrame.current) cancelAnimationFrame(enterFrame.current);
     setOpenIndex(i);
     setEnteredPanel(false);
     // defer to next frame so transitions can see initial state
-    requestAnimationFrame(() => setEnteredPanel(true));
+    enterFrame.current = requestAnimationFrame(() => setEnteredPanel(true));
   };
-  const scheduleClose = () => {
-    // Mouse movement must not dismiss a menu while its links have keyboard focus.
-    if (menuRef.current?.contains(document.activeElement)) return;
+  const scheduleClose = (i: number) => {
+    // A pointer click also focuses links; only keyboard use should retain the menu.
+    if (keyboardInteraction.current && menuRef.current?.children[i]?.contains(document.activeElement)) return;
     if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = setTimeout(closeMenu, HOVER_CLOSE_DELAY_MS);
   };
 
   return (
     <>
-      <ul ref={menuRef} className="hidden lg:flex items-center gap-4">
+      <ul
+        ref={menuRef}
+        className="hidden lg:flex items-center gap-4"
+        onPointerDownCapture={() => { keyboardInteraction.current = false; }}
+        onKeyDownCapture={() => {
+          keyboardInteraction.current = true;
+          if (closeTimer.current) clearTimeout(closeTimer.current);
+        }}
+        onClick={(event) => {
+          // Also dismiss same-page links, which do not change the pathname.
+          if ((event.target as Element).closest("a[href]")) closeMenu();
+        }}
+      >
         {navigation.map((item, i) => (
           <li
             key={item.label}
             className="relative"
             onMouseEnter={() => holdOpen(i)}
-            onMouseLeave={scheduleClose}
+            onMouseLeave={() => scheduleClose(i)}
             onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) closeMenu();
             }}
@@ -244,7 +266,7 @@ function DesktopMenu({
                   )}
                   style={{ transitionDuration: `${PANEL_DURATION_MS}ms` }}
                   onMouseEnter={() => holdOpen(i)}
-                  onMouseLeave={scheduleClose}
+                  onMouseLeave={() => scheduleClose(i)}
                 >
                   <MenuLevel items={item.children} level={1} parentLabel={item.label} />
                 </div>
@@ -268,7 +290,10 @@ function MenuLevel({ items, level, parentLabel }: { items: Item[]; level: number
   const [entered, setEntered] = useState(false);
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(id);
+    return () => {
+      cancelAnimationFrame(id);
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
   }, []);
 
   const holdOpen = (i: number) => {
@@ -724,12 +749,13 @@ type NavMenuProps = {
 };
 
 export function NavMenu({ transparent, navigation }: NavMenuProps) {
+  const pathname = usePathname();
   const resolvedNavigation =
     navigation?.length ? (navigation as Item[]) : (NAV_MAIN as Item[]);
 
   return (
     <nav className="ml-auto flex items-center gap-3">
-      <DesktopMenu transparent={transparent} navigation={resolvedNavigation} />
+      <DesktopMenu key={pathname} transparent={transparent} navigation={resolvedNavigation} />
       <MobileMenu navigation={resolvedNavigation} />
     </nav>
   );

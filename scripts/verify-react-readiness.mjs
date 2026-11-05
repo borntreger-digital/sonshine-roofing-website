@@ -195,6 +195,78 @@ try {
   await act(async () => menuTrigger.focus());
   await act(async () => desktop.querySelector('a[href="/about-sonshine-roofing"]').focus());
   assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false', 'Leaving the menu item closes its submenu');
+
+  const hoverMenu = async () => act(async () => menuItem.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: document.body })));
+  const leaveMenu = async () => act(async () => {
+    menuItem.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+    await new Promise(resolve => setTimeout(resolve, 160));
+  });
+  const pointerClick = async (node) => act(async () => {
+    node.dispatchEvent(new window.PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+    node.focus();
+    // The real router handles navigation; this component fixture supplies its pathname below.
+    node.addEventListener('click', event => event.preventDefault(), { once: true });
+    node.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+  });
+  await hoverMenu();
+  await pointerClick(menuTrigger);
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Pointer click keeps the hovered heading open');
+  await leaveMenu();
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false', 'Pointer-focused heading must not latch the dropdown after hover ends');
+
+  await hoverMenu();
+  await pointerClick(menuTrigger);
+  await act(async () => menuTrigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true })));
+  await act(async () => desktop.querySelector('a[href="/roof-repair"]').focus());
+  await leaveMenu();
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Switching from mouse to keyboard preserves focused links');
+  await pointerClick(desktop.querySelector('a[href="/roof-repair"]'));
+  await leaveMenu();
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false', 'Pointer link activation and mouse exit dismiss the dropdown');
+
+  await hoverMenu();
+  await pointerClick(desktop.querySelector('a[href="/roof-repair"]'));
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false', 'Same-page link activation closes without needing a pathname change');
+
+  await hoverMenu();
+  await act(async () => {
+    menuItem.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+    await new Promise(resolve => setTimeout(resolve, 40));
+    menuItem.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: document.body }));
+    await new Promise(resolve => setTimeout(resolve, 160));
+  });
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Re-entering during the close delay cancels dismissal');
+
+  await pointerClick(menuTrigger);
+  await act(async () => {
+    menuItem.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+    menuTrigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    desktop.querySelector('a[href="/roof-repair"]').focus();
+    await new Promise(resolve => setTimeout(resolve, 160));
+  });
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'true', 'Keyboard navigation cancels a pending pointer-close timer');
+  await act(async () => desktop.querySelector('a[href="/about-sonshine-roofing"]').focus());
+  await hoverMenu();
+  await leaveMenu();
+  assert.equal(menuTrigger.getAttribute('aria-expanded'), 'false', 'Keyboard focus in another nav item does not hold a hovered dropdown open');
+  await hoverMenu();
+
+  const navigation = [
+    { label: 'Roofing Services', children: [{ label: 'Roof Replacement', href: '/roof-replacement-sarasota-fl' }] },
+    { label: 'Our Work', children: [{ label: 'Project Gallery', href: '/project' }] },
+  ];
+  pathname = '/roof-replacement-sarasota-fl';
+  await act(async () => mounted.render(React.createElement(NavMenu, { navigation })));
+  const routeMenu = document.querySelector('ul');
+  const routeTrigger = routeMenu.querySelector('button');
+  assert.equal(routeTrigger.getAttribute('aria-expanded'), 'false', 'Client navigation clears the previous desktop menu');
+  await pointerClick(routeTrigger);
+  pathname = '/project';
+  await act(async () => mounted.render(React.createElement(NavMenu, { navigation })));
+  assert.equal(document.querySelector('ul button').getAttribute('aria-expanded'), 'false', 'A second route change also clears menu state');
+  pathname = '/roof-replacement-sarasota-fl';
+  await act(async () => mounted.render(React.createElement(NavMenu, { navigation })));
+  assert.equal(document.querySelector('ul button').getAttribute('aria-expanded'), 'false', 'Back navigation starts with a closed menu');
   await clean();
 
   const ReviewsCatcher = load('components/reviews-catcher/ReviewsCatcher.tsx').default;
