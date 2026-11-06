@@ -122,17 +122,27 @@ const person = makePerson({
 const doc = render(person);
 assert.deepEqual(
   [...doc.querySelectorAll('h2')].map((node) => node.textContent),
-  ['How JB helps', 'Meet JB'],
+  ['How JB helps', 'Meet JB', 'Contact SonShine Roofing'],
 );
 assert.deepEqual(
-  [...doc.querySelectorAll('article .prose > ul > li')].map((node) => node.textContent),
+  [...doc.querySelectorAll('[aria-labelledby="person-helps-heading"] li')].map(
+    (node) => node.textContent,
+  ),
   ['First responsibility', injected, 'Last responsibility'],
 );
 assert.equal(doc.querySelectorAll('[onerror], script').length, 0);
 assert.equal(doc.querySelectorAll('h1').length, 1);
 assert.equal(doc.querySelector('h1').textContent, person.title);
 assert.equal(doc.querySelectorAll('a[href="/about-sonshine-roofing#meet-our-team"]').length, 2);
-assert.equal(doc.querySelector('article .prose div').innerHTML, person.contentHtml);
+const biography = doc.querySelector('[aria-labelledby="person-bio-heading"]');
+assert.equal(biography.querySelector('.prose').innerHTML, person.contentHtml);
+const contact = doc.querySelector('[aria-labelledby="person-contact-heading"]');
+assert.equal(doc.querySelectorAll('aside').length, 1);
+assert.equal(contact.querySelectorAll('a[href="/contact-us#book-an-appointment"]').length, 1);
+assert.ok(
+  biography.compareDocumentPosition(contact) & 4,
+  'Contact follows the biography in reading order',
+);
 assert.deepEqual(
   [...doc.querySelectorAll('nav a')].map((a) => a.getAttribute('href')),
   ['/person/nathan-borntreger', '/person/josh'],
@@ -158,7 +168,7 @@ const noDetails = render(
 );
 assert.deepEqual(
   [...noDetails.querySelectorAll('h2')].map((node) => node.textContent),
-  ['Meet Fixture bob'],
+  ['Meet Fixture bob', 'Contact SonShine Roofing'],
 );
 assert.equal(noDetails.querySelectorAll('img').length, 0);
 

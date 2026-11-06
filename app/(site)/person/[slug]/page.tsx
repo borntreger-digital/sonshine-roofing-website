@@ -107,7 +107,7 @@ export default async function PersonPage({ params }: { params: Promise<{ slug: s
       <JsonLd data={personLd} />
       <JsonLd data={breadcrumbsLd} />
       <JsonLd data={webPageLd} />
-      <PersonProfile person={person} people={navItems} contact={<SidebarCta />} />
+      <PersonProfile person={person} people={navItems} contact={<SidebarCta embedded />} />
     </>
   );
 }
