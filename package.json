@@ -157,7 +157,8 @@
   "allowScripts": {
     "fsevents@2.3.3": false,
     "unrs-resolver@1.12.2": false,
-    "workerd@1.20261023.1": true
+    "workerd@1.20261023.1": true,
+    "workerd@1.20261104.1": true
   },
   "type": "module"
 }
