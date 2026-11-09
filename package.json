@@ -111,7 +111,7 @@
     "@vitejs/plugin-react": "6.1.2",
     "@vitejs/plugin-rsc": "0.5.38",
     "babel-plugin-react-compiler": "1.0.0",
-    "cf": "1.0.0-beta.26",
+    "cf": "1.0.0-beta.28",
     "eslint": "10.13.0",
     "eslint-plugin-import-x": "4.17.1",
     "eslint-plugin-jsx-a11y-x": "0.2.0",
@@ -157,7 +157,8 @@
   "allowScripts": {
     "fsevents@2.3.3": false,
     "unrs-resolver@1.12.2": false,
-    "workerd@1.20261023.1": true
+    "workerd@1.20261023.1": true,
+    "workerd@1.20261104.1": true
   },
   "type": "module"
 }

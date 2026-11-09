@@ -8,6 +8,19 @@ postinstall fallback is denied: its platform-specific optional package supplies
 the native binary, verified after a clean install. Review each new version before
 changing the exact `allowScripts` decision.
 
+## November 9 cf install-script review
+
+The `cf` 1.0.0-beta.28 update adds a nested `workerd` 1.20261104.1 while
+retaining `workerd` 1.20261023.1 for the existing Workers toolchain. Both need
+exact-version `allowScripts` entries. The new npm registry tarball matches its
+lockfile SHA-512 integrity. Its `postinstall` is `node install.js`; compared with
+1.20261023.1, the installer only changes the expected binary date and pinned
+package version. It locates the platform-specific Cloudflare binary, links it
+into the package and verifies `--version`. If that optional binary is missing,
+its existing fallback installs the exact platform package through npm, then
+tries the corresponding `registry.npmjs.org` tarball. No new installer behavior
+was introduced. Keep strict script enforcement and the existing denied scripts.
+
 ## Application and CSS
 
 Next 16.4.2, React/DOM 19.3.1, Sharp 0.35.5 and sanitize-html 2.18.1 contain the
