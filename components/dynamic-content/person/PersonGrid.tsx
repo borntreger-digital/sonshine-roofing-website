@@ -23,8 +23,8 @@ export default function PersonGrid({ people }: { people: Person[] }) {
               >
                 <Card className="flex h-full flex-col overflow-hidden hover:shadow-lg transition">
                   <CardHeader className="shrink-0 px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
-                    <CardTitle className="h-6 shrink-0 font-semibold text-2xl leading-6 lg:h-12 min-[1200px]:h-6">{p.title}</CardTitle>
-                    <p className="mt-1 h-12 shrink-0 text-slate-700 leading-6 lg:h-18 min-[1200px]:h-12">{p.positionTitle}</p>
+                    <CardTitle className="h-6 shrink-0 font-semibold text-2xl leading-6 lg:h-12 min-[75rem]:h-6">{p.title}</CardTitle>
+                    <p className="mt-1 h-12 shrink-0 text-slate-700 leading-6 lg:h-18 min-[75rem]:h-12">{p.positionTitle}</p>
                   </CardHeader>
 
                   {p.featuredImage?.url ? (
