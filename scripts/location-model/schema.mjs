@@ -1,5 +1,6 @@
 // Contract v3. Definitions contain no source records or private identifiers.
-export const MODEL_VERSION = 'location-model-v6';
+export const MODEL_VERSION = 'location-model-v7';
+const NEIGHBORHOOD_DESCRIPTION_LIMIT = 220;
 const field = (name, type, options = {}) => ({ field: name, type,
   schema: type === 'alias' ? null : { is_nullable: true, ...options.schema },
   meta: { interface: 'input', ...options.meta } });
@@ -30,7 +31,16 @@ export const locationSchema = {
     ].map(item => ({ ...item, meta: { ...item.meta, group: 'seo' } })),
   ],
   roofing_neighborhoods: [id(), relation('client', true), status(), string('name', true), string('slug', true), relation('service_area', true),
-    prose('description'), prose('landmarks'),
+    field('description', 'text', { meta: {
+      interface: 'input-multiline', options: { softLength: NEIGHBORHOOD_DESCRIPTION_LIMIT },
+      note: `Plain text. Describe verified coverage without implying undocumented work. Use no more than ${NEIGHBORHOOD_DESCRIPTION_LIMIT} characters.`,
+      validation: { _or: [
+        { description: { _null: true } },
+        // A true end-of-input assertion also counts a trailing line break.
+        { description: { _regex: `^[\\s\\S]{0,${NEIGHBORHOOD_DESCRIPTION_LIMIT}}(?![\\s\\S])` } },
+      ] },
+      validation_message: `Use no more than ${NEIGHBORHOOD_DESCRIPTION_LIMIT} characters.`,
+    } }), prose('landmarks'),
     media('image', 'Optional neighborhood photo with a verified file description. A photo is not a coverage map and must not imply undocumented completed work.'),
     media('coverage_map'), sort(), ...system()],
   roofing_projects: [

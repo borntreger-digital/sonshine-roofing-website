@@ -1,7 +1,7 @@
 # Location content model
 
 Current authoring contract after the September 2026 Directus migration. The
-application snapshot format is `location-v3`; retained setup tooling is model v6.
+application snapshot format is `location-v3`; retained setup tooling is model v7.
 Use [location authoring](location-authoring.md) for edits and [DEPLOY.md](../DEPLOY.md)
 for publication/recovery. Historical release decisions remain dated evidence.
 
@@ -16,7 +16,8 @@ for publication/recovery. Historical release decisions remain dated evidence.
   Page publication also requires published taxonomy and the correct client.
   Published `noindex` pages remain routable but leave location/image sitemaps.
 - `roofing_neighborhoods`: client, status, name, slug, required `service_area`,
-  optional plain-text description/landmarks, optional `image` for a verified
+  plain-text description (at most 220 characters; nullable drafts) and optional
+  landmarks, optional `image` for a verified
   neighborhood photo and a separate optional `coverage_map` for an actual map,
   sort. Names are required. Use client/slug
   uniqueness and a primary area; resolve conflicting assignments before writes.
@@ -95,7 +96,10 @@ functionality; one combined review carousel; shared homepage service cards; neig
 partnerships; global/local FAQs. Omit empty sections and absent optional fields.
 Null project neighborhood means no label, wrapper, or placeholder. Neighborhood
 cards can link to matching published projects but have no routes or archive filter.
-Coverage maps have no customer pins. Use concise verified coverage language.
+Render complete descriptions without hiding continuation text. Neighborhood
+photos occupy the top 16:9 frame, with crops checked for meaningful subjects;
+select images that need no public attribution because cards omit credit blocks.
+Coverage maps remain uncropped and have no customer pins. Use concise verified coverage language.
 Longboat Key is organized under Sarasota by owner decision. Other conflicts need
 verification. The owner approved these direct nearby lists on 2026-09-15:
 Sarasota → Bradenton, Lakewood Ranch, Siesta Key, Osprey;

@@ -202,8 +202,11 @@ runtime and two-release acceptance gates.
   migrated owners are published in Directus and deployed. Later CMS edits become
   public only through a successful frontend build and deployment.
 - Use reusable `roofing_neighborhoods` with one primary area and real names.
-  Optional descriptions are short plain text. Coverage does not claim a completed
-  project. Verified projects may link from a card; neighborhoods have no routes.
+  Fill published SonShine descriptions with complete plain text of no more than
+  220 characters. Directus enforces the limit; nullable drafts remain supported.
+  Coverage does not claim a completed project. Verified projects may link from a
+  card; neighborhoods have no routes, so descriptions must not rely on hidden
+  or truncated continuation text.
   Migration reruns preserve edited descriptions unless an explicit description
   revision is supplied and its before-image still matches. Leave a project
   neighborhood empty with a documented exception when no recognized neighborhood
