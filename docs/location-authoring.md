@@ -23,8 +23,11 @@ indexable only after editorial review and a successful deployment.
 ## Coverage and matching content
 
 - Use `roofing_neighborhoods` for real neighborhood names and one primary area.
-  Descriptions and landmarks are optional plain text. Shorten source copy and
-  omit unsupported project claims. ZIP alone is insufficient membership evidence.
+  Fill published descriptions with complete plain text of at most 220 characters.
+  Directus shows the editor limit and validates it on save; null remains valid
+  for a draft. Landmarks are separate optional plain text. Shorten source copy
+  without adding unsupported project claims. ZIP alone is insufficient
+  membership evidence.
 - Longboat Key belongs to Sarasota under the owner's organization decision.
   Resolve other conflicts before assignment. No neighborhood route/filter exists.
 - Optional coverage maps require verified descriptions and must not show customer
@@ -32,13 +35,19 @@ indexable only after editorial review and a successful deployment.
   old file and source bytes for rollback.
 - Store verified neighborhood photos in `image`; `coverage_map` is reserved for
   actual maps. Both are optional and need accurate image descriptions.
-- For a photo requiring credit, store `metadata.attribution` on its Directus file.
-  Required fields are `title`, `creator`, `source_url`, `license`, and `license_url`;
-  `creator_url` and `changes` are optional. Use absolute HTTP(S) links without
-  credentials. The neighborhood card displays the credit below the uncropped
-  image. Record actual image transformations in `changes` when required.
-  The build must receive file metadata as an object or explicit null; only these
-  public credit fields enter the snapshot, never arbitrary metadata or EXIF.
+- Neighborhood photos fill a cropped 16:9 frame at the top of each card. Review
+  signs and subjects at the actual display sizes and preserve them with suitable
+  focal positioning. Actual coverage maps remain uncropped.
+- Neighborhood cards do not display photo credit, source, license, or crop
+  disclosures. Select photos whose terms permit this use without public
+  attribution. Replace an incompatible photo rather than remove its credit and
+  continue using it. If a suitable replacement cannot be found, ask the owner
+  for one while other work continues.
+- Preserve original media and its provenance metadata for recovery and other
+  uses. Existing `metadata.attribution` may contain `title`, `creator`,
+  `source_url`, `license`, `license_url`, `creator_url`, and `changes`. The build
+  still accepts an object or explicit null and retains the public projection;
+  arbitrary metadata and EXIF must not enter the snapshot.
 - Projects retain a required primary service area. Neighborhood is nullable and
   shown only when verified; a missing value produces no label or placeholder.
   The private AccuLynx job reference and ZIP never enter website snapshots.
@@ -72,6 +81,14 @@ shared company facts belong in global questions. Answers use the restricted FAQ
 sanitizer, and visible content matches the FAQ structured data.
 
 ## Preview and publish
+
+For an existing description field, use the focused
+`node scripts/setup-location-schema.mjs --neighborhood-description --dry-run`
+mode with the configured URL and authorized `LOCATION_DIRECTUS_ADMIN_TOKEN`.
+Review its changes, then use `--apply` and `--verify-only`. This updates only
+the field's editor guidance and API validation, preserves other metadata and
+database nullability, and refuses a collection containing another client's
+records. The broad setup command deliberately skips existing field metadata.
 
 A successful credentialed prebuild packages project/video and matching location
 snapshots. Page routes, metadata, FAQs, coverage, navigation, local selections and
