@@ -39,7 +39,7 @@ export default function QuickQuoteWebFormSkeleton() {
             <Skeleton className="mx-auto h-[78px] w-full max-w-[304px] rounded-[4px]" />
           </div>
 
-          <Skeleton className="mx-auto mt-[15px] h-[40px] w-full rounded-full min-[481px]:w-[240px]" />
+          <Skeleton className="mx-auto mt-[15px] h-[40px] w-full rounded-xl min-[481px]:w-[240px]" />
 
           <div className="space-y-2 pt-[10px]">
             <Skeleton className="mx-auto h-3 w-11/12 rounded-md" />

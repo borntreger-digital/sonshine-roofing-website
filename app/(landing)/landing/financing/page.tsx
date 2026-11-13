@@ -95,7 +95,7 @@ export default function FinancingLandingPage() {
           {steps.map((step, index) => (
             <li key={step.title} className="rounded-2xl border border-blue-100 bg-white p-6">
               <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 font-bold text-(--brand-blue)">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 font-bold text-(--brand-blue)">
                   {index + 1}
                 </span>
                 <h3 className="text-xl font-semibold text-slate-900">{step.title}</h3>

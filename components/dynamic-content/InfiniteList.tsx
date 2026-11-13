@@ -100,9 +100,9 @@ const renderVideoItem = (
     };
 
     return (
-        <div className="vid-item group block" data-video-slug={safeSlug}>
+        <div className="vid-item block" data-video-slug={safeSlug}>
             <Card
-                className="vid-card overflow-hidden transition hover:shadow-lg"
+                className="vid-card overflow-hidden"
                 data-title={video.title}
                 data-cats={catNames}
                 data-bucket={bucketSlugs}
@@ -118,7 +118,7 @@ const renderVideoItem = (
                     aria-label={`Play ${video.title || "video"}`}
                     onClick={handleOpen}
                     data-video-slug={safeSlug}
-                    className="relative block w-full"
+                    className="group/video-play relative block w-full focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--brand-blue)"
                 >
                     <div
                         className="relative w-full overflow-hidden bg-blue-200"
@@ -127,12 +127,12 @@ const renderVideoItem = (
                             src={video.thumbnailUrl}
                             alt={video.title}
                             ratio="16 / 9"
-                            className="object-cover w-full transition-transform duration-300 hover:scale-[1.06]"
+                            className="object-cover w-full transition-transform duration-300 motion-reduce:transition-none motion-safe:group-hover/video-play:scale-[1.06]"
                             sizes="(min-width: 1024px) 50vw, 100vw"
                         />
                     </div>
-                    <span className="absolute inset-0 grid place-items-center bg-black/0 transition group-hover:bg-black/15">
-                        <span className="grid place-items-center rounded-full bg-white/90 p-4 shadow-md">
+                    <span className="absolute inset-0 grid place-items-center bg-black/0 transition group-hover/video-play:bg-black/15">
+                        <span className="grid place-items-center rounded-xl bg-white/90 p-4 shadow-md">
                             <svg viewBox="0 0 24 24" aria-hidden="true" className="w-6 fill-slate-900">
                                 <path d="M8 5v14l11-7z" />
                             </svg>

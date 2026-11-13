@@ -279,7 +279,7 @@ export default async function Page() {
           </p>
           <SmartLink
             href="#truck-offer"
-            className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-600 focus-visible:outline-hidden focus-visible:ring-4 focus-visible:ring-blue-300"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-600 focus-visible:outline-hidden focus-visible:ring-4 focus-visible:ring-blue-300"
           >
             Back to the offer
             <ArrowUpRight className="h-4 w-4" aria-hidden />

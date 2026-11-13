@@ -73,9 +73,8 @@ export default function ProgramCard({
   return (
     <div
       className={cn(
-        "rounded-2xl h-fit transition-transform",
+        "rounded-2xl h-fit",
         wrapperClass,
-        "hover:shadow-lg motion-safe:hover:scale-[1.01]",
         isBluePrimary && "shadow-lg"
       )}
     >
@@ -102,7 +101,7 @@ export default function ProgramCard({
               />
             ) : null}
             {recommended && (
-              <span className="inline-flex items-center rounded-full bg-(--brand-orange) px-2 py-0.5 text-xs font-semibold text-white whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center rounded-md bg-(--brand-orange) px-2 py-0.5 text-xs font-semibold text-white whitespace-nowrap shrink-0">
                 Most popular
               </span>
             )}
@@ -148,7 +147,7 @@ export default function ProgramCard({
           {chips.length ? (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {chips.map((c, i) => (
-                <span key={i} className="inline-flex items-center rounded-full border border-slate-300 bg-white px-2.5 py-0.5 text-xs text-slate-700">
+                <span key={i} className="inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-0.5 text-xs text-slate-700">
                   {c}
                 </span>
               ))}

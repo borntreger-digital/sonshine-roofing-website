@@ -4,7 +4,6 @@ import { SECTION_HEADING, SECTION_SUBTITLE } from "@/components/location/section
 
 const imageHeight = 175;
 const imageWidth = 175;
-const imageClasses = "transition-transform duration-200 ease-out group-hover:translate-y-px group-hover:drop-shadow-xs";
 const awards = [
   {
     year: "2021",
@@ -65,13 +64,13 @@ export default async function bestOfTheBest({
       </div>
 
 
-      {/* Badges: responsive, semantic list with subtle hover affordances */}
+      {/* Badges: responsive semantic list */}
       <ul className="grid justify-center grid-cols-5 gap-4 my-16 place-items-center">
         {awards.map((award) => {
           const label = `Best of the Best ${award.year} Award`;
 
           return (
-            <li key={award.year} className="relative group">
+            <li key={award.year} className="relative">
               <StaticImage
                 src={award.src}
                 title={label}
@@ -79,7 +78,6 @@ export default async function bestOfTheBest({
                 width={imageWidth}
                 loading="lazy"
                 decoding="async"
-                className={imageClasses}
               />
             </li>
           );

@@ -281,7 +281,7 @@ export default function Footer({ settings, services = [], navigation = [], servi
                       rel="noopener noreferrer"
                       aria-label={s.label}
                       title={s.label}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[#24445f] bg-[#0d2942] text-[#ffb45f] transition-colors hover:border-[#fb9216] hover:bg-[#fb9216] hover:text-[#071b2b] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#59ddff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#071b2b]"
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#24445f] bg-[#0d2942] text-[#ffb45f] transition-colors hover:border-[#fb9216] hover:bg-[#fb9216] hover:text-[#071b2b] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#59ddff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#071b2b]"
                     >
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </a>

@@ -18,11 +18,11 @@ type LeadFormSuccessProps = {
 };
 
 const INFO_BADGE_CLASS =
-  'inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1';
+  'inline-flex items-center gap-2 rounded-md border border-slate-200 px-3 py-1';
 const SUCCESS_LINK_CARD_CLASS =
   'group flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-xs transition hover:-translate-y-0.5 hover:border-(--brand-blue) hover:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-(--brand-blue)';
 const SUCCESS_LINK_ICON_WRAPPER_CLASS =
-  'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-(--brand-blue)/10 text-(--brand-blue)';
+  'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--brand-blue)/10 text-(--brand-blue)';
 
 export default function LeadFormSuccess({
   successMeta,

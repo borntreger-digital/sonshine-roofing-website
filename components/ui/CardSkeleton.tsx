@@ -2,6 +2,7 @@ import * as React from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS,
+  CONTENT_PREVIEW_MEDIA_CLASS,
   PROJECT_PREVIEW_CARD_MIN_HEIGHT_CLASS,
 } from "@/components/dynamic-content/card-utils";
 import { cn } from "@/lib/utils";
@@ -40,8 +41,8 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
 
   const cardClassName = cn(
     variant === "video"
-      ? "vid-card overflow-hidden transition hover:shadow-lg"
-      : "flex h-full flex-col overflow-hidden transition hover:shadow-lg",
+      ? "vid-card overflow-hidden"
+      : "flex h-full flex-col overflow-hidden",
     variant === "blog" && BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS,
     variant === "project" && PROJECT_PREVIEW_CARD_MIN_HEIGHT_CLASS,
     className
@@ -72,60 +73,64 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
 
   const renderChipRow = (
     count: number,
-    size: "small" | "large",
     containerClassName?: string
   ) => {
-    const height = size === "small" ? "h-6" : "h-7";
-    const width = size === "small" ? "w-16" : "w-24";
     return (
       <div className={cn("flex gap-2", containerClassName)}>
         {Array.from({ length: count }).map((_, i) => (
-          <Skeleton key={`chip-${size}-${i}`} className={cn(height, width, "rounded-full")} />
+          <Skeleton key={`chip-${i}`} className="h-6 w-16 rounded-md" />
         ))}
       </div>
     );
   };
 
-  const renderPreviewPillStrip = (size: "small" | "large", slotClassName?: string) => (
-    <div className={cn("relative -mx-5 sm:-mx-6", slotClassName)}>
+  const renderBlogTopics = () => (
+    <div className="relative -mx-5 mt-3 min-h-11 sm:-mx-6">
       <div className="flex flex-nowrap gap-2 overflow-x-auto px-5 pb-2 scrollbar-none sm:px-6">
-        {renderChipRow(DEFAULT_CHIP_COUNT, size)}
+        {renderChipRow(DEFAULT_CHIP_COUNT)}
       </div>
       <div className="pointer-events-none absolute inset-y-1 left-0 w-6 bg-linear-to-r from-white to-transparent" />
       <div className="pointer-events-none absolute inset-y-1 right-0 w-6 bg-linear-to-l from-white to-transparent" />
     </div>
   );
 
-  const renderProjectPills = () => (
-    renderPreviewPillStrip("large", "mt-4 min-h-11.5")
+  const header = (
+    <CardHeader className={headerClassName}>
+      <CardTitle
+        className={cn(
+          variant === "video" ? "font-medium" : "font-semibold",
+          variant === "blog" && "min-h-12",
+          variant === "project" && "min-h-15",
+        )}
+      >
+        <Skeleton className="h-6 w-3/4" />
+      </CardTitle>
+      {variant === "project" && (
+        <div className="min-h-10">
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+      )}
+    </CardHeader>
+  );
+
+  const media = withImage && (
+    <div className={cn(CONTENT_PREVIEW_MEDIA_CLASS, resolvedAspect)}>
+      <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
+      {variant === "video" && (
+        <span className="pointer-events-none absolute inset-0 grid place-items-center">
+          <span className="grid place-items-center rounded-xl bg-white/90 p-4 shadow-md">
+            <span className="h-4 w-4 rounded-sm bg-slate-300" />
+          </span>
+        </span>
+      )}
+    </div>
   );
 
   return (
     <Card ref={ref} className={cardClassName} {...props}>
-      <CardHeader className={headerClassName}>
-        <CardTitle
-          className={cn(
-            variant === "video" ? "font-medium" : "font-semibold",
-            variant === "blog" && "min-h-12",
-            variant === "project" && "min-h-15",
-          )}
-        >
-          <Skeleton className="h-6 w-3/4" />
-        </CardTitle>
-      </CardHeader>
-
-      {withImage && (
-        <div className={cn("relative w-full", resolvedAspect)}>
-          <Skeleton className="absolute inset-0 h-full w-full" />
-          {variant === "video" && (
-            <span className="pointer-events-none absolute inset-0 grid place-items-center">
-              <span className="grid place-items-center rounded-full bg-white/90 p-4 shadow-md">
-                <span className="h-4 w-4 rounded-full bg-slate-300" />
-              </span>
-            </span>
-          )}
-        </div>
-      )}
+      {variant === "project" && media}
+      {header}
+      {variant !== "project" && media}
 
       <CardContent className={contentClassName}>
         {variant === "blog" && (
@@ -139,7 +144,7 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
             <div className="mt-3 min-h-18">
               {renderBodyLines(showMeta ? undefined : "mt-2")}
             </div>
-            {renderPreviewPillStrip("small", "mt-3 min-h-11")}
+            {renderBlogTopics()}
           </>
         )}
 
@@ -154,14 +159,21 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
               <Skeleton className="h-4 w-5/6" />
               <Skeleton className="h-4 w-2/3" />
             </div>
-            {renderProjectPills()}
+            <div className="mt-5 space-y-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={`fact-${i}`} className="grid grid-cols-[5rem_minmax(0,1fr)] gap-x-3 py-0.5">
+                  <Skeleton className="h-4 w-14" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              ))}
+            </div>
           </>
         )}
 
         {variant === "video" && (
           <>
             {renderBodyLines()}
-            {renderChipRow(DEFAULT_CHIP_COUNT, "small", "mt-3")}
+            {renderChipRow(DEFAULT_CHIP_COUNT, "mt-3")}
             <div className="mt-3">
               <Skeleton className="h-4 w-40" />
             </div>
@@ -172,7 +184,7 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
       <CardFooter className={footerClassName}>
         <div className="inline-flex items-center gap-2">
           <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-4 w-4 rounded-full" />
+          <Skeleton className="h-4 w-4 rounded-sm" />
         </div>
       </CardFooter>
     </Card>
