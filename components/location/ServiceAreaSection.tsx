@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import SmartLink from '@/components/utils/SmartLink';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { CONTENT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES } from '@/components/dynamic-content/card-utils';
+import { cn } from '@/lib/utils';
 import LocationSectionHeading from '@/components/location/LocationSectionHeading';
 import type { LocationNeighborhood, LocationProject } from '@/lib/content/location-types';
 import type { ProjectImage } from '@/lib/content/project-types';
@@ -42,7 +44,7 @@ export default function ServiceAreaSection({ areaId, locationName, overviewHtml,
       ) : null}
 
       {coverage.length ? (
-        <div className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className={cn(CONTENT_PREVIEW_GRID_CLASS, 'auto-rows-auto')}>
           {coverage.map((neighborhood) => {
             const matchingProjects = projects.filter((record) =>
               record.status === 'published' &&
@@ -51,57 +53,42 @@ export default function ServiceAreaSection({ areaId, locationName, overviewHtml,
             );
             const description = neighborhood.description?.trim();
             const landmarks = neighborhood.landmarks?.trim();
-            const attribution = neighborhood.image?.attribution;
-            const hasDetails = Boolean(description || landmarks || matchingProjects.length);
             return (
-              <Card key={neighborhood.id}>
-                <CardHeader><CardTitle>{neighborhood.name}</CardTitle></CardHeader>
-                {neighborhood.image ? (
-                  <figure>
+              <Card key={neighborhood.id} className="row-span-4 grid grid-rows-subgrid gap-0" data-neighborhood-card>
+                <div className="relative aspect-video w-full overflow-hidden bg-blue-100" data-neighborhood-photo>
+                  {neighborhood.image ? (
                     <Image src={neighborhood.image.url} alt={neighborhood.image.altText}
-                      width={neighborhood.image.width || 960} height={neighborhood.image.height || 540}
-                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" className="h-auto w-full" />
-                    {attribution ? (
-                      <figcaption className="px-6 py-3 text-xs leading-relaxed text-slate-600">
-                        Photo: <SmartLink href={attribution.sourceUrl} target="_blank" rel="noopener noreferrer"
-                          className="underline underline-offset-2">{attribution.title}</SmartLink>
-                        {' by '}
-                        {attribution.creatorUrl ? (
-                          <SmartLink href={attribution.creatorUrl} target="_blank" rel="noopener noreferrer"
-                            className="underline underline-offset-2">{attribution.creator}</SmartLink>
-                        ) : attribution.creator}.
-                        {' '}<SmartLink href={attribution.licenseUrl} target="_blank" rel="license noopener noreferrer"
-                          className="underline underline-offset-2">{attribution.license}</SmartLink>.
-                        {attribution.changes ? ` ${attribution.changes}` : null}
-                      </figcaption>
-                    ) : null}
-                  </figure>
-                ) : null}
-                {neighborhood.mapImage ? (
-                  <Image src={neighborhood.mapImage.url} alt={neighborhood.mapImage.altText}
-                    width={neighborhood.mapImage.width || 960} height={neighborhood.mapImage.height || 540}
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" className="h-auto w-full" />
-                ) : null}
-                {hasDetails ? (
-                  <CardContent className="space-y-4 text-slate-600">
-                    {description ? <p>{description}</p> : null}
-                    {landmarks ? <p><span className="font-semibold">Nearby landmarks: </span>{landmarks}</p> : null}
-                    {matchingProjects.length ? (
-                      <div className="space-y-2">
-                        <h4 className="text-sm font-semibold text-slate-800">Featured Projects:</h4>
-                        <ul className="list-disc space-y-2 pl-5">
-                          {matchingProjects.map(({ id, project }) => (
-                            <li key={id}>
-                              <SmartLink href={project.uri} className="font-semibold text-brand-blue underline underline-offset-4">
-                                {project.title}
-                              </SmartLink>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
-                  </CardContent>
-                ) : null}
+                      fill sizes={CONTENT_PREVIEW_IMAGE_SIZES} className="object-cover" />
+                  ) : null}
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold leading-tight">{neighborhood.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 pb-6 leading-7 text-slate-600" data-neighborhood-description>
+                  {description ? <p>{description}</p> : null}
+                  {landmarks ? <p><span className="font-semibold">Nearby landmarks: </span>{landmarks}</p> : null}
+                  {neighborhood.mapImage ? (
+                    <Image src={neighborhood.mapImage.url} alt={neighborhood.mapImage.altText}
+                      width={neighborhood.mapImage.width || 960} height={neighborhood.mapImage.height || 540}
+                      sizes={CONTENT_PREVIEW_IMAGE_SIZES} className="h-auto w-full rounded-xl" />
+                  ) : null}
+                </CardContent>
+                <CardFooter className="block border-t border-blue-200 bg-blue-50 p-6" data-neighborhood-projects>
+                  {matchingProjects.length ? (
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold text-slate-800">Featured Projects:</h4>
+                      <ul className="list-disc space-y-2 pl-5">
+                        {matchingProjects.map(({ id, project }) => (
+                          <li key={id}>
+                            <SmartLink href={project.uri} className="font-semibold text-brand-blue underline underline-offset-4">
+                              {project.title}
+                            </SmartLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </CardFooter>
               </Card>
             );
           })}
