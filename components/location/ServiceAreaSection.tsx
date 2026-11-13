@@ -44,7 +44,8 @@ export default function ServiceAreaSection({ areaId, locationName, overviewHtml,
       ) : null}
 
       {coverage.length ? (
-        <div className={cn(CONTENT_PREVIEW_GRID_CLASS, 'auto-rows-auto')}>
+        // Repeated flex tracks share one size across every card row, while photos retain their aspect ratio.
+        <div className={cn(CONTENT_PREVIEW_GRID_CLASS, 'auto-rows-[auto_1fr_2fr_2fr]')}>
           {coverage.map((neighborhood) => {
             const matchingProjects = projects.filter((record) =>
               record.status === 'published' &&
