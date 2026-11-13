@@ -119,7 +119,9 @@ check('verified project neighborhood appears once under its linked card title', 
   const subtitle = doc.querySelector('[data-project-neighborhood]');
   assert.equal(doc.querySelectorAll('[data-project-neighborhood]').length, 1);
   assert.equal(subtitle.textContent, 'Verified Neighborhood');
-  assert.equal(subtitle.previousElementSibling.tagName, 'H3');
+  const title = subtitle.closest('a').querySelector('h3');
+  assert.ok(title.parentElement.contains(subtitle));
+  assert.ok(title.compareDocumentPosition(subtitle) & doc.defaultView.Node.DOCUMENT_POSITION_FOLLOWING);
   assert.equal(subtitle.closest('a').getAttribute('href'), '/project/named');
   assert.equal(doc.querySelectorAll('button[aria-label^="Play video"]').length, 0);
   assert.doesNotMatch(doc.body.textContent, /Drone Video|Tap to watch/);
