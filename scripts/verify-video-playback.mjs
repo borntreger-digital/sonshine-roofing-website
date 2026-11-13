@@ -99,7 +99,7 @@ const project = {
   heroImage: { url: 'https://images.test/roof.jpg', altText: 'Roof' },
   materialTypes: [], serviceAreas: [], roofColors: [], projectImages: [], productLinks: [],
 };
-const ProjectVideo = () => null;
+const ProjectInlineVideo = () => null;
 
 const page = (items, hasNextPage = false) => ({
   items,
@@ -174,7 +174,7 @@ const mocks = {
   },
   '@/lib/content/project-data': { projectServiceLabel: () => 'Roof Replacement' },
   '@/lib/content/directus-faqs': { listFaqs: async () => [] },
-  '@/components/dynamic-content/project/ProjectVideo': ProjectVideo,
+  '@/components/dynamic-content/project/ProjectInlineVideo': ProjectInlineVideo,
   '@/components/dynamic-content/project/ProjectGallery': () => null,
   '@/components/dynamic-content/project/ProjectTestimonial': () => null,
   '@/components/dynamic-content/project/BackToProjectsButton': () => null,
@@ -261,9 +261,11 @@ test('the project route uses independent video copy and omits a draft video play
   const original = project.video;
   try {
     let tree = elements(await ProjectPage({ params: Promise.resolve({ slug: project.slug }) }));
-    const player = tree.find((node) => node.type === ProjectVideo);
+    const player = tree.find((node) => node.type === ProjectInlineVideo);
     assert.equal(player.props.title, alpha.title);
-    assert.equal(player.props.posterUrl, alpha.thumbnailUrl);
+    assert.equal(player.props.posterUrl, project.heroImage.url);
+    assert.equal(player.props.posterAlt, project.heroImage.altText);
+    assert.ok(player.key.endsWith(alpha.youtubeId), 'a different video remounts the click-to-play state');
     const schema = tree.find((node) => node.props.id === 'project-video').props.data;
     assert.equal(schema.name, alpha.title);
     assert.equal(schema.description, alpha.excerpt);
@@ -271,13 +273,40 @@ test('the project route uses independent video copy and omits a draft video play
     assert.equal(schema.uploadDate, null, 'never substitute a project or website date');
     project.video = null;
     tree = elements(await ProjectPage({ params: Promise.resolve({ slug: project.slug }) }));
-    assert.equal(tree.some((node) => node.type === ProjectVideo), false);
+    assert.equal(tree.some((node) => node.type === ProjectInlineVideo), false);
     assert.equal(tree.some((node) => node.props.id === 'project-video'), false);
     assert.ok(tree.some((node) => node.props.children === project.projectDescription),
       'unpublishing the video retains the project narrative');
   } finally {
     project.video = original;
   }
+});
+
+test('project inline video waits for a click, keeps page scroll unlocked, and resets for another video', async () => {
+  const InlineVideo = loadSource(resolve(root, 'components/dynamic-content/project/ProjectInlineVideo.tsx')).default;
+  await act(async () => mounted?.unmount());
+  mounted = createRoot(document.getElementById('root'));
+  const renderVideo = (id) => React.createElement(InlineVideo, {
+    key: id, videoId: id, title: 'Finished roof', posterUrl: project.heroImage.url,
+  });
+  await act(async () => mounted.render(renderVideo('abcdefghijk')));
+  assert.equal(document.querySelector('iframe'), null, 'no player or autoplay before a click');
+  const bodyStyle = document.body.getAttribute('style');
+  await click('Play drone video: Finished roof');
+  const player = document.querySelector('iframe');
+  assert.ok(player.closest('section'), 'player replaces the cover inside the page');
+  assert.equal(dialog(), null);
+  assert.equal(document.body.getAttribute('style'), bodyStyle, 'does not lock or change body scroll');
+  assert.equal(document.activeElement, player, 'keyboard focus follows the activated player');
+  const src = new URL(player.src);
+  assert.equal(src.origin, 'https://www.youtube-nocookie.com');
+  for (const key of ['controls', 'fs', 'playsinline', 'autoplay']) assert.equal(src.searchParams.get(key), '1');
+  assert.ok(player.hasAttribute('allowfullscreen'));
+  assert.equal(player.getAttribute('referrerpolicy'), 'strict-origin-when-cross-origin');
+  assert.ok(document.querySelector('a[href="https://www.youtube.com/watch?v=abcdefghijk"]'), 'fallback remains outside the player');
+  await act(async () => mounted.render(renderVideo('lmnopqrstuv')));
+  assert.equal(document.querySelector('iframe'), null, 'route changes do not autoplay the next video');
+  assert.ok(button('Play drone video: Finished roof'));
 });
 
 test('sitemap destinations follow public project availability while preserving video copy and dates', async () => {

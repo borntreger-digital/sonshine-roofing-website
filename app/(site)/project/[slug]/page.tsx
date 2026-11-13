@@ -7,7 +7,7 @@ import Section from "@/components/layout/Section";
 import { notFound } from "next/navigation";
 import { getProjectBySlug, listProjectSlugs, listRelatedProjects } from "@/lib/content/projects";
 import { projectServiceLabel } from "@/lib/content/project-data";
-import ProjectVideo from "@/components/dynamic-content/project/ProjectVideo";
+import ProjectInlineVideo from "@/components/dynamic-content/project/ProjectInlineVideo";
 import YouMayAlsoLike from "@/components/engagement/YouMayAlsoLike";
 import ShareWhatYouThink from "@/components/engagement/ShareWhatYouThink";
 import ProjectGallery from "@/components/dynamic-content/project/ProjectGallery";
@@ -256,11 +256,12 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           {/* Left column: Video facade (fallback to image) + badges */}
           <div>
             {video ? (
-              <ProjectVideo
+              <ProjectInlineVideo
+                key={video.youtubeId}
                 title={video.title}
                 videoId={video.youtubeId}
-                posterUrl={video.thumbnailUrl}
-                posterAlt={video.title}
+                posterUrl={heroImageUrl || video.thumbnailUrl}
+                posterAlt={heroImageUrl ? heroImageAlt : video.title}
               />
             ) : (
               heroImageUrl && (
