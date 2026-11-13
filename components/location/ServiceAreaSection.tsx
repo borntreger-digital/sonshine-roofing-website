@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import SmartLink from '@/components/utils/SmartLink';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CONTENT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES } from '@/components/dynamic-content/card-utils';
+import { CONTENT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES, CONTENT_PREVIEW_MEDIA_CLASS } from '@/components/dynamic-content/card-utils';
 import { cn } from '@/lib/utils';
 import LocationSectionHeading from '@/components/location/LocationSectionHeading';
 import type { LocationNeighborhood, LocationProject } from '@/lib/content/location-types';
@@ -56,7 +56,7 @@ export default function ServiceAreaSection({ areaId, locationName, overviewHtml,
             const landmarks = neighborhood.landmarks?.trim();
             return (
               <Card key={neighborhood.id} className="row-span-4 grid grid-rows-subgrid gap-0" data-neighborhood-card>
-                <div className="relative aspect-video w-full overflow-hidden bg-blue-100" data-neighborhood-photo>
+                <div className={cn(CONTENT_PREVIEW_MEDIA_CLASS, 'aspect-video bg-blue-100')} data-neighborhood-photo>
                   {neighborhood.image ? (
                     <Image src={neighborhood.image.url} alt={neighborhood.image.altText}
                       fill sizes={CONTENT_PREVIEW_IMAGE_SIZES} className="object-cover" />
