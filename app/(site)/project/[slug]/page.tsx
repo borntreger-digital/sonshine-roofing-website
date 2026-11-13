@@ -13,6 +13,7 @@ import ShareWhatYouThink from "@/components/engagement/ShareWhatYouThink";
 import ProjectGallery from "@/components/dynamic-content/project/ProjectGallery";
 import { PROJECT_GALLERY_DEFAULT_HEIGHT, PROJECT_GALLERY_DEFAULT_WIDTH } from "@/components/dynamic-content/project/galleryConfig";
 import ProjectTestimonial from "@/components/dynamic-content/project/ProjectTestimonial";
+import { ProjectFacts, ProjectNeighborhood } from "@/components/dynamic-content/project/ProjectMetadata";
 
 import type { Metadata } from "next";
 import { buildArticleMetadata } from "@/lib/seo/meta";
@@ -80,12 +81,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-const Badge = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-block px-2 py-1 text-base font-semibold rounded-md bg-blue-100 text-slate-700">
-    {children}
-  </span>
-);
-
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const projectPromise = getProjectBySlug(slug);
@@ -114,12 +109,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const heroImageUrl = project.heroImage?.url ?? undefined;
   const heroImageAlt = project.heroImage?.altText || project.title;
   const serviceLabel = projectServiceLabel(project.projectDescription);
-  const heroBadges = [
-    ...(project.materialTypes ?? []).map((t) => ({ label: t.name })),
-    ...(project.roofColors ?? []).map((t) => ({ label: t.name })),
-    ...(project.serviceAreas ?? []).map((t) => ({ label: t.name })),
-  ].filter((badge) => badge.label);
-  const hasAnyBadges = heroBadges.length > 0;
 
   const origin = SITE_ORIGIN;
   const shareUrl = `${origin}/project/${slug}`;
@@ -234,11 +223,15 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <>
       <Hero
         title={project.title}
-        metadata={project.date ? <EditorialDates published={project.date} modified={project.modified} className="text-sm text-slate-200" /> : null}
+        metadata={(project.neighborhood?.name.trim() || project.date) ? (
+          <div className="space-y-3">
+            <ProjectNeighborhood project={project} className="text-base text-slate-200 md:text-lg" />
+            {project.date ? <EditorialDates published={project.date} modified={project.modified} className="text-sm text-slate-200" /> : null}
+          </div>
+        ) : null}
         subtitle=""
         imageSrc={heroImageUrl}
         justifyStart
-        badges={heroBadges}
       >
       </Hero>
       <Section>
@@ -251,7 +244,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
         {/* Two-column layout */}
         <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-[4fr_2fr]">
-          {/* Left column: Video facade (fallback to image) + badges */}
+          {/* Left column: Video facade (fallback to image), testimonial, and gallery */}
           <div>
             {video ? (
               <ProjectInlineVideo
@@ -276,15 +269,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                 />
               )
             )}
-            {hasAnyBadges && (
-              <div className="flex flex-wrap gap-2 mt-4">
-                {heroBadges.map((badge, index) => (
-                  <Badge key={`hero-badge-${index}`}>{badge.label}</Badge>
-                ))}
-              </div>
-            )}
-
-            <div className="grid gap-8">
+            <div className="mt-6 grid gap-8">
               <ShareWhatYouThink urlOverride={shareUrl} />
 
               {/* Customer Testimonial */}
@@ -293,29 +278,24 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               ) : null}
 
               {/* Gallery */}
-              <ProjectGallery images={project.projectImages} projectTitle={project.title} />
+              <ProjectGallery images={project.projectImages} projectTitle={project.title} appearance="flat" />
             </div>
           </div>
 
           {/* Right column: Project Details + Products */}
           <div className="sticky top-16 bg-amber-50/50 shadow-xs rounded-3xl border border-blue-200">
-            {project.projectDescription && (
-              <>
-                <div className="rounded-t-3xl px-6 border-b border-blue-200 overflow-hidden bg-blue-50">
-                  <h3 className="text-2xl mt-6 mb-4">
-                    About This Project
-                  </h3>
-
-                </div>
-                <div className="px-6">
-                  <h4 className="mt-4 mb-2 text-xl text-slate-600">
-                    Summary
-                  </h4>
-                  <p className="mb-6">{project.projectDescription}</p>
-                </div>
-
-              </>
-            )}
+            <div className="rounded-t-3xl px-6 border-b border-blue-200 overflow-hidden bg-blue-50">
+              <h3 className="text-2xl mt-6 mb-4">About This Project</h3>
+            </div>
+            <div className="px-6 py-5">
+              <ProjectFacts project={project} />
+              {project.projectDescription && (
+                <>
+                  <h4 className="mt-6 mb-2 text-xl text-slate-600">Summary</h4>
+                  <p>{project.projectDescription}</p>
+                </>
+              )}
+            </div>
 
             {project.productLinks?.length > 0 && (
               <>

@@ -11,7 +11,7 @@ type Props = {
   posterAlt?: string;
 };
 
-/** Project detail playback; location cards retain their separate modal player. */
+/** Click-to-play video on the project detail page. */
 export default function ProjectInlineVideo({ title, videoId, posterUrl, posterAlt }: Props) {
   const [playing, setPlaying] = useState(false);
   const playerRef = useRef<HTMLIFrameElement>(null);
@@ -23,10 +23,7 @@ export default function ProjectInlineVideo({ title, videoId, posterUrl, posterAl
 
   return (
     <section className="w-full max-w-3xl" aria-label={`Drone video: ${title}`}>
-      <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 className="text-2xl leading-tight md:text-3xl">See the finished roof</h2>
-        <span className="shrink-0 text-xs text-slate-500">Drone video</span>
-      </div>
+      <h2 className="mb-3 text-2xl leading-tight md:text-3xl">See the finished roof</h2>
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="relative aspect-video min-h-[200px] w-full min-w-0 bg-slate-950">
           {playing ? (
@@ -55,7 +52,7 @@ export default function ProjectInlineVideo({ title, videoId, posterUrl, posterAl
               />
               <span className="pointer-events-none absolute inset-0 bg-linear-to-t from-slate-950/30 via-transparent to-transparent" aria-hidden="true" />
               <span className="pointer-events-none absolute inset-0 grid place-items-center" aria-hidden="true">
-                <span className="grid size-14 place-items-center rounded-full border border-white bg-white/95 text-(--brand-blue) shadow-md motion-safe:transition-transform motion-safe:group-hover:scale-105 md:size-16">
+                <span className="grid size-14 place-items-center rounded-xl border border-white bg-white/95 text-(--brand-blue) shadow-md motion-safe:transition-transform motion-safe:group-hover:scale-105 md:size-16">
                   <Play className="ml-1 size-6 fill-current" />
                 </span>
               </span>

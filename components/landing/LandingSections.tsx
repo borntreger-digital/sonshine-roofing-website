@@ -13,6 +13,8 @@ import { getSiteSettings } from '@/lib/content/directus-site';
 import { getProjectBySlug } from '@/lib/content/projects';
 import { staticImage } from '@/lib/content/static-media';
 import { cn } from '@/lib/utils';
+import { CONTENT_PREVIEW_MEDIA_CLASS } from '@/components/dynamic-content/card-utils';
+import { ProjectFacts, ProjectNeighborhood } from '@/components/dynamic-content/project/ProjectMetadata';
 
 const container = 'mx-auto w-full max-w-6xl px-4 sm:px-6';
 type HighlightText = string | readonly string[];
@@ -86,12 +88,16 @@ export async function LandingFormSection({ children }: { children: ReactNode }) 
         >
           {projects.map((project) => project?.heroImage ? (
             <figure key={project.slug} className="overflow-hidden rounded-3xl border border-blue-200 bg-white shadow-xs">
-              <div className="relative aspect-4/3">
+              <div className={cn(CONTENT_PREVIEW_MEDIA_CLASS, 'aspect-4/3')}>
                 <Image src={project.heroImage.url} alt={project.heroImage.altText || project.title} fill
                   sizes="(min-width: 1152px) 352px, (min-width: 1024px) 32vw, 100vw"
                   className="object-cover" loading="lazy" />
               </div>
-              <figcaption className="px-5 py-4 text-sm font-semibold text-slate-700">{project.title}</figcaption>
+              <figcaption className="space-y-2 px-5 py-4">
+                <p className="text-sm font-semibold text-slate-700">{project.title}</p>
+                <ProjectNeighborhood project={project} />
+                <ProjectFacts project={project} className="pt-2" />
+              </figcaption>
             </figure>
           ) : null)}
         </aside>
