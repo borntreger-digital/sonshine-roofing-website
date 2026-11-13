@@ -1,24 +1,29 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-// ---- Helpers for proper children handling ----
 type DivProps = React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode };
 type H3Props = React.HTMLAttributes<HTMLHeadingElement> & { children?: React.ReactNode };
+type CardProps = DivProps & {
+  /** Enable only when the whole card is a link or button. */
+  interactive?: boolean;
+};
 
-export const Card = React.forwardRef<HTMLDivElement, DivProps>(function Card(
-  { className, children, ...props },
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(function Card(
+  { className, children, interactive = false, ...props },
   ref
 ) {
   return (
     <div
       ref={ref}
       className={cn(
-        "group/card not-prose rounded-3xl overflow-hidden",
+        "not-prose rounded-3xl overflow-hidden",
         "border border-blue-200 bg-white text-slate-900 shadow-xs md:shadow-md",
-        "transform-gpu transition-all duration-300",
-        "hover:border-[#1C6FFF] hover:shadow-lg motion-safe:hover:scale-[1.01] motion-reduce:transform-none motion-reduce:translate-none motion-reduce:rotate-none motion-reduce:scale-none",
-        "focus-visible:border-[#1C6FFF] focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1C6FFF]",
-        "group-focus-visible:border-[#1C6FFF] group-focus-visible:outline-solid group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[#1C6FFF] group-focus-visible:shadow-lg",
+        interactive && [
+          "group/interactive-card transition-[border-color,box-shadow,scale] duration-300",
+          "hover:border-[#1C6FFF] hover:shadow-lg motion-safe:hover:scale-[1.01]",
+          "focus-visible:border-[#1C6FFF] focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1C6FFF]",
+          "group-focus-visible:border-[#1C6FFF] group-focus-visible:outline-solid group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[#1C6FFF] group-focus-visible:shadow-lg",
+        ],
         className
       )}
       {...props}
@@ -38,7 +43,7 @@ export const CardHeader = React.forwardRef<HTMLDivElement, DivProps>(function Ca
       {/* SonShine gradient stripe under header */}
       <span className="pointer-events-none absolute bottom-0 left-0 h-1 w-full overflow-hidden">
         <span
-          className="block h-full w-full bg-linear-to-r from-[#0045d7] via-[#1c6fff] to-[#00e3fe] bg-size-[200%_100%] bg-position-[0%_50%] motion-safe:group-hover:animate-[stripe-slide_600ms_ease-out_forwards] motion-safe:group-hover/card:animate-[stripe-slide_600ms_ease-out_forwards] motion-safe:group-focus-visible:animate-[stripe-slide_600ms_ease-out_forwards] motion-safe:group-focus-visible/card:animate-[stripe-slide_600ms_ease-out_forwards]"
+          className="block h-full w-full bg-linear-to-r from-[#0045d7] via-[#1c6fff] to-[#00e3fe] bg-size-[200%_100%] bg-position-[0%_50%] motion-safe:group-hover/interactive-card:animate-[stripe-slide_600ms_ease-out_forwards] motion-safe:group-focus-visible/interactive-card:animate-[stripe-slide_600ms_ease-out_forwards]"
         />
       </span>
     </div>
