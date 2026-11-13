@@ -146,7 +146,7 @@ export default function ProjectVideo({ title, videoId, className, posterUrl, pos
         />
         {/* Play overlay */}
         <span className="absolute inset-0 grid place-items-center bg-black/0 transition hover:bg-black/15">
-          <span className="grid place-items-center rounded-full bg-white/90 p-4 shadow-md">
+          <span className="grid place-items-center rounded-xl bg-white/90 p-4 shadow-md">
             <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6 fill-slate-900">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -182,7 +182,7 @@ export default function ProjectVideo({ title, videoId, className, posterUrl, pos
                   type="button"
                   aria-label="Close"
                   onClick={(e) => { e.stopPropagation(); setOpen(false); }}
-                  className="fixed z-50 top-[max(0.75rem,env(safe-area-inset-top))] right-[max(0.75rem,env(safe-area-inset-right))] md:top-[max(1.25rem,env(safe-area-inset-top))] md:right-[max(1.25rem,env(safe-area-inset-right))] border border-blue-200 rounded-full hover:bg-white/80 bg-white/40 text-blue-200 hover:text-red-600 p-2.5 shadow-lg backdrop-blur-xs transition focus:outline-hidden focus-visible:ring-2"
+                  className="fixed z-50 top-[max(0.75rem,env(safe-area-inset-top))] right-[max(0.75rem,env(safe-area-inset-right))] md:top-[max(1.25rem,env(safe-area-inset-top))] md:right-[max(1.25rem,env(safe-area-inset-right))] border border-blue-200 rounded-xl hover:bg-white/80 bg-white/40 text-blue-200 hover:text-red-600 p-2.5 shadow-lg backdrop-blur-xs transition focus:outline-hidden focus-visible:ring-2"
                 >
                   <X className="h-5 w-5" aria-hidden="true" />
                 </button>
