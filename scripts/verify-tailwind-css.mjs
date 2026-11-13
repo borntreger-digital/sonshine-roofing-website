@@ -22,6 +22,20 @@ for (const kind of ['blog', 'project']) {
   assert.equal(declaration(desktop, 'min-height'), `var(--${kind}-preview-card-min-h-desktop)`);
 }
 const prose = rule('.prose');
+const radiusValues = [];
+result.root.walkDecls('--radius', node => radiusValues.push(node.value));
+assert.deepEqual(radiusValues, ['0.5rem'], 'Shared corner styles have one effective radius value');
+assert.ok(!rules.some(node => node.selector === '.card:hover'), 'Static legacy card wrappers must not gain hover elevation');
+const stripeRules = rules.filter(node => node.selector.includes('stripe-slide'));
+assert.equal(stripeRules.length, 2, 'Header motion is limited to interactive-card hover and focus');
+for (const stripe of stripeRules) {
+  assert.match(stripe.toString(), /group\\\/interactive-card/, 'Header motion cannot respond to an unrelated group');
+  let motionSafe = false;
+  for (let parent = stripe.parent; parent; parent = parent.parent) {
+    if (parent.type === 'atrule' && parent.name === 'media' && parent.params === '(prefers-reduced-motion: no-preference)') motionSafe = true;
+  }
+  assert.ok(motionSafe, 'Header motion respects reduced-motion settings');
+}
 const paragraph = prose.nodes.find(node => node.type === 'rule' && node.selector.startsWith(':where(p)'));
 assert.equal(declaration(paragraph, 'font-size'), '1.2rem');
 assert.equal(declaration(paragraph, 'line-height'), '1.85rem');
