@@ -13,6 +13,41 @@ function jsonDefaultsEqual(actual, desired) {
   }
 }
 
+// Existing-field metadata is deliberately outside the broad setup routine.
+// This mode changes only the neighborhood description's editor and API limit.
+export async function configureNeighborhoodDescription(request, { apply = false, verifyOnly = false } = {}) {
+  assert.ok(!(apply && verifyOnly), 'Choose apply or verification.');
+  const route = 'fields/roofing_neighborhoods/description';
+  const field = await request(route);
+  assert.equal(field?.field, 'description', 'Missing neighborhood description field.');
+  assert.equal(field.type, 'text', 'Neighborhood description must remain text.');
+  const desired = locationSchema.roofing_neighborhoods.find(row => row.field === 'description').meta;
+  const prior = field.meta ?? {};
+  const hasLimit = isDeepStrictEqual(prior.validation, desired.validation)
+    || prior.validation?._and?.some(rule => isDeepStrictEqual(rule, desired.validation));
+  const append = (text, addition) => text?.includes(addition) ? text : [text, addition].filter(Boolean).join(' ');
+  const meta = {
+    options: { ...prior.options, ...desired.options },
+    validation: hasLimit ? prior.validation : prior.validation ? { _and: [prior.validation, desired.validation] } : desired.validation,
+    validation_message: append(prior.validation_message, desired.validation_message),
+    note: append(prior.note || desired.note, desired.validation_message),
+  };
+  const changes = Object.keys(meta).filter(key => !isDeepStrictEqual(prior[key], meta[key]));
+  assert.ok(!verifyOnly || changes.length === 0, 'Neighborhood description limit metadata is not configured.');
+  if (changes.length && apply) {
+    // The collection currently contains only SonShine records. Do not extend
+    // this collection-wide rule to an unrelated tenant without review.
+    const rows = await request('items/roofing_neighborhoods?fields=client.slug&limit=-1');
+    assert.ok(Array.isArray(rows) && rows.length > 0 && rows.every(row => row.client?.slug === 'sonshine-roofing'),
+      'Description limit requires a SonShine-only neighborhood collection.');
+    await request(route, 'PATCH', { meta });
+    const after = await request(route);
+    for (const key of Object.keys(meta)) assert.deepEqual(after.meta?.[key], meta[key], `Description ${key} readback failed.`);
+    assert.deepEqual(after.schema, field.schema, 'Description database schema changed.');
+  }
+  return { mode: apply ? 'apply' : verifyOnly ? 'verify-only' : 'dry-run', field: 'roofing_neighborhoods.description', changes };
+}
+
 export async function setupLocationSchema(request, { apply = false, verifyOnly = false, verifyPrivateAccess } = {}) {
   assert.ok(!(apply && verifyOnly), 'Choose apply or verification.');
   const collections = new Set((await request('collections')).map(row => row.collection));
@@ -101,5 +136,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       assertReaderProjection((await response.json()).data, { requireProjectAccess: Boolean(auth) });
     }
   };
-  console.log(JSON.stringify(await setupLocationSchema(request, { apply: modes[0] === '--apply', verifyOnly: modes[0] === '--verify-only', verifyPrivateAccess }), null, 2));
+  const options = { apply: modes[0] === '--apply', verifyOnly: modes[0] === '--verify-only' };
+  const result = process.argv.includes('--neighborhood-description')
+    ? await configureNeighborhoodDescription(request, options)
+    : await setupLocationSchema(request, { ...options, verifyPrivateAccess });
+  console.log(JSON.stringify(result, null, 2));
 }

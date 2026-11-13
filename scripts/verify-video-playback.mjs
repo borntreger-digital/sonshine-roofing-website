@@ -282,6 +282,48 @@ test('the project route uses independent video copy and omits a draft video play
   }
 });
 
+test('project cards share photo-first presentation, labeled facts and verified neighborhood text', async () => {
+  const ProjectCard = loadSource(resolve(root, 'components/dynamic-content/project/ProjectArchiveCard.tsx')).default;
+  const fixture = { ...project, neighborhood: { id: 'fixture-neighborhood', name: 'Verified Neighborhood', slug: 'verified' },
+    serviceAreas: [{ name: 'Fixture City', slug: 'fixture-city' }],
+    materialTypes: [{ name: 'Metal', slug: 'metal' }],
+    roofColors: [{ name: 'Silver', slug: 'silver', materialTypeSlug: 'metal' }],
+  };
+  await act(async () => mounted?.unmount());
+  mounted = createRoot(document.getElementById('root'));
+  await act(async () => mounted.render(React.createElement(ProjectCard, { project: fixture })));
+  const card = document.querySelector('.proj-card');
+  assert.equal(card.firstElementChild.style.aspectRatio, '16 / 10', 'photo is the first card region');
+  assert.equal(card.querySelector('h3').nextElementSibling.textContent, fixture.neighborhood.name);
+  assert.equal(card.querySelectorAll('[data-project-neighborhood]').length, 1);
+  assert.deepEqual([...card.querySelectorAll('dt')].map(node => node.textContent), ['Location', 'Material', 'Color']);
+  assert.deepEqual([...card.querySelectorAll('dd')].map(node => node.textContent), ['Fixture City', 'Metal', 'Silver']);
+  assert.equal(card.querySelectorAll('a').length, 0, 'facts and neighborhood do not nest links inside the linked card');
+  assert.equal(card.closest('a').getAttribute('href'), '/project/alpha-project');
+  await act(async () => mounted.render(React.createElement(ProjectCard, { project: { ...fixture, neighborhood: null, roofColors: [] } })));
+  assert.equal(document.querySelector('[data-project-neighborhood]'), null, 'unknown neighborhood has no label or placeholder');
+  assert.deepEqual([...document.querySelectorAll('dt')].map(node => node.textContent), ['Location', 'Material']);
+});
+
+test('project detail uses one facts block, its hero subtitle, and only the flat project gallery', async () => {
+  const ProjectPage = loadSource(resolve(root, 'app/(site)/project/[slug]/page.tsx')).default;
+  const { ProjectFacts, ProjectNeighborhood } = loadSource(resolve(root, 'components/dynamic-content/project/ProjectMetadata.tsx'));
+  const elements = (node) => React.isValidElement(node)
+    ? [node, ...React.Children.toArray(node.props.children).flatMap(elements)] : [];
+  const original = project.neighborhood;
+  try {
+    project.neighborhood = { id: 'fixture-neighborhood', name: 'Verified Neighborhood', slug: 'verified' };
+    const tree = elements(await ProjectPage({ params: Promise.resolve({ slug: project.slug }) }));
+    assert.equal(tree.filter(node => node.type === ProjectFacts).length, 1);
+    const hero = tree.find(node => node.type === mocks['@/components/ui/Hero']);
+    assert.equal(hero.props.badges, undefined, 'facts are not duplicated as hero badges');
+    assert.ok(elements(hero.props.metadata).some(node => node.type === ProjectNeighborhood));
+    assert.equal(tree.find(node => node.type === mocks['@/components/dynamic-content/project/ProjectGallery']).props.appearance, 'flat');
+  } finally {
+    project.neighborhood = original;
+  }
+});
+
 test('project inline video waits for a click, keeps page scroll unlocked, and resets for another video', async () => {
   const InlineVideo = loadSource(resolve(root, 'components/dynamic-content/project/ProjectInlineVideo.tsx')).default;
   await act(async () => mounted?.unmount());
@@ -291,6 +333,8 @@ test('project inline video waits for a click, keeps page scroll unlocked, and re
   });
   await act(async () => mounted.render(renderVideo('abcdefghijk')));
   assert.equal(document.querySelector('iframe'), null, 'no player or autoplay before a click');
+  assert.equal(document.querySelector('section > h2').textContent, 'See the finished roof');
+  assert.equal(document.querySelector('section > h2').nextElementSibling.tagName, 'DIV', 'no redundant Drone video label above the preview');
   const bodyStyle = document.body.getAttribute('style');
   await click('Play drone video: Finished roof');
   const player = document.querySelector('iframe');

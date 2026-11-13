@@ -20,6 +20,9 @@ import { getProjectBySlug } from '@/lib/content/projects';
 import { staticImage } from '@/lib/content/static-media';
 import { REPLACEMENT_LANDING_REVIEWS } from '@/lib/landing/reviews';
 import ReviewStarRow from '@/components/reviews-widget/ReviewStarRow';
+import { CONTENT_PREVIEW_MEDIA_CLASS } from '@/components/dynamic-content/card-utils';
+import { ProjectFacts, ProjectNeighborhood } from '@/components/dynamic-content/project/ProjectMetadata';
+import { cn } from '@/lib/utils';
 
 const LANDING_PATH = '/landing/roof-replacement';
 const CTA_LABEL = 'Request My Free Estimate';
@@ -141,10 +144,7 @@ export default async function RoofReplacementLandingPage() {
                 <div className="grid gap-6 md:grid-cols-2">
                   {projects.map((project) => (
                     <Card key={project.slug} className="flex h-full min-w-0 flex-col">
-                      <CardHeader className="px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
-                        <h4 className="text-2xl font-bold leading-tight text-slate-900">{project.title}</h4>
-                      </CardHeader>
-                      <div className="relative aspect-16/10 w-full overflow-hidden bg-blue-200">
+                      <div className={cn(CONTENT_PREVIEW_MEDIA_CLASS, 'aspect-16/10')}>
                         <StaticImage
                           src={project.heroImage!.url}
                           alt={project.heroImage!.altText}
@@ -154,21 +154,28 @@ export default async function RoofReplacementLandingPage() {
                           loading="lazy"
                         />
                       </div>
-                      {project.customerTestimonial?.customerReview && (
-                        <CardContent className="flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
-                          <ReviewStarRow />
-                          <figure className="mt-4">
-                            <blockquote className="whitespace-pre-line text-base italic leading-7 text-slate-600">
-                              &ldquo;{project.customerTestimonial.customerReview}&rdquo;
-                            </blockquote>
-                            {project.customerTestimonial.customerName && (
-                              <figcaption className="mt-4 text-sm font-semibold text-slate-900">
-                                {project.customerTestimonial.customerName}
-                              </figcaption>
-                            )}
-                          </figure>
-                        </CardContent>
-                      )}
+                      <CardHeader className="px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
+                        <h4 className="text-2xl font-bold leading-tight text-slate-900">{project.title}</h4>
+                        <ProjectNeighborhood project={project} />
+                      </CardHeader>
+                      <CardContent className="flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
+                        <ProjectFacts project={project} />
+                        {project.customerTestimonial?.customerReview && (
+                          <div className="mt-6">
+                            <ReviewStarRow />
+                            <figure className="mt-4">
+                              <blockquote className="whitespace-pre-line text-base italic leading-7 text-slate-600">
+                                &ldquo;{project.customerTestimonial.customerReview}&rdquo;
+                              </blockquote>
+                              {project.customerTestimonial.customerName && (
+                                <figcaption className="mt-4 text-sm font-semibold text-slate-900">
+                                  {project.customerTestimonial.customerName}
+                                </figcaption>
+                              )}
+                            </figure>
+                          </div>
+                        )}
+                      </CardContent>
                     </Card>
                   ))}
                 </div>

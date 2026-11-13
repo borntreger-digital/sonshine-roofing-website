@@ -113,18 +113,25 @@ check('a null neighborhood removes its entire label and wrapper', () => {
   assert.equal(doc.querySelectorAll('[data-project-neighborhood]').length, 0);
   assert.doesNotMatch(doc.body.textContent, /Neighborhood:/);
 });
-check('verified project neighborhood renders exactly one label; unpublished video removes its full player', () => {
+check('verified project neighborhood appears once under its linked card title', () => {
   const props = baseProps(); props.projects.local = [project('named', { neighborhood: { id: 'n', name: 'Verified Neighborhood', slug: 'verified' } })];
   const doc = render(Hub, props);
-  assert.equal(doc.querySelector('[data-project-neighborhood]').textContent, 'Neighborhood: Verified Neighborhood');
+  const subtitle = doc.querySelector('[data-project-neighborhood]');
+  assert.equal(doc.querySelectorAll('[data-project-neighborhood]').length, 1);
+  assert.equal(subtitle.textContent, 'Verified Neighborhood');
+  const title = subtitle.closest('a').querySelector('h3');
+  assert.ok(title.parentElement.contains(subtitle));
+  assert.ok(title.compareDocumentPosition(subtitle) & doc.defaultView.Node.DOCUMENT_POSITION_FOLLOWING);
+  assert.equal(subtitle.closest('a').getAttribute('href'), '/project/named');
   assert.equal(doc.querySelectorAll('button[aria-label^="Play video"]').length, 0);
   assert.doesNotMatch(doc.body.textContent, /Drone Video|Tap to watch/);
   assert.ok(doc.querySelector('a[href="/project/named"]'));
 });
-check('published video retains the existing accessible facade and no eager iframe', () => {
+check('location project cards do not duplicate a project video player', () => {
   const props = baseProps(); props.projects.local = [project('with-video', { video: { title: 'Fixture roof video', youtubeId: 'fixture0001', thumbnailUrl: 'https://example.com/video.jpg' } })];
   const doc = render(Hub, props);
-  assert.ok(doc.querySelector('button[aria-label="Play video: Fixture roof video"]'));
+  assert.equal(doc.querySelectorAll('button[aria-label^="Play video"]').length, 0);
+  assert.ok(doc.querySelector('a[href="/project/with-video"]'));
   assert.equal(doc.querySelectorAll('iframe').length, 0);
 });
 check('coverage records need a real name and omit every absent detail', () => {
@@ -159,25 +166,21 @@ check('neighborhood photos render separately from optional coverage maps', () =>
   assert.equal(doc.querySelector('img').alt, 'Synthetic neighborhood entrance sign');
   assert.equal(doc.querySelectorAll('figcaption').length, 0);
 });
-check('attributed neighborhood photos display escaped credit, source and license beneath the correct image', () => {
-  const attribution = { title: 'Synthetic <em>photo</em>', creator: 'Fixture photographer', creatorUrl: 'https://example.com/creator',
-    sourceUrl: 'https://example.com/source', license: 'Fixture license', licenseUrl: 'https://example.com/license', changes: 'Resized and converted to WebP; no crop.' };
+check('neighborhood photos fill the top slot without rendering provenance metadata', () => {
+  const attribution = { title: 'Synthetic photo credit', creator: 'Fixture photographer', creatorUrl: 'https://example.com/creator',
+    sourceUrl: 'https://example.com/source', license: 'Fixture license', licenseUrl: 'https://example.com/license', changes: 'Fixture crop disclosure' };
   const photo = { url: 'https://example.com/photo.webp', altText: 'Synthetic entrance photo', attribution };
+  const description = 'A complete description that remains readable in the neighborhood card.';
   const doc = render(Coverage, { areaId: page.id, locationName: page.name, mapImage: null,
-    neighborhoods: [neighborhood({ image: photo })], projects: [] });
-  const caption = doc.querySelector('figcaption');
-  assert.equal(caption.previousElementSibling.alt, photo.altText);
-  assert.match(caption.textContent, /Synthetic <em>photo<\/em> by Fixture photographer/);
-  assert.match(caption.textContent, /Fixture license\. Resized and converted to WebP; no crop\./);
-  assert.equal(caption.querySelector('em'), null);
-  assert.deepEqual([...caption.querySelectorAll('a')].map(node => node.href), [attribution.sourceUrl, attribution.creatorUrl, attribution.licenseUrl]);
-  assert.ok([...caption.querySelectorAll('a')].every(node => node.rel.includes('noopener') && node.rel.includes('noreferrer')));
-  assert.ok(caption.querySelector('a[href="https://example.com/license"]').rel.includes('license'));
-  const withoutOptional = render(Coverage, { areaId: page.id, locationName: page.name, mapImage: null,
-    neighborhoods: [neighborhood({ image: { ...photo, attribution: { ...attribution, creatorUrl: null, changes: null } } })], projects: [] });
-  assert.equal(withoutOptional.querySelectorAll('figcaption a').length, 2);
-  assert.match(withoutOptional.querySelector('figcaption').textContent, /by Fixture photographer/);
-  assert.doesNotMatch(withoutOptional.querySelector('figcaption').textContent, /Resized|undefined|null/);
+    neighborhoods: [neighborhood({ image: photo, description })], projects: [] });
+  const card = doc.querySelector('[data-neighborhood-card]');
+  const frame = card.querySelector('[data-neighborhood-photo]');
+  assert.equal(card.firstElementChild, frame);
+  assert.equal(frame.querySelector('img').alt, photo.altText);
+  assert.ok(frame.nextElementSibling.querySelector('h3'));
+  assert.equal(card.querySelector('[data-neighborhood-description]').textContent, description);
+  assert.equal(card.querySelectorAll('figcaption, a').length, 0);
+  assert.doesNotMatch(card.textContent, /Synthetic photo credit|Fixture photographer|Fixture license|Fixture crop disclosure/);
 });
 check('section order and regional labels remain accurate and no business rating markup is emitted', () => {
   const props = baseProps();

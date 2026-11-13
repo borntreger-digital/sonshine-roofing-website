@@ -345,7 +345,7 @@ const PROGRAM_DETAIL_ANCHORS: Record<FinancingProgramKey, string> = {
 
 // ============ STYLE CONSTANTS ====================== //
 const pillBase =
-  'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold tracking-tight shadow-xs';
+  'inline-flex items-center rounded-md px-3 py-1 text-xs font-semibold tracking-tight shadow-xs';
 const successPillClass = `${pillBase} bg-emerald-500 text-white`;
 const gradientShell =
   'rounded-3xl bg-linear-to-r from-(--brand-blue) to-(--brand-cyan) p-[1.5px] shadow-xl shadow-[rgba(0,69,215,0.12)]';
@@ -1610,7 +1610,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
                   <button
                     key={value}
                     type="button"
-                    className={`rounded-full border px-3 py-1 shadow-xs transition focus:outline-hidden focus:ring-2 focus:ring-offset-2 ${className}`}
+                    className={`rounded-md border px-3 py-1 shadow-xs transition focus:outline-hidden focus:ring-2 focus:ring-offset-2 ${className}`}
                     style={
                       isCustom && selected && customPulse
                         ? { animation: 'chip-pop 0.85s ease-out' }

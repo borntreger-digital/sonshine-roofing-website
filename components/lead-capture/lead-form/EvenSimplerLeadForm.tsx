@@ -592,7 +592,7 @@ export default function EvenSimplerLeadForm({
                         </div>
                         <div className="flex items-center justify-between gap-3">
                           <p className="font-semibold text-slate-900">{label}</p>
-                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-inner">
+                          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white shadow-inner">
                             <Check
                               className={cn(
                                 'h-4 w-4',

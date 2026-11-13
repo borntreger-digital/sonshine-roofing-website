@@ -49,7 +49,7 @@ export default function NotFound() {
   return (
     <Section>
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-10 text-center">
-        <div className="inline-flex items-center gap-3 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-(--brand-blue) shadow-xs ring-1 ring-slate-200">
+        <div className="inline-flex items-center gap-3 rounded-md bg-white/80 px-4 py-2 text-sm font-semibold text-(--brand-blue) shadow-xs ring-1 ring-slate-200">
           <Sparkles className="h-4 w-4 text-(--brand-blue)" aria-hidden="true" />
           Page Not Found
         </div>
@@ -72,7 +72,7 @@ export default function NotFound() {
               data-icon-affordance="right"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-(--brand-blue)/10 text-(--brand-blue)">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--brand-blue)/10 text-(--brand-blue)">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <h2 className="not-prose font-display text-[1.5rem] font-bold leading-none group-hover:text-(--brand-blue)">

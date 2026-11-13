@@ -142,11 +142,11 @@ export default async function Page() {
             <Suspense
               fallback={
                 <div className="mx-auto w-full rounded-3xl border border-blue-100 bg-white p-6 shadow-xs">
-                  <div className="h-6 w-32 animate-pulse rounded-full bg-slate-200" />
+                  <div className="h-6 w-32 animate-pulse rounded-md bg-slate-200" />
                   <div className="mt-4 space-y-3">
-                    <div className="h-4 animate-pulse rounded-full bg-slate-200" />
-                    <div className="h-4 animate-pulse rounded-full bg-slate-200" />
-                    <div className="h-4 animate-pulse rounded-full bg-slate-200" />
+                    <div className="h-4 animate-pulse rounded-md bg-slate-200" />
+                    <div className="h-4 animate-pulse rounded-md bg-slate-200" />
+                    <div className="h-4 animate-pulse rounded-md bg-slate-200" />
                   </div>
                 </div>
               }

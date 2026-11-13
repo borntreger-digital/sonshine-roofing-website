@@ -73,6 +73,30 @@ async function mount(component, props = {}) {
 }
 const click = async (node) => { assert.ok(node); await act(async () => node.dispatchEvent(new MouseEvent('click',{bubbles:true}))); };
 try {
+  const { Card, CardHeader, CardTitle } = load('components/ui/card.tsx');
+  const cardHeading = React.createElement(CardHeader, null, React.createElement(CardTitle, null, 'Fixture card'));
+  const cardRef = React.createRef();
+  await mount(() => React.createElement('div', { className: 'group' },
+    React.createElement(Card, { ref: cardRef, 'data-fixture-card': '' }, cardHeading)));
+  const staticCard = document.querySelector('[data-fixture-card]');
+  assert.equal(cardRef.current, staticCard, 'Card forwards its DOM ref');
+  assert.doesNotMatch(staticCard.className, /hover:|focus-visible:|transition|transform|group\//, 'A static card has no inherited interaction styling');
+  assert.equal(staticCard.getAttribute('tabindex'), null, 'Static cards do not add a keyboard stop');
+  assert.equal(staticCard.getAttribute('role'), null, 'Static cards do not claim button or link semantics');
+  assert.equal(staticCard.querySelector('h3').textContent, 'Fixture card');
+  let cardActivations = 0;
+  await mount(() => React.createElement('a', { href: '#fixture', className: 'group', onClick: event => { event.preventDefault(); cardActivations++; } },
+    React.createElement(Card, { interactive: true, 'data-fixture-card': '' }, cardHeading)));
+  const interactiveCard = document.querySelector('[data-fixture-card]');
+  assert.ok(interactiveCard.classList.contains('group/interactive-card'), 'Only an opted-in card enables its scoped header motion');
+  assert.match(interactiveCard.className, /group-focus-visible:outline/, 'Linked cards retain visible keyboard feedback');
+  assert.equal(interactiveCard.hasAttribute('interactive'), false, 'The styling option does not leak to the DOM');
+  await act(async () => document.querySelector('a').focus());
+  assert.equal(document.activeElement, document.querySelector('a'), 'The surrounding link keeps keyboard ownership');
+  await click(interactiveCard.querySelector('h3'));
+  assert.equal(cardActivations, 1, 'Clicking card content activates its real link once');
+  await clean();
+
   process.env.NEXT_PUBLIC_GTM_ID='GTM-SYNTHETIC';
   process.env.NEXT_PUBLIC_META_PIXEL_ID='0000000000';
   process.env.NEXT_PUBLIC_BASE_URL='https://example.test';

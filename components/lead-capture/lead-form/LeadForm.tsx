@@ -54,7 +54,7 @@ const HERO_SMS_CLASS_NAMES = {
   label: 'text-sm font-semibold leading-6 text-slate-300',
   options: 'mt-4 flex flex-wrap gap-3',
   optionLabel:
-    'inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/4 px-4 py-2.5 text-slate-300 focus-within:ring-2 focus-within:ring-(--brand-orange)',
+    'inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/4 px-4 py-2.5 text-slate-300 focus-within:ring-2 focus-within:ring-(--brand-orange)',
   optionLabelSelected: 'border-slate-200 bg-(--brand-orange) text-slate-200',
   radio: 'sr-only',
   optionText: 'text-sm font-semibold leading-none',

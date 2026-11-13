@@ -73,9 +73,10 @@ export default async function ReviewsCarousel({
           </p>
         ) : null}
         {showBusinessProfileLink ? (
-          <p className="text-base font-semibold text-slate-700 transition hover:text-(--brand-blue)">
+          <p className="text-base font-semibold text-slate-700">
             <SmartLink href={resolvedGbpUrl} target="_blank" rel="noopener noreferrer nofollow"
-              aria-label="See All Google Reviews" data-icon-affordance="up-right">
+              aria-label="See All Google Reviews" data-icon-affordance="up-right"
+              className="transition-colors hover:text-(--brand-blue)">
               See All Google Reviews
               <ArrowUpRight className="icon-affordance ml-2 inline h-3 w-3" />
             </SmartLink>

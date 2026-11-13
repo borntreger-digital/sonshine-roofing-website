@@ -340,8 +340,6 @@
 ----------------------------------------*/
 @layer base {
   :root {
-    --radius: 1rem;
-
     /* Brand palette */
     --brand-blue:  #0045d7; /* primary */
     --brand-cyan:  #00e3fe; /* gradient partner */
@@ -501,7 +499,6 @@
 
   /* Cards */
   .card { @apply rounded-2xl border border-blue-200 bg-amber-50/50; box-shadow: var(--elev-1); }
-  .card:hover { box-shadow: var(--elev-2); }
 
   /* Badges */
   .badge { @apply inline-block border border-(--brand-orange) rounded-md bg-slate-100 px-2.5 py-1 text-xs sm:text-sm text-slate-700; }
@@ -711,7 +708,7 @@
     display: block;
     width: 2.75rem;
     height: 2.75rem;
-    border-radius: 9999px;
+    @apply rounded-xl;
     background: rgb(255 255 255 / 0.9);
     box-shadow: 0 8px 24px rgb(15 23 42 / 0.3);
     transition: transform 200ms ease-out;

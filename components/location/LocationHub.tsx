@@ -1,22 +1,19 @@
-import Image from 'next/image';
 import { CalendarDays, HandCoins, ShieldCheck } from 'lucide-react';
 import LandingHero from '@/components/marketing/landing-page/LandingHero';
 import InitialNavigation from '@/components/lead-capture/lead-form/InitialNavigation';
 import ProjectArchiveCard from '@/components/dynamic-content/project/ProjectArchiveCard';
-import { CONTENT_PREVIEW_IMAGE_SIZES } from '@/components/dynamic-content/card-utils';
-import ProjectVideo from '@/components/dynamic-content/project/ProjectVideo';
+import { CONTENT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES } from '@/components/dynamic-content/card-utils';
 import FaqInlineListClient from '@/components/dynamic-content/faq/FaqInlineListClient';
 import ServiceAreaSection from '@/components/location/ServiceAreaSection';
+import { PartnershipGrid } from '@/components/location/LocalPartnershipsSection';
 import LocationSectionHeading from '@/components/location/LocationSectionHeading';
 import { FEATURE_LIST_CLASS, FEATURE_PILL_CLASS } from '@/components/location/sectionStyles';
 import LocationReviewsCarousel from '@/components/reviews-widget/LocationReviewsCarousel';
-import SmartLink from '@/components/utils/SmartLink';
 import { cn } from '@/lib/utils';
 import { allura } from '@/lib/ui/allura-font';
 import { JsonLd } from '@/lib/seo/json-ld';
 import { faqSchema } from '@/lib/seo/schema';
 import { sanitizeFaqHtml } from '@/lib/content/directus-faq-html';
-import { sanitizeSponsorHtml } from '@/lib/content/directus-sponsor-html';
 import type { DirectusFaq } from '@/lib/content/directus-faqs';
 import type {
   LocationGroups,
@@ -47,22 +44,9 @@ type SectionCopy = {
 function ProjectCards({ projects }: { projects: LocationProject[] }) {
   if (!projects.length) return null;
   return (
-    <div className="grid items-start gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div className={CONTENT_PREVIEW_GRID_CLASS}>
       {projects.map(({ id, project }) => (
-        <article key={id} className="space-y-4">
-          <ProjectArchiveCard project={project} imageSizes={CONTENT_PREVIEW_IMAGE_SIZES} />
-          {project.neighborhood?.name.trim() ? (
-            <p className="px-2 text-sm text-slate-600" data-project-neighborhood>
-              <span className="font-semibold">Neighborhood: </span>{project.neighborhood.name}
-            </p>
-          ) : null}
-          {project.video ? (
-            <div className="px-2">
-              <ProjectVideo title={project.video.title} videoId={project.video.youtubeId}
-                posterUrl={project.video.thumbnailUrl} posterAlt={project.video.title} />
-            </div>
-          ) : null}
-        </article>
+        <ProjectArchiveCard key={id} project={project} imageSizes={CONTENT_PREVIEW_IMAGE_SIZES} />
       ))}
     </div>
   );
@@ -92,28 +76,7 @@ function SponsorGroup({ heading, highlightText, description, sponsors }: Section
   return (
     <section className="space-y-8" aria-label={heading}>
       <LocationSectionHeading heading={heading} highlightText={highlightText} description={description} />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {sponsors.map(({ id, feature, areaNames }) => (
-          <article key={id} className="space-y-4 rounded-3xl border border-blue-200 bg-white p-6">
-            {feature.featuredImage ? (
-              <Image src={feature.featuredImage.url} alt={feature.featuredImage.altText || ''}
-                width={96} height={96} sizes="96px" className="h-24 w-24 object-contain" />
-            ) : null}
-            <h3 className="text-2xl">{feature.title}</h3>
-            <p className="text-sm text-slate-600">{Array.from(new Set(areaNames)).join(', ')}</p>
-            {feature.contentHtml ? (
-              <div className="space-y-3 text-slate-600" dangerouslySetInnerHTML={{ __html: sanitizeSponsorHtml(feature.contentHtml) }} />
-            ) : null}
-            {feature.links && (feature.links.websiteUrl || feature.links.facebookUrl || feature.links.instagramUrl) ? (
-              <ul className="flex flex-wrap gap-4 text-sm font-semibold text-brand-blue">
-                {feature.links.websiteUrl ? <li><SmartLink href={feature.links.websiteUrl}>Website</SmartLink></li> : null}
-                {feature.links.facebookUrl ? <li><SmartLink href={feature.links.facebookUrl}>Facebook</SmartLink></li> : null}
-                {feature.links.instagramUrl ? <li><SmartLink href={feature.links.instagramUrl}>Instagram</SmartLink></li> : null}
-              </ul>
-            ) : null}
-          </article>
-        ))}
-      </div>
+      <PartnershipGrid items={sponsors} />
     </section>
   );
 }
@@ -128,7 +91,7 @@ export default function LocationHub({
     <>
       <LandingHero scriptFontClassName={allura.variable} title={page.title}
         highlightText={['BEST', 'Over 39 Years']} description={page.introduction} />
-      <div data-location-hub className="mx-auto flex max-w-[1280px] flex-col gap-20 px-4 py-14 md:gap-24 md:py-20">
+      <div data-location-hub className="mx-auto flex max-w-7xl flex-col gap-20 px-4 py-14 md:gap-24 md:py-20">
         <InitialNavigation heading={`Roofing Services in ${page.name}`} headingId="location-services"
           highlightText={page.name} embedded trustPills={(
             <div className={cn(FEATURE_LIST_CLASS, 'mt-6 pb-0')}>

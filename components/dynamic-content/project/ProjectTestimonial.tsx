@@ -44,7 +44,6 @@ export default function ProjectTestimonial({
     <section
       className={cn(
         "rounded-3xl border border-blue-200 bg-amber-50/50 p-6 shadow-md",
-        "transition hover:shadow-lg",
         className
       )}
     >

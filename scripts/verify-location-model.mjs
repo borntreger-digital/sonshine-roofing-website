@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, symlink, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { setupLocationSchema } from './setup-location-schema.mjs';
+import { setupLocationSchema, configureNeighborhoodDescription } from './setup-location-schema.mjs';
 import { locationSchema, locationRelations, publicProjectFields, publicLocationFields } from './location-model/schema.mjs';
 import { planPermissions, applyPermissionPlan, assertReaderProjection, rowScope, prepareRecoveryDirectory, readPermissions } from './location-model/permissions.mjs';
 
@@ -59,6 +59,55 @@ mapRelation.schema.on_delete = 'RESTRICT';
 assert.ok(!Object.keys(locationSchema).includes('location_landing_pages'));
 assert.ok(!Object.keys(locationSchema).includes('website_pages'));
 assert.ok(!publicProjectFields.some(name => ['job_id', 'zip'].includes(name)));
+
+// Description-only mode must not create fields or change database constraints,
+// existing editor options, or unrelated validation rules.
+const description = locationSchema.roofing_neighborhoods.find(row => row.field === 'description');
+const lengthRule = description.meta.validation._or.find(rule => rule.description?._regex).description._regex;
+assert.equal(description.meta.options.softLength, 220);
+assert.deepEqual(description.meta.validation._or[0], { description: { _null: true } });
+for (const value of ['', 'x'.repeat(220), 'x'.repeat(219) + '\n']) assert.ok(new RegExp(lengthRule).test(value));
+for (const value of ['x'.repeat(221), 'x'.repeat(220) + '\n', 'x'.repeat(220) + '\r\n']) assert.ok(!new RegExp(lengthRule).test(value));
+const originalDescription = {
+  field: 'description', type: 'text', schema: { is_nullable: true, max_length: null },
+  meta: { interface: 'input-multiline', required: false, options: { trim: true }, note: 'Keep this editor guidance.',
+    validation: { description: { _ncontains: '<script' } }, validation_message: 'Plain text only.' },
+};
+let descriptionState = structuredClone(originalDescription);
+let descriptionWrites = 0;
+let neighborhoodTenants = [{ client: { slug: 'sonshine-roofing' } }];
+const descriptionRequest = async (route, method = 'GET', body) => {
+  if (route.startsWith('items/')) {
+    assert.equal(route, 'items/roofing_neighborhoods?fields=client.slug&limit=-1');
+    assert.equal(method, 'GET'); return neighborhoodTenants;
+  }
+  assert.equal(route, 'fields/roofing_neighborhoods/description');
+  if (method === 'PATCH') {
+    descriptionWrites++;
+    assert.deepEqual(Object.keys(body), ['meta']);
+    descriptionState.meta = { ...descriptionState.meta, ...body.meta };
+  } else assert.equal(method, 'GET');
+  return structuredClone(descriptionState);
+};
+assert.equal((await configureNeighborhoodDescription(descriptionRequest)).changes.length, 4);
+assert.equal(descriptionWrites, 0);
+await assert.rejects(configureNeighborhoodDescription(descriptionRequest, { verifyOnly: true }), /not configured/u);
+await configureNeighborhoodDescription(descriptionRequest, { apply: true });
+assert.equal(descriptionWrites, 1);
+assert.equal(descriptionState.meta.options.trim, true);
+assert.deepEqual(descriptionState.meta.validation._and[0], originalDescription.meta.validation);
+assert.equal(descriptionState.meta.required, false);
+assert.equal(descriptionState.meta.interface, 'input-multiline');
+assert.ok(descriptionState.meta.note.startsWith(originalDescription.meta.note));
+assert.ok(descriptionState.meta.validation_message.startsWith(originalDescription.meta.validation_message));
+assert.deepEqual(descriptionState.schema, originalDescription.schema);
+assert.equal((await configureNeighborhoodDescription(descriptionRequest, { verifyOnly: true })).changes.length, 0);
+assert.equal((await configureNeighborhoodDescription(descriptionRequest, { apply: true })).changes.length, 0);
+assert.equal(descriptionWrites, 1, 'Description mode must be idempotent.');
+descriptionState = structuredClone(originalDescription);
+neighborhoodTenants.push({ client: { slug: 'another-client' } });
+await assert.rejects(configureNeighborhoodDescription(descriptionRequest, { apply: true }), /SonShine-only/u);
+assert.equal(descriptionWrites, 1, 'Never impose the collection-wide limit on another tenant.');
 
 const availableFields = Object.fromEntries(Object.entries(publicLocationFields).map(([name, fields]) => [name, fields]));
 const initial = [{ id: 'synthetic-permission-1', policy: 'synthetic-reader', collection: 'roofing_projects', action: 'read', fields: ['*'], permissions: null }];

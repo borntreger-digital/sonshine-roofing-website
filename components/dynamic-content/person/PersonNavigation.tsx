@@ -32,7 +32,7 @@ function NeighborCard({ person, next }: { person: PersonNavItem; next: boolean }
       )}
       data-icon-affordance={next ? 'right' : 'left'}
     >
-      <Card className={cn('flex h-full', next && 'text-right')}>
+      <Card interactive className={cn('flex h-full', next && 'text-right')}>
         {!next && portrait}
         <div className="flex min-w-0 flex-1 flex-col">
           <CardHeader className="grow px-4 py-4 sm:px-5">

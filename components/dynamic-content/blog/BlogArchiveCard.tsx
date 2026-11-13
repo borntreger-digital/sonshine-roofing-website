@@ -28,7 +28,7 @@ type Props = {
 };
 
 const pillClass =
-  "inline-flex min-w-0 max-w-full items-center rounded-full font-semibold tracking-tight bg-blue-100 px-2.5 py-1 text-[0.75rem] sm:text-xs text-slate-700 sm:px-3 sm:py-1 sm:text-sm";
+  "inline-flex min-w-0 max-w-full items-center rounded-md font-semibold tracking-tight bg-blue-100 px-2.5 py-1 text-[0.75rem] sm:text-xs text-slate-700 sm:px-3 sm:py-1 sm:text-sm";
 const pillLabelClass = "block max-w-full truncate";
 
 export default function BlogArchiveCard({ post, style, className, imageSizes = "(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" }: Props) {
@@ -48,8 +48,9 @@ export default function BlogArchiveCard({ post, style, className, imageSizes = "
         data-icon-affordance="right"
       >
         <Card
+          interactive
           className={cn(
-            "flex h-full min-w-0 flex-col overflow-hidden transition hover:shadow-lg",
+            "flex h-full min-w-0 flex-col overflow-hidden",
             BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS,
           )}
         >
@@ -69,7 +70,7 @@ export default function BlogArchiveCard({ post, style, className, imageSizes = "
                 src={post.featuredImage.url}
                 alt={post.featuredImage.altText ?? post.title}
                 sizes={imageSizes}
-                className="object-cover transition-transform duration-300 hover:scale-[1.06]"
+                className="object-cover"
               />
             ) : (
               <div className="absolute inset-0 bg-linear-to-r from-[#0045d7] to-[#00e3fe]" />

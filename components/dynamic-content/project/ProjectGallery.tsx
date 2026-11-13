@@ -18,14 +18,15 @@ type GalleryImage = ProjectImage & { staticMedia?: PublicImage };
 type ProjectGalleryProps = {
   images: GalleryImage[];
   projectTitle: string;
+  appearance?: "card" | "flat";
 };
 
 const imageClassBase =
-  "select-none object-cover object-center hover:scale-[1.06] transition-all duration-500 ease-out";
+  "select-none object-cover object-center motion-safe:group-hover:scale-[1.06] motion-safe:transition duration-500 ease-out";
 
 const containerBase = "relative overflow-hidden rounded-xl shadow-xl border border-blue-200 bg-slate-100";
 
-export default function ProjectGallery({ images, projectTitle }: ProjectGalleryProps) {
+export default function ProjectGallery({ images, projectTitle, appearance = "card" }: ProjectGalleryProps) {
   const mounted = useHydrated();
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
@@ -252,7 +253,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
   if (!hasImages) return null;
 
   return (
-    <section aria-label="Project Photos" className="p-4 sm:p-6 bg-white rounded-3xl shadow-md border border-blue-200">
+    <section aria-label="Project Photos" className={appearance === "card" ? "p-4 sm:p-6 bg-white rounded-3xl shadow-md border border-blue-200" : "min-w-0"}>
       <h2 className="text-xl text-center md:text-left md:text-3xl">Photo Gallery</h2>
       <p className="text-xs flex items-center gap-2 justify-center md:justify-start md:text-sm text-slate-500" aria-live="off">
         <span>Tap to expand an image</span>
@@ -315,7 +316,7 @@ function GalleryImage({ image, projectTitle, onOpen }: GalleryImageProps) {
         className="pointer-events-none absolute inset-0 grid place-items-center bg-linear-to-t from-black/50 via-black/20 to-transparent opacity-0 transition duration-200 ease-out group-active:opacity-100 group-focus-visible:opacity-100 group-hover:opacity-100"
         aria-hidden="true"
       >
-        <span className="flex items-center justify-center rounded-full bg-white/90 p-3 text-slate-900 shadow-xs transition group-active:scale-105 group-hover:scale-105">
+        <span className="flex items-center justify-center rounded-xl bg-white/90 p-3 text-slate-900 shadow-xs transition group-active:scale-105 group-hover:scale-105">
           <Expand className="h-5 w-5" />
         </span>
       </span>
@@ -367,7 +368,7 @@ function NavButton({ ariaLabel, onClick, children, className }: NavButtonProps) 
         e.stopPropagation();
         onClick();
       }}
-      className={`inline-flex items-center justify-center rounded-full bg-white/40 hover:bg-white/80 p-1 backdrop-blur-xs sm:p-2 md:p-3 lg:p-4 text-blue-200 border border-blue-100 hover:text-blue-500 shadow-lg transition-colors hover:bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue) focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${className ?? ""}`}
+      className={`inline-flex items-center justify-center rounded-xl bg-white/40 p-1 backdrop-blur-xs sm:p-2 md:p-3 lg:p-4 text-blue-200 border border-blue-100 hover:text-blue-500 shadow-lg transition-colors hover:bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue) focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${className ?? ""}`}
     >
       {children}
     </button>
