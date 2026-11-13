@@ -4,7 +4,6 @@ import LandingHero from '@/components/marketing/landing-page/LandingHero';
 import InitialNavigation from '@/components/lead-capture/lead-form/InitialNavigation';
 import ProjectArchiveCard from '@/components/dynamic-content/project/ProjectArchiveCard';
 import { CONTENT_PREVIEW_IMAGE_SIZES } from '@/components/dynamic-content/card-utils';
-import ProjectVideo from '@/components/dynamic-content/project/ProjectVideo';
 import FaqInlineListClient from '@/components/dynamic-content/faq/FaqInlineListClient';
 import ServiceAreaSection from '@/components/location/ServiceAreaSection';
 import LocationSectionHeading from '@/components/location/LocationSectionHeading';
@@ -55,12 +54,6 @@ function ProjectCards({ projects }: { projects: LocationProject[] }) {
             <p className="px-2 text-sm text-slate-600" data-project-neighborhood>
               <span className="font-semibold">Neighborhood: </span>{project.neighborhood.name}
             </p>
-          ) : null}
-          {project.video ? (
-            <div className="px-2">
-              <ProjectVideo title={project.video.title} videoId={project.video.youtubeId}
-                posterUrl={project.video.thumbnailUrl} posterAlt={project.video.title} />
-            </div>
           ) : null}
         </article>
       ))}
@@ -128,7 +121,7 @@ export default function LocationHub({
     <>
       <LandingHero scriptFontClassName={allura.variable} title={page.title}
         highlightText={['BEST', 'Over 39 Years']} description={page.introduction} />
-      <div data-location-hub className="mx-auto flex max-w-[1280px] flex-col gap-20 px-4 py-14 md:gap-24 md:py-20">
+      <div data-location-hub className="mx-auto flex max-w-7xl flex-col gap-20 px-4 py-14 md:gap-24 md:py-20">
         <InitialNavigation heading={`Roofing Services in ${page.name}`} headingId="location-services"
           highlightText={page.name} embedded trustPills={(
             <div className={cn(FEATURE_LIST_CLASS, 'mt-6 pb-0')}>
