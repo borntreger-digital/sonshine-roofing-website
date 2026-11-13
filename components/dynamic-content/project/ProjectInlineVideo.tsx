@@ -28,7 +28,7 @@ export default function ProjectInlineVideo({ title, videoId, posterUrl, posterAl
         <span className="shrink-0 text-xs text-slate-500">Drone video</span>
       </div>
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="relative aspect-video min-h-[200px] bg-slate-950">
+        <div className="relative aspect-video min-h-[200px] w-full min-w-0 bg-slate-950">
           {playing ? (
             <iframe
               ref={playerRef}
