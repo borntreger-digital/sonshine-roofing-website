@@ -80,9 +80,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-// Extract YouTube ID from various URL formats
 const Badge = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-slate-700">
+  <span className="inline-block px-2 py-1 text-base font-semibold rounded-md bg-blue-100 text-slate-700">
     {children}
   </span>
 );
@@ -119,7 +118,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     ...(project.materialTypes ?? []).map((t) => ({ label: t.name })),
     ...(project.roofColors ?? []).map((t) => ({ label: t.name })),
     ...(project.serviceAreas ?? []).map((t) => ({ label: t.name })),
-    { label: serviceLabel },
   ].filter((badge) => badge.label);
   const hasAnyBadges = heroBadges.length > 0;
 

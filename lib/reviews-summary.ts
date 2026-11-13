@@ -4,5 +4,5 @@
  */
 export const GOOGLE_REVIEW_SUMMARY = {
   rating: 4.9,
-  reviewCount: 294,
+  reviewCount: 296,
 } as const;
