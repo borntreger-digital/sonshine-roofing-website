@@ -40,7 +40,7 @@ const REVIEW_SMARTLINK_ARROWUPRIGHT_STYLES =
   'icon-affordance text-(--brand-blue) absolute h-4 w-4 top-0 right-0';
 const REVIEW_LINK_TITLE_BAR = 'mb-2 flex flex-col px-2 justify-start';
 const LOGO_STYLES =
-  'h-8 w-8 rounded-full border border-blue-100 bg-white object-contain p-1 shadow-xs';
+  'h-8 w-8 rounded-md border border-blue-100 bg-white object-contain p-1 shadow-xs';
 const TITLE_BASE = 'mx-2 text-lg font-semibold text-slate-900';
 const TITLE_ACCENT = 'text-(--brand-orange)';
 const TITLE_ACCENT_GOOGLE = 'text-blue-600';

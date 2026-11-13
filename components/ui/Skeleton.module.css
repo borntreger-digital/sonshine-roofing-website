@@ -1,35 +1,37 @@
-.skeleton {
-  position: relative;
-  overflow: hidden;
-  display: block;
-  width: 100%;
-  height: 1rem;
-  border-radius: var(--skeleton-radius, 0.5rem);
-  background: var(--skeleton-base, rgba(0, 0, 0, 0.06));
-}
-
-@media (prefers-color-scheme: dark) {
+@layer components {
   .skeleton {
-    background: var(--skeleton-base, rgba(255, 255, 255, 0.08));
+    position: relative;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    height: 1rem;
+    border-radius: var(--skeleton-radius, 0.5rem);
+    background: var(--skeleton-base, rgba(0, 0, 0, 0.06));
   }
-}
 
-.shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    var(--skeleton-highlight, rgba(255, 255, 255, 0.35)),
-    transparent
-  );
-  animation: ss-shimmer 1.25s ease-in-out infinite;
-}
+  @media (prefers-color-scheme: dark) {
+    .skeleton {
+      background: var(--skeleton-base, rgba(255, 255, 255, 0.08));
+    }
+  }
 
-@keyframes ss-shimmer {
-  100% {
-    transform: translateX(100%);
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      var(--skeleton-highlight, rgba(255, 255, 255, 0.35)),
+      transparent
+    );
+    animation: ss-shimmer 1.25s ease-in-out infinite;
+  }
+
+  @keyframes ss-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
   }
 }

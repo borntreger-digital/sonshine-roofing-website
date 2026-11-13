@@ -21,7 +21,7 @@ export default function PersonGrid({ people }: { people: Person[] }) {
                 className="group block h-full rounded-2xl focus-visible:outline-hidden"
                 data-icon-affordance="right"
               >
-                <Card className="flex h-full flex-col overflow-hidden hover:shadow-lg transition">
+                <Card interactive className="flex h-full flex-col overflow-hidden">
                   <CardHeader className="shrink-0 px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
                     <CardTitle className="h-6 shrink-0 font-semibold text-2xl leading-6 lg:h-12 min-[75rem]:h-6">{p.title}</CardTitle>
                     <p className="mt-1 h-12 shrink-0 text-slate-700 leading-6 lg:h-18 min-[75rem]:h-12">{p.positionTitle}</p>
@@ -33,7 +33,7 @@ export default function PersonGrid({ people }: { people: Person[] }) {
                         src={p.featuredImage.url}
                         alt={p.featuredImage.altText || p.title}
                         ratio="4 / 3"
-                        className="object-cover w-full transition-transform duration-300 hover:scale-[1.06]"
+                        className="object-cover w-full"
                         sizes="(min-width: 1152px) 262px, (min-width: 1024px) calc((100vw - 104px) / 4), (min-width: 768px) calc((100vw - 68px) / 2), (min-width: 640px) calc((100vw - 52px) / 2), calc(100vw - 34px)"
                         priority={false}
                       />

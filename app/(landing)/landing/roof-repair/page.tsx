@@ -162,7 +162,7 @@ export default function RoofRepairLandingPage() {
           ].map(({ title, description }, index) => (
             <li key={title} className="rounded-3xl border border-blue-100 bg-white p-6">
               <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 font-semibold text-(--brand-blue)">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 font-semibold text-(--brand-blue)">
                   {index + 1}
                 </span>
                 <h3 className="text-xl font-semibold text-slate-900">{title}</h3>

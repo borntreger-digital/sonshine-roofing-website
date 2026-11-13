@@ -9,7 +9,7 @@ import SmartLink from '../utils/SmartLink';
 import ReviewAttribution from './ReviewAttribution';
 import type { ReviewsSliderProps } from './types';
 
-const CONTROL_CLASS = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-blue-50 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-default disabled:opacity-40';
+const CONTROL_CLASS = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-blue-50 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-default disabled:opacity-40';
 
 function lockReviewScroll() {
   const body = document.body;
@@ -220,7 +220,7 @@ export default function ReviewsSlider({ reviews, onReady, onError }: ReviewsSlid
           <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby={modalTitleId}
             className="relative mx-auto flex max-h-[85dvh] w-full max-w-[720px] cursor-auto flex-col overflow-hidden rounded-3xl border border-blue-300 bg-white shadow-2xl">
             <button ref={closeBtnRef} type="button" aria-label="Close review" onClick={closeModal}
-              className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full text-red-600 hover:bg-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-brand-blue">
+              className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-xl text-red-600 hover:bg-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-brand-blue">
               <X className="h-6 w-6" aria-hidden="true" />
             </button>
             <div className="border-b border-blue-200 bg-blue-50 px-5 pb-4 pr-16 pt-5">

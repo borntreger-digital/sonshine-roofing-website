@@ -402,7 +402,7 @@ export default function ResourceArchiveClient<Item>({
             });
             searchRef.current?.focus({ preventScroll: true });
           }}
-          className="pointer-events-auto inline-flex min-h-12 items-center gap-2 rounded-full bg-(--brand-blue) px-4 py-2 text-sm font-semibold text-white shadow-lg focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan) focus:ring-offset-2"
+          className="pointer-events-auto inline-flex min-h-12 items-center gap-2 rounded-xl bg-(--brand-blue) px-4 py-2 text-sm font-semibold text-white shadow-lg focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan) focus:ring-offset-2"
         >
           To Filters <ArrowUp className="h-4 w-4" aria-hidden="true" />
         </button>

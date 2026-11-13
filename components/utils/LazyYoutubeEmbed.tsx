@@ -134,7 +134,7 @@ export default function LazyYoutubeEmbed({
             <span className="sr-only">Play {title}</span>
             <span
               aria-hidden="true"
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-black/80"
+              className="flex h-16 w-16 items-center justify-center rounded-xl bg-black/70 text-white transition hover:bg-black/80"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M8 5v14l11-7z" />
