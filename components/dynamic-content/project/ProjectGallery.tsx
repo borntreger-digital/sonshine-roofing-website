@@ -5,13 +5,14 @@ import { useHydrated } from "@/lib/ui/use-hydrated";
 import Image, { type ImageProps } from "next/image";
 import { DirectusImage } from "@/components/media/DirectusImage";
 import type { PublicImage } from "@/lib/content/public-image";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { createPortal } from "react-dom";
-import { ChevronLeft, ChevronRight, Expand } from "lucide-react";
-import ModalCloseButton from "@/components/ui/ModalCloseButton";
+import { ChevronLeft, ChevronRight, Expand, X } from "lucide-react";
 import Skeleton from "@/components/ui/Skeleton";
 import type { ProjectImage } from "@/lib/content/project-types";
-import { PROJECT_GALLERY_DEFAULT_HEIGHT, PROJECT_GALLERY_DEFAULT_WIDTH } from "./galleryConfig";
+import { useGalleryModal } from "./useGalleryModal";
+import { useGalleryGestures } from "./useGalleryGestures";
+import styles from "./ProjectGallery.module.css";
 
 type GalleryImage = ProjectImage & { staticMedia?: PublicImage };
 
@@ -30,14 +31,10 @@ export default function ProjectGallery({ images, projectTitle, appearance = "car
   const mounted = useHydrated();
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
-  const modalRef = React.useRef<HTMLDivElement | null>(null);
-  const closeBtnRef = React.useRef<HTMLButtonElement | null>(null);
   const previouslyFocused = React.useRef<HTMLElement | null>(null);
-  const scrollYRef = React.useRef(0);
 
   const totalImages = images.length;
   const hasImages = totalImages > 0;
-  const isOpen = activeIndex !== null;
   const currentImage = typeof activeIndex === "number" ? images[activeIndex] : null;
 
 
@@ -61,194 +58,21 @@ export default function ProjectGallery({ images, projectTitle, appearance = "car
     });
   }, [totalImages]);
 
-  React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        closeModal();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        goPrev();
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        goNext();
-      } else if (e.key === "Tab" && modalRef.current) {
-        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-        if (!focusables.length) return;
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        const isShift = e.shiftKey;
-        const el = document.activeElement as HTMLElement | null;
-        if (!isShift && el === last) {
-          e.preventDefault();
-          first.focus();
-        } else if (isShift && el === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      }
-    };
-
-    const body = document.body;
-
-    if (isOpen) {
-      // Safari does not focus buttons on pointer click. Preserve the actual opener.
-      previouslyFocused.current ??= document.activeElement as HTMLElement | null;
-      scrollYRef.current = window.scrollY || window.pageYOffset || 0;
-      body.style.position = "fixed";
-      body.style.top = `-${scrollYRef.current}px`;
-      body.style.left = "0";
-      body.style.right = "0";
-      body.style.width = "100%";
-      body.style.overflow = "hidden";
-
-      window.addEventListener("keydown", onKey);
-      setTimeout(() => closeBtnRef.current?.focus(), 0);
-    } else {
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.width = "";
-      body.style.overflow = "";
-
-      window.removeEventListener("keydown", onKey);
-
-      const y = scrollYRef.current || 0;
-      const html = document.documentElement;
-      const prevBehavior = html.style.scrollBehavior;
-      html.style.scrollBehavior = "auto";
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: y, left: 0 });
-        html.style.scrollBehavior = prevBehavior;
-        const el = previouslyFocused.current;
-        if (el) {
-          try {
-            el.focus({ preventScroll: true });
-          } catch {
-            el.focus();
-          }
-        }
-        previouslyFocused.current = null;
-      });
-    }
-
-    return () => {
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.width = "";
-      body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [isOpen, closeModal, goNext, goPrev]);
-
-  const modalComponent =
-    mounted && currentImage
-      ? createPortal(
-          <AnimatePresence>
-            {isOpen ? (
-              <motion.div
-                key="project-gallery-lightbox"
-                className="fixed inset-0 z-1000"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Project photo viewer"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <motion.div
-                  className="absolute inset-0 bg-black/75 backdrop-blur-[1px]"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                />
-
-                <ModalCloseButton
-                  ref={closeBtnRef}
-                  ariaLabel="Close"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeModal();
-                  }}
-                />
-
-                <div
-                  className="absolute inset-0 flex cursor-pointer items-center justify-center p-4"
-                  onClick={(e) => {
-                    if (e.target === e.currentTarget) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      closeModal();
-                    }
-                  }}
-                >
-                  <motion.div
-                    ref={modalRef}
-                    className="relative flex w-full max-w-296 cursor-auto items-center justify-center md:px-12 lg:px-16"
-                    initial={{ opacity: 0, scale: 0.96, y: 8 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      y: 0,
-                      transition: { type: "spring", stiffness: 260, damping: 24 },
-                    }}
-                    exit={{ opacity: 0, scale: 0.98, y: 4, transition: { duration: 0.15 } }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="relative flex w-full max-w-5xl items-center justify-center overflow-hidden rounded-xl bg-slate-950 shadow-xl">
-                      <LightboxImage image={currentImage} projectTitle={projectTitle} />
-
-                      {totalImages > 1 ? (
-                        <>
-                          <NavButton
-                            ariaLabel="Previous photo"
-                            onClick={goPrev}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 md:hidden"
-                          >
-                            <ChevronLeft className="h-6 w-6" aria-hidden="true" />
-                          </NavButton>
-                          <NavButton
-                            ariaLabel="Next photo"
-                            onClick={goNext}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 md:hidden"
-                          >
-                            <ChevronRight className="h-6 w-6" aria-hidden="true" />
-                          </NavButton>
-                        </>
-                      ) : null}
-                    </div>
-
-                    {totalImages > 1 ? (
-                      <>
-                        <NavButton
-                          ariaLabel="Previous photo"
-                          onClick={goPrev}
-                          className="absolute left-[max(0.5rem,env(safe-area-inset-left))] top-1/2 hidden -translate-y-1/2 md:inline-flex"
-                        >
-                          <ChevronLeft className="h-6 w-6" aria-hidden="true" />
-                        </NavButton>
-                        <NavButton
-                          ariaLabel="Next photo"
-                          onClick={goNext}
-                          className="absolute right-[max(0.5rem,env(safe-area-inset-right))] top-1/2 hidden -translate-y-1/2 md:inline-flex"
-                        >
-                          <ChevronRight className="h-6 w-6" aria-hidden="true" />
-                        </NavButton>
-                      </>
-                    ) : null}
-                  </motion.div>
-                </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>,
-          document.body
-        )
-      : null;
+  const modalComponent = mounted && currentImage && activeIndex !== null
+    ? createPortal(
+        <ProjectImageViewer
+          image={currentImage}
+          projectTitle={projectTitle}
+          activeIndex={activeIndex}
+          totalImages={totalImages}
+          opener={previouslyFocused}
+          onClose={closeModal}
+          onPrevious={goPrev}
+          onNext={goNext}
+        />,
+        document.body,
+      )
+    : null;
 
   if (!hasImages) return null;
 
@@ -324,26 +148,111 @@ function GalleryImage({ image, projectTitle, onOpen }: GalleryImageProps) {
   );
 }
 
-function LightboxImage({ image, projectTitle }: { image: GalleryImage; projectTitle: string }) {
-  const width = image.width ?? PROJECT_GALLERY_DEFAULT_WIDTH;
-  const height = image.height ?? PROJECT_GALLERY_DEFAULT_HEIGHT;
-  const aspectStyle: React.CSSProperties = {
-    aspectRatio: `${width} / ${height}`,
-    maxHeight: "85vh",
-    maxWidth: "95vw",
-  };
+type ProjectImageViewerProps = {
+  image: GalleryImage;
+  projectTitle: string;
+  activeIndex: number;
+  totalImages: number;
+  opener: React.RefObject<HTMLElement | null>;
+  onClose: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
+};
+
+function ProjectImageViewer({ image, projectTitle, activeIndex, totalImages, opener, onClose, onPrevious, onNext }: ProjectImageViewerProps) {
+  const { dialogRef, closeRef } = useGalleryModal(opener, onClose, onPrevious, onNext);
+  const { stageRef, backdropRef } = useGalleryGestures(totalImages > 1, onPrevious, onNext, onClose);
+  const reducedMotion = useReducedMotion();
+  const id = React.useId();
 
   return (
-    <div className="relative w-full max-w-5xl" style={aspectStyle}>
+    <motion.div
+      ref={dialogRef}
+      className={styles.dialog}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`${id}-title`}
+      aria-describedby={`${id}-counter ${id}-instructions`}
+      tabIndex={-1}
+      initial={reducedMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: reducedMotion ? 0 : 0.15 }}
+    >
+      <div ref={backdropRef} className={styles.backdrop}>
+        <div className={styles.panel}>
+          <div className={styles.header}>
+            <h2 id={`${id}-title`} className={styles.title}>Project photo viewer</h2>
+            <button ref={closeRef} type="button" onClick={onClose} aria-label="Close image viewer" className={styles.control}>
+              <X className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+          <p id={`${id}-instructions`} className="sr-only">
+            {totalImages > 1 ? "Use the arrow buttons, Left and Right keys, or swipe on the image to browse. " : ""}
+            Press Escape to close.
+          </p>
+          <div ref={stageRef} className={styles.stage}>
+            <LightboxImage key={image.url} image={image} projectTitle={projectTitle} onRetry={() => closeRef.current?.focus({ preventScroll: true })} />
+          </div>
+          <div className={styles.footer}>
+            <div className={styles.navigation}>
+              {totalImages > 1 ? (
+                <NavButton ariaLabel="Previous image" onClick={onPrevious}>
+                  <ChevronLeft className="h-6 w-6" aria-hidden="true" />
+                </NavButton>
+              ) : null}
+              <span id={`${id}-counter`} className={styles.counter} style={{ minWidth: `max(8.75rem, ${10 + String(totalImages).length * 2}ch)` }} aria-live="polite" aria-atomic="true">
+                Image {activeIndex + 1} of {totalImages}
+              </span>
+              {totalImages > 1 ? (
+                <NavButton ariaLabel="Next image" onClick={onNext}>
+                  <ChevronRight className="h-6 w-6" aria-hidden="true" />
+                </NavButton>
+              ) : null}
+            </div>
+            {totalImages > 1 ? <p className={styles.hint} aria-hidden="true">Swipe to browse</p> : null}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function LightboxImage({ image, projectTitle, onRetry }: { image: GalleryImage; projectTitle: string; onRetry: () => void }) {
+  const [status, setStatus] = React.useState<"loading" | "loaded" | "error">("loading");
+  const [attempt, setAttempt] = React.useState(0);
+  const imageRef = React.useCallback((node: HTMLImageElement | null) => {
+    if (node?.complete && node.naturalWidth > 0) setStatus("loaded");
+  }, []);
+
+  return (
+    <>
       <GalleryPhoto
+        key={attempt}
+        ref={imageRef}
         image={image}
         projectTitle={projectTitle}
         fill
-        sizes="100vw"
-        priority={false}
-        className="h-full w-full object-contain"
+        sizes="(min-width: 1024px) 1024px, 100vw"
+        draggable={false}
+        // vinext supplies an inline cover default for fill images.
+        style={{ objectFit: "contain" }}
+        className={`${styles.image} ${status !== "loaded" ? styles.imagePending : ""}`}
+        onLoad={() => setStatus("loaded")}
+        onError={() => setStatus("error")}
       />
-    </div>
+      {status !== "loaded" ? (
+        <div className={styles.imageStatus}>
+          <span>{status === "error" ? "Image couldn’t load" : "Loading image…"}</span>
+          {status === "error" ? (
+            <button type="button" className={styles.retry} onClick={() => {
+              onRetry();
+              setStatus("loading");
+              setAttempt((value) => value + 1);
+            }}>Retry image</button>
+          ) : null}
+        </div>
+      ) : null}
+    </>
   );
 }
 
@@ -356,19 +265,20 @@ type NavButtonProps = {
   ariaLabel: string;
   onClick: () => void;
   children: React.ReactNode;
-  className?: string;
 };
 
-function NavButton({ ariaLabel, onClick, children, className }: NavButtonProps) {
+function NavButton({ ariaLabel, onClick, children }: NavButtonProps) {
   return (
     <button
       type="button"
       aria-label={ariaLabel}
       onClick={(e) => {
         e.stopPropagation();
+        // Safari does not focus a button after a pointer activation.
+        e.currentTarget.focus({ preventScroll: true });
         onClick();
       }}
-      className={`inline-flex items-center justify-center rounded-lg bg-white/40 p-1 backdrop-blur-xs sm:p-2 md:p-3 lg:p-4 text-blue-200 border border-blue-100 hover:text-blue-500 shadow-lg transition-colors hover:bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue) focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${className ?? ""}`}
+      className={styles.control}
     >
       {children}
     </button>
