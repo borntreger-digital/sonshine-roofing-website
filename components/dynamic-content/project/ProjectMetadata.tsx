@@ -17,9 +17,9 @@ export function ProjectNeighborhood({ project, className }: {
 
 export function ProjectFacts({ project, className }: { project: ProjectMetadata; className?: string }) {
   const facts = [
-    ["Location", termNames(project.serviceAreas)],
     ["Material", termNames(project.materialTypes)],
     ["Color", termNames(project.roofColors)],
+    ["Location", termNames(project.serviceAreas)],
   ].filter(([, value]) => value);
   if (!facts.length) return null;
 
