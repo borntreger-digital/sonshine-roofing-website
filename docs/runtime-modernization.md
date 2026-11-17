@@ -23,17 +23,20 @@ was introduced. Keep strict script enforcement and the existing denied scripts.
 
 ## Application and CSS
 
-Next 16.4.2, React/DOM 19.3.1, Sharp 0.35.5 and sanitize-html 2.18.1 contain the
-reviewed security fixes. Tailwind 4.3.3 uses `@tailwindcss/postcss` and
+Next 16.4.6, React/DOM 19.3.1, Sharp 0.35.5 and sanitize-html 2.18.1 contain the
+reviewed security fixes. The November 17 update pins Next and its ESLint plugin
+to 16.4.6, including the November 3 security fixes from 16.4.5. Its lockfile
+changes are limited to the matching Next packages; no new install scripts are
+introduced. Tailwind 4.3.3 uses `@tailwindcss/postcss` and
 `tailwind-merge` 3.7.0. The explicit `@config` in `app/globals.css` retains the
 existing typed theme, typography sizes and class-based dark mode. The migration
 keeps the former shadow, outline and gradient appearance and handles individual
 transform properties in menu transitions and reduced-motion resets.
 
 `verify:tailwind-css` compiles the real stylesheet and checks theme values,
-prose, forced-colors focus, class merging and the mobile/desktop card heights.
-The last check covers a defect in the automatic upgrader that moved the desktop
-height outside its media query. The three ads pages share this migration.
+prose, forced-colors focus and class merging. Dossier cards now size naturally
+with scoped responsive styles instead of the removed blog minimum-height
+utility. The three ads pages share this migration.
 Tailwind 4's browser baseline is Safari 16.4+, Chrome 111+ and Firefox 128+.
 
 A scoped `postcss-selector-parser` 7.1.7 override patches typography's older
@@ -103,6 +106,16 @@ A scoped stable-compiler trial compiled the real archive component and passed it
 latency benchmark and does not establish a production performance benefit. The
 stable and Rust compilers remain disabled. No demonstrated benefit justifies the
 other disk-cache, lazy-import or worker-thread experiments.
+
+## November 17 dependency advisory
+
+The Next 16.4.6 update clears the Next advisories reported against 16.4.3.
+The same-day GitHub review of [GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf)
+reports a picomatch ReDoS affecting every published version through 4.0.7,
+with no patched release. Both full and production-only npm audits report its
+transitive dependency chains, including the Workers build tools. No audit
+exception, dependency downgrade or custom fork has been added. The existing
+zero-finding audit gate remains authoritative for release readiness.
 
 ## Verification and remaining release checks
 
