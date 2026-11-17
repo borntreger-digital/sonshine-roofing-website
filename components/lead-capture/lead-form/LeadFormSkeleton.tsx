@@ -71,7 +71,7 @@ function ContextStepSkeleton() {
         </div>
         <div className="space-y-3">
           <Skeleton className="h-4 w-56 rounded-lg" />
-          <Skeleton className="h-24 w-full rounded-3xl" />
+          <Skeleton className="h-24 w-full rounded-xl" />
         </div>
       </div>
       <aside className="hidden gap-4 rounded-xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-slate-600 lg:flex lg:flex-col">
@@ -96,7 +96,7 @@ function ContactStepSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="h-4 w-32 rounded-lg" />
-          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full rounded-lg" />
         </div>
       ))}
       <div className="md:col-span-2 space-y-3">
@@ -117,7 +117,7 @@ function ContactStepSkeleton() {
       </div>
       <div className="md:col-span-2 space-y-2">
         <Skeleton className="h-4 w-48 rounded-lg" />
-        <Skeleton className="h-28 w-full rounded-3xl" />
+        <Skeleton className="h-28 w-full rounded-xl" />
       </div>
       <div className="md:col-span-2">
         <Skeleton className="h-12 w-full rounded-3xl" />

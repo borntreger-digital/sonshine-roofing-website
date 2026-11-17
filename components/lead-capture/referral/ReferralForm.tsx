@@ -58,7 +58,7 @@ const INITIAL_FORM: ReferralFormState = {
 };
 
 const INPUT_CLASS =
-  'mt-2 w-full rounded-xl border border-blue-100 px-4 py-2 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30';
+  'mt-2 w-full rounded-lg border border-blue-100 px-4 py-2 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30';
 const INPUT_ERROR_CLASS = 'border-red-300 focus:border-red-400 focus:ring-red-200';
 const SUCCESS_MESSAGE =
   'Thanks. We received your referral. Check your email for confirmation and details on how you can earn your reward';
@@ -478,7 +478,7 @@ export default function ReferralForm() {
                 autoComplete="off"
                 value={form.notes}
                 onChange={(event) => setField('notes', event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30"
+                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30"
               />
             </label>
           </section>

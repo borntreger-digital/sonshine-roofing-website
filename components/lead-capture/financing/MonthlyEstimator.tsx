@@ -355,7 +355,7 @@ const innerPanelUnlocked = `${innerPanelBase} overflow-hidden`;
 const stepCardClass =
   'space-y-4 rounded-xl border border-blue-200 bg-white/85 p-5 shadow-xs backdrop-blur-sm';
 const inputBaseClass =
-  'mt-1 w-full rounded-xl border border-blue-100 bg-white px-3 py-2 text-base text-slate-900 shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/20';
+  'mt-1 w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-base text-slate-900 shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/20';
 
 type FormValues = {
   firstName: string;
