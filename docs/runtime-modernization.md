@@ -113,9 +113,23 @@ The Next 16.4.6 update clears the Next advisories reported against 16.4.3.
 The same-day GitHub review of [GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf)
 reports a picomatch ReDoS affecting every published version through 4.0.7,
 with no patched release. Both full and production-only npm audits report its
-transitive dependency chains, including the Workers build tools. No audit
-exception, dependency downgrade or custom fork has been added. The existing
-zero-finding audit gate remains authoritative for release readiness.
+transitive dependency chains, including the Workers build tools. On November 17,
+the owner approved a temporary exception for only this advisory and findings
+whose entire dependency chain resolves exclusively to it. No dependency
+downgrade or custom fork was added. The exception expires at midnight after
+November 24 in America/New_York (`2026-11-25T05:00:00Z`). Both complete and
+production-only audits still reject every other advisory, malformed or
+inconsistent report, unresolved/cyclic chain, and audit service failure.
+After expiration, this finding blocks the release gate again; it does not stop
+an already deployed site. Remove the exception when an upstream fix is available.
+
+The application does not directly import the affected matchers. A static scan
+of the 352 generated Worker modules found no identifying matcher strings;
+this reduces the evidence for public runtime exposure but does not prove
+non-exploitability. The exception accepts the remaining availability risk,
+rather than claiming the vulnerability has been fixed. Tests cover direct and
+transitive findings, mixed advisories, invalid graphs/counts, and the exact
+expiration boundary.
 
 ## Verification and remaining release checks
 
@@ -129,8 +143,9 @@ The prior exception for GHSA-vfj7-8cjw-p6xm was removed during the October 27
 Workers source promotion. GitHub withdrew that advisory on October 23 because
 it was not practically exploitable:
 https://github.com/advisories/GHSA-vfj7-8cjw-p6xm. Fresh complete and production-only
-npm audits reported zero vulnerabilities. The audit gate now accepts no advisory
-exceptions and fails on any reported finding, inconsistent counts or audit outage.
+npm audits reported zero vulnerabilities. At that time, the audit gate accepted no advisory
+exceptions and failed on any reported finding, inconsistent counts or audit outage.
+The November 17 owner-approved exception above is the sole current exception.
 Its tests include rejection of the former exception if it reappears. No dependency
 downgrade, fork or audit-threshold relaxation was used.
 
