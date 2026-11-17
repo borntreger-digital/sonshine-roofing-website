@@ -23,6 +23,11 @@ function loadSource(filename) {
     fileName: filename,
   }).outputText;
   const localRequire = (id) => {
+    if (id.endsWith('.module.css')) {
+      const stylesheet = id.startsWith('@/') ? resolve(root, id.slice(2)) : resolve(dirname(filename), id);
+      const classes = [...readFileSync(stylesheet, 'utf8').matchAll(/\.([a-zA-Z_][\w-]*)\s*(?=[{,:.#\s])/g)].map((match) => match[1]);
+      return Object.fromEntries(classes.map((name) => [name, name]));
+    }
     if (id === 'next/image') return function FixtureImage(props) {
       const attributes = { ...props }; delete attributes.fill; delete attributes.priority;
       return React.createElement('img', attributes);
@@ -151,8 +156,9 @@ check('coverage links only verified published project matches, including project
   const projectHeading = doc.querySelector('[aria-labelledby="location-coverage"] h4');
   assert.equal(projectHeading.textContent, 'Featured Projects:');
   assert.equal(projectHeading.nextElementSibling.tagName, 'UL');
-  assert.ok(projectHeading.nextElementSibling.classList.contains('list-disc'));
+  assert.equal(projectHeading.nextElementSibling.getAttribute('role'), 'list');
   assert.equal(projectHeading.nextElementSibling.querySelectorAll('li').length, 1);
+  assert.equal(projectHeading.nextElementSibling.querySelector('li h5').textContent, matching.project.title);
   assert.equal(doc.querySelectorAll('a[href^="/neighborhood"]').length, 0);
 });
 check('coverage maps preserve verified descriptions and never add customer pins', () => {

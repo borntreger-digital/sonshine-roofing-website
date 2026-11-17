@@ -17,7 +17,7 @@ import ProjectArchiveCard from "@/components/dynamic-content/project/ProjectArch
 import SmartLink from "@/components/utils/SmartLink";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
-import { lineClampStyle, truncateText } from "@/components/dynamic-content/card-utils";
+import { lineClampStyle, PROJECT_ARCHIVE_GRID_LAYOUT_CLASS, truncateText } from "@/components/dynamic-content/card-utils";
 import { buildProjectHref } from "@/lib/routes";
 
 const smallPillClass =
@@ -190,7 +190,7 @@ const renderVideoItem = (
     );
 };
 
-const renderProjectItem = (project: ProjectSummary): ReactNode => <ProjectArchiveCard project={project} />;
+const renderProjectItem = (project: ProjectSummary): ReactNode => <ProjectArchiveCard project={project} variant="archive" />;
 
 export default function InfiniteList<T>(props: Props<T>) {
     // Query/result identity owns pagination state and cancels the old request on unmount.
@@ -214,9 +214,10 @@ function InfiniteListQuery<T>({
     const baseQuery: ResourceQuery = useMemo(() => ({ first: pageSize, filters }), [pageSize, filters]);
     const initialPages = useMemo(() => [initial], [initial]);
     const effectiveGridClassName = useMemo(
-        () => ["auto-rows-fr", gridClass].filter(Boolean).join(" "),
-        [gridClass]
+        () => [kind === "project" ? "items-stretch" : "auto-rows-fr", gridClass].filter(Boolean).join(" "),
+        [gridClass, kind]
     );
+    const effectiveGridLayoutClassName = gridLayoutClassName ?? (kind === "project" ? PROJECT_ARCHIVE_GRID_LAYOUT_CLASS : undefined);
 
     const [pages, setPages] = useState<PageResult<T>[]>(initialPages);
     const [loading, setLoading] = useState(false);
@@ -348,7 +349,7 @@ function InfiniteListQuery<T>({
         <>
             <Grid 
                 className={effectiveGridClassName} 
-                layoutClassName={gridLayoutClassName}
+                layoutClassName={effectiveGridLayoutClassName}
                 data-loading={loading ? "true" : "false"}
             >
                 {items.map((item, index) => {
@@ -364,9 +365,10 @@ function InfiniteListQuery<T>({
             {loading && (
                 <GridLoadingState
                     variant={loaderVariant}
+                    projectVariant={kind === "project" ? "archive" : undefined}
                     count={skeletonCountEff}
                     className={effectiveGridClassName}
-                    layoutClassName={gridLayoutClassName}
+                    layoutClassName={effectiveGridLayoutClassName}
                 />
             )}
 

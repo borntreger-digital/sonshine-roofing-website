@@ -4,7 +4,7 @@ export const revalidate = false;
 export const dynamic = 'force-static';
 import { Suspense } from 'react';
 import StaticImage from '@/components/media/StaticImage';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import ProjectArchiveCard from '@/components/dynamic-content/project/ProjectArchiveCard';
 import EvenSimplerLeadForm from '@/components/lead-capture/lead-form/EvenSimplerLeadForm';
 import {
   LandingCta,
@@ -19,10 +19,6 @@ import { getWebsitePageMetadata } from '@/lib/content/directus-site';
 import { getProjectBySlug } from '@/lib/content/projects';
 import { staticImage } from '@/lib/content/static-media';
 import { REPLACEMENT_LANDING_REVIEWS } from '@/lib/landing/reviews';
-import ReviewStarRow from '@/components/reviews-widget/ReviewStarRow';
-import { CONTENT_PREVIEW_MEDIA_CLASS } from '@/components/dynamic-content/card-utils';
-import { ProjectFacts, ProjectNeighborhood } from '@/components/dynamic-content/project/ProjectMetadata';
-import { cn } from '@/lib/utils';
 
 const LANDING_PATH = '/landing/roof-replacement';
 const CTA_LABEL = 'Request My Free Estimate';
@@ -143,40 +139,18 @@ export default async function RoofReplacementLandingPage() {
                 <h3 className="mb-5 text-2xl font-semibold text-slate-900">{material} roof replacements</h3>
                 <div className="grid gap-6 md:grid-cols-2">
                   {projects.map((project) => (
-                    <Card key={project.slug} className="flex h-full min-w-0 flex-col">
-                      <div className={cn(CONTENT_PREVIEW_MEDIA_CLASS, 'aspect-16/10')}>
-                        <StaticImage
-                          src={project.heroImage!.url}
-                          alt={project.heroImage!.altText}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 600px"
-                          loading="lazy"
-                        />
-                      </div>
-                      <CardHeader className="px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
-                        <h4 className="text-2xl font-bold leading-tight text-slate-900">{project.title}</h4>
-                        <ProjectNeighborhood project={project} />
-                      </CardHeader>
-                      <CardContent className="flex flex-1 flex-col px-5 py-5 sm:px-6 sm:py-6">
-                        <ProjectFacts project={project} />
-                        {project.customerTestimonial?.customerReview && (
-                          <div className="mt-6">
-                            <ReviewStarRow />
-                            <figure className="mt-4">
-                              <blockquote className="whitespace-pre-line text-base italic leading-7 text-slate-600">
-                                &ldquo;{project.customerTestimonial.customerReview}&rdquo;
-                              </blockquote>
-                              {project.customerTestimonial.customerName && (
-                                <figcaption className="mt-4 text-sm font-semibold text-slate-900">
-                                  {project.customerTestimonial.customerName}
-                                </figcaption>
-                              )}
-                            </figure>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <ProjectArchiveCard
+                      key={project.slug}
+                      project={{
+                        ...project,
+                        reviewSnippet: project.customerTestimonial?.customerReview ?? null,
+                        reviewAuthorName: project.customerTestimonial?.customerName ?? null,
+                      }}
+                      linked={false}
+                      reviewDisplay="full"
+                      headingLevel={4}
+                      imageSizes="(max-width: 768px) 100vw, 600px"
+                    />
                   ))}
                 </div>
               </div>

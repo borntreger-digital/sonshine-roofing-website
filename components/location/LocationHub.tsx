@@ -2,7 +2,7 @@ import { CalendarDays, HandCoins, ShieldCheck } from 'lucide-react';
 import LandingHero from '@/components/marketing/landing-page/LandingHero';
 import InitialNavigation from '@/components/lead-capture/lead-form/InitialNavigation';
 import ProjectArchiveCard from '@/components/dynamic-content/project/ProjectArchiveCard';
-import { CONTENT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES } from '@/components/dynamic-content/card-utils';
+import { PROJECT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES } from '@/components/dynamic-content/card-utils';
 import FaqInlineListClient from '@/components/dynamic-content/faq/FaqInlineListClient';
 import ServiceAreaSection from '@/components/location/ServiceAreaSection';
 import { PartnershipGrid } from '@/components/location/LocalPartnershipsSection';
@@ -44,7 +44,7 @@ type SectionCopy = {
 function ProjectCards({ projects }: { projects: LocationProject[] }) {
   if (!projects.length) return null;
   return (
-    <div className={CONTENT_PREVIEW_GRID_CLASS}>
+    <div className={PROJECT_PREVIEW_GRID_CLASS}>
       {projects.map(({ id, project }) => (
         <ProjectArchiveCard key={id} project={project} imageSizes={CONTENT_PREVIEW_IMAGE_SIZES} />
       ))}

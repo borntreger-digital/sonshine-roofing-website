@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import SmartLink from '@/components/utils/SmartLink';
+import ProjectArchiveCard from '@/components/dynamic-content/project/ProjectArchiveCard';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CONTENT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES, CONTENT_PREVIEW_MEDIA_CLASS } from '@/components/dynamic-content/card-utils';
 import { cn } from '@/lib/utils';
@@ -78,12 +78,10 @@ export default function ServiceAreaSection({ areaId, locationName, overviewHtml,
                   {matchingProjects.length ? (
                     <div className="space-y-2">
                       <h4 className="text-sm font-semibold text-slate-800">Featured Projects:</h4>
-                      <ul className="list-disc space-y-2 pl-5">
+                      <ul className="list-none space-y-3 p-0" role="list">
                         {matchingProjects.map(({ id, project }) => (
                           <li key={id}>
-                            <SmartLink href={project.uri} className="font-semibold text-brand-blue underline underline-offset-4">
-                              {project.title}
-                            </SmartLink>
+                            <ProjectArchiveCard project={project} variant="compact" headingLevel={5} imageSizes="80px" />
                           </li>
                         ))}
                       </ul>

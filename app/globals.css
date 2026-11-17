@@ -83,13 +83,6 @@
   }
 }
 
-@utility project-preview-card-min-h {
-  min-height: var(--project-preview-card-min-h-mobile);
-  @media (min-width: 768px) {
-    min-height: var(--project-preview-card-min-h-desktop);
-  }
-}
-
 @utility shimmer {
   /* Apply to any block that should show a shimmer sweep.
      Example: <div class="w-24 h-4 rounded shimmer"></div> */
@@ -367,8 +360,6 @@
     --scroll-lock-offset: 0px;
     --blog-preview-card-min-h-mobile: 24rem;
     --blog-preview-card-min-h-desktop: 26rem;
-    --project-preview-card-min-h-mobile: 31rem;
-    --project-preview-card-min-h-desktop: 33rem;
   }
 
   html {

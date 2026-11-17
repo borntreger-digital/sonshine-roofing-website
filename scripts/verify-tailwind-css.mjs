@@ -14,7 +14,7 @@ function rule(selector) {
   return value;
 }
 function declaration(node, prop) { return node.nodes.find(item => item.type === 'decl' && item.prop === prop)?.value; }
-for (const kind of ['blog', 'project']) {
+for (const kind of ['blog']) {
   const card = rule(`.${kind}-preview-card-min-h`);
   assert.equal(declaration(card, 'min-height'), `var(--${kind}-preview-card-min-h-mobile)`);
   const desktop = card.nodes.find(node => node.type === 'atrule' && node.name === 'media' && node.params === '(min-width: 768px)');
@@ -48,4 +48,4 @@ rule('.bg-blue-10'); rule('.bg-orange-10');
 assert.equal(twMerge('shadow-xs shadow-lg'), 'shadow-lg');
 assert.equal(twMerge('text-(--brand-blue) text-white'), 'text-white');
 assert.equal(twMerge('motion-reduce:translate-y-1 motion-reduce:translate-y-2'), 'motion-reduce:translate-y-2');
-console.log('Verified generated v4 theme, prose, responsive card heights, focus fallback and class merging.');
+console.log('Verified generated v4 theme, prose, responsive blog card heights, focus fallback and class merging.');

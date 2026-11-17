@@ -3,14 +3,17 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import {
   BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS,
   CONTENT_PREVIEW_MEDIA_CLASS,
-  PROJECT_PREVIEW_CARD_MIN_HEIGHT_CLASS,
 } from "@/components/dynamic-content/card-utils";
+import type { ProjectCardVariant } from "@/components/dynamic-content/project/ProjectArchiveCard";
+import projectStyles from "@/components/dynamic-content/project/ProjectArchiveCard.module.css";
 import { cn } from "@/lib/utils";
 import Skeleton from "@/components/ui/Skeleton";
 
 export type CardSkeletonProps = React.HTMLAttributes<HTMLDivElement> & {
   /** Which card layout to mirror. Defaults to the blog card. */
   variant?: "blog" | "project" | "video";
+  /** Project placement to mirror when variant is project. */
+  projectVariant?: ProjectCardVariant;
   /** Show an image block that matches the card media slot. */
   withImage?: boolean;
   /** Tailwind aspect class for the image block (e.g., "aspect-4/3"). */
@@ -27,6 +30,7 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
   {
     className,
     variant = "blog",
+    projectVariant = "standard",
     withImage = true,
     imageAspectClass,
     bodyLines = 2,
@@ -37,14 +41,13 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
 ) {
   const lines = Math.max(0, bodyLines | 0);
   const resolvedAspect =
-    imageAspectClass ?? (variant === "project" ? "aspect-16/10" : "aspect-video");
+    imageAspectClass ?? "aspect-video";
 
   const cardClassName = cn(
     variant === "video"
       ? "vid-card overflow-hidden"
       : "flex h-full flex-col overflow-hidden",
     variant === "blog" && BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS,
-    variant === "project" && PROJECT_PREVIEW_CARD_MIN_HEIGHT_CLASS,
     className
   );
   const headerClassName = variant === "video" ? undefined : "px-5 pb-5 pt-5 sm:px-6 sm:pt-6";
@@ -94,22 +97,52 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
     </div>
   );
 
+  if (variant === "project") {
+    const hasDescription = lines > 0 && (projectVariant === "standard" || projectVariant === "archive");
+    return (
+      <div ref={ref} className={cn("not-prose", projectStyles.shell, className)} aria-hidden="true" {...props}>
+        <div className={cn(
+          projectStyles.card,
+          projectStyles[projectVariant],
+          hasDescription ? projectStyles.hasProse : projectStyles.noDescription,
+        )}>
+          {withImage && (
+            <div className={cn(projectStyles.photo, imageAspectClass)}>
+              <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
+            </div>
+          )}
+          <div className={projectStyles.heading}>
+            <Skeleton className="h-7 w-3/4" />
+            {showMeta && <Skeleton className="mt-2 h-4 w-1/2" />}
+          </div>
+          <div className={projectStyles.facts}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={`project-fact-${i}`} className={projectStyles.fact}>
+                <Skeleton className="h-4 w-14" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            ))}
+          </div>
+          {hasDescription && <div className={projectStyles.description}>{renderBodyLines()}</div>}
+          <div className={projectStyles.footer}>
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-7 w-7 rounded-md" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const header = (
     <CardHeader className={headerClassName}>
       <CardTitle
         className={cn(
           variant === "video" ? "font-medium" : "font-semibold",
           variant === "blog" && "min-h-12",
-          variant === "project" && "min-h-15",
         )}
       >
         <Skeleton className="h-6 w-3/4" />
       </CardTitle>
-      {variant === "project" && (
-        <div className="min-h-10">
-          <Skeleton className="h-4 w-1/2" />
-        </div>
-      )}
     </CardHeader>
   );
 
@@ -128,9 +161,8 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
 
   return (
     <Card ref={ref} className={cardClassName} {...props}>
-      {variant === "project" && media}
       {header}
-      {variant !== "project" && media}
+      {media}
 
       <CardContent className={contentClassName}>
         {variant === "blog" && (
@@ -145,28 +177,6 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
               {renderBodyLines(showMeta ? undefined : "mt-2")}
             </div>
             {renderBlogTopics()}
-          </>
-        )}
-
-        {variant === "project" && (
-          <>
-            <div className="min-h-21">
-              {renderBodyLines()}
-            </div>
-            <div className="mt-5 min-h-32 space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
-              <Skeleton className="h-4 w-2/3" />
-            </div>
-            <div className="mt-5 space-y-2">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={`fact-${i}`} className="grid grid-cols-[5rem_minmax(0,1fr)] gap-x-3 py-0.5">
-                  <Skeleton className="h-4 w-14" />
-                  <Skeleton className="h-4 w-3/4" />
-                </div>
-              ))}
-            </div>
           </>
         )}
 
