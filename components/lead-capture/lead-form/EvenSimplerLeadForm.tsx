@@ -609,7 +609,7 @@ export default function EvenSimplerLeadForm({
               </section>
 
               <section>
-                <label className="block ">
+                <label className="block">
                   <h3 className="text-lg sm:text-xl font-semibold text-slate-600">
                     Anything else you’d like us to know? (optional){' '}
                   </h3>
@@ -619,7 +619,7 @@ export default function EvenSimplerLeadForm({
                     autoComplete="off"
                     value={form.notes}
                     onChange={(event) => setField('notes', event.target.value)}
-                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30"
+                    className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30"
                   />
                 </label>
               </section>

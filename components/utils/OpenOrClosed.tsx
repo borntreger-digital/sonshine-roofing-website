@@ -5,7 +5,7 @@ import { CONTACT_TIME_ZONE, OFFICE_HOURS, type WeeklyHours } from "@/lib/contact
 
 // STYLES
   const baseStyles =
-    'inline-flex w-fit items-center gap-2 rounded-xl border px-2.5 py-1 font-medium';
+    'inline-flex w-fit items-center gap-2 rounded-lg border px-2.5 py-1 font-medium';
   const openStyles =
     'border-green-200 bg-green-50 text-green-700';
   const closedStyles =
