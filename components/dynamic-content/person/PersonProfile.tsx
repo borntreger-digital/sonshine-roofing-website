@@ -117,11 +117,6 @@ export default function PersonProfile({
         <div className="mx-auto max-w-2xl lg:max-w-none">
           <PersonNavigation slug={person.slug} people={people} />
         </div>
-        <div className="mt-6 text-center">
-          <SmartLink href={TEAM_HREF} className="btn btn-outline btn-md">
-            View the full team
-          </SmartLink>
-        </div>
       </article>
     </Section>
   );
