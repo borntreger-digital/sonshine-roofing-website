@@ -348,14 +348,14 @@ const pillBase =
   'inline-flex items-center rounded-md px-3 py-1 text-xs font-semibold tracking-tight shadow-xs';
 const successPillClass = `${pillBase} bg-emerald-500 text-white`;
 const gradientShell =
-  'rounded-3xl bg-linear-to-r from-(--brand-blue) to-(--brand-cyan) p-[1.5px] shadow-xl shadow-[rgba(0,69,215,0.12)]';
-const innerPanelBase = 'rounded-3xl bg-white';
+  'rounded-xl bg-linear-to-r from-(--brand-blue) to-(--brand-cyan) p-[1.5px] shadow-xl shadow-[rgba(0,69,215,0.12)]';
+const innerPanelBase = 'rounded-xl bg-white';
 const innerPanelLocked = `${innerPanelBase} overflow-hidden`;
 const innerPanelUnlocked = `${innerPanelBase} overflow-hidden`;
 const stepCardClass =
-  'space-y-4 rounded-2xl border border-blue-200 bg-white/85 p-5 shadow-xs backdrop-blur-sm';
+  'space-y-4 rounded-xl border border-blue-200 bg-white/85 p-5 shadow-xs backdrop-blur-sm';
 const inputBaseClass =
-  'mt-1 w-full rounded-xl border border-blue-100 bg-white px-3 py-2 text-base text-slate-900 shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/20';
+  'mt-1 w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-base text-slate-900 shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/20';
 
 type FormValues = {
   firstName: string;
@@ -934,7 +934,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
                   key={option.value}
                   type="button"
                   onClick={() => handleQuizAnswer(stepIndex, option.value)}
-                  className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-sm font-medium transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                  className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-sm font-medium transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 ${
                     selected
                       ? 'border-(--brand-blue) bg-(--brand-blue)/10 text-(--brand-blue) focus-visible:ring-(--brand-blue)/40'
                       : 'border-blue-100 bg-white text-slate-700 hover:border-(--brand-blue)/40 hover:bg-(--brand-blue)/5 focus-visible:ring-(--brand-blue)/40'
@@ -1238,7 +1238,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
   ) : null;
 
   const stepControls = (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100/70 bg-white/80 px-4 py-3 shadow-xs">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-100/70 bg-white/80 px-4 py-3 shadow-xs">
       <button
         type="button"
         onClick={step > 0 ? handleBack : undefined}
@@ -1301,7 +1301,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
             aria-hidden="true"
             className="hidden"
           />
-          <header className="flex flex-wrap items-center justify-between gap-3 rounded-t-3xl bg-blue-50 px-6 py-4">
+          <header className="flex flex-wrap items-center justify-between gap-3 rounded-t-xl bg-blue-50 px-6 py-4">
             <div className="flex items-center gap-2 text-slate-900">
               <SearchCheck className="h-5 w-5 text-(--brand-blue)" aria-hidden="true" />
               <h3 className="text-lg font-semibold md:text-xl">Find the Right Financing Plan</h3>
@@ -1327,10 +1327,10 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
             Take this quiz and discover the best roof financing plan for your particular budget and
             amount of equity in your home.
           </div>
-          <div className="bg-blue-50/40 px-6 py-6 rounded-b-3xl">
+          <div className="bg-blue-50/40 px-6 py-6 rounded-b-xl">
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
               <div className="space-y-6">
-                <div className="flex flex-col gap-2 rounded-2xl w-fit border border-blue-100/70 bg-white/80 px-4 py-3 text-sm font-medium text-slate-700 shadow-xs">
+                <div className="flex flex-col gap-2 rounded-lg w-fit border border-blue-100/70 bg-white/80 px-4 py-3 text-sm font-medium text-slate-700 shadow-xs">
                   <div className="flex flex-wrap items-center gap-3">
                     <span>{stepTitle}</span>
                     <div
@@ -1445,7 +1445,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
   return (
     <div id="estimator" className={gradientShell}>
       <section className={innerPanelUnlocked}>
-        <header className="flex items-center justify-between gap-3 rounded-t-3xl bg-blue-50 px-6 py-4">
+        <header className="flex items-center justify-between gap-3 rounded-t-xl bg-blue-50 px-6 py-4">
           <div className="flex items-center gap-2 text-slate-900">
             <SearchCheck className="h-5 w-5 text-(--brand-blue)" aria-hidden="true" />
             <h3 className="text-lg font-semibold md:text-xl">Find the Right Financing Plan</h3>
@@ -1456,7 +1456,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
           </span>
         </header>
 
-        <div className="space-y-6 bg-blue-50/40 px-6 py-6 rounded-b-3xl">
+        <div className="space-y-6 bg-blue-50/40 px-6 py-6 rounded-b-xl">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <button
               type="button"
@@ -1477,7 +1477,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
             </button>
           </div>
 
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-6 shadow-xs">
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-6 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
               <h3 className="text-xl md:text-2xl font-semibold text-emerald-700">
                 <ChartBar className="h-5 w-5 md:h-6 md:w-6 inline text-emerald-700 mr-3" />
@@ -1569,7 +1569,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
             )}
           </div>
 
-          <div className="space-y-4 rounded-2xl px-4 py-4">
+          <div className="space-y-4 rounded-xl px-4 py-4">
             <label htmlFor="activeAmount" className="block text-base font-medium text-slate-700">
               <Wallet className="h-4 w-4 mr-2 inline text-(--brand-blue)" />
               Project Budget
@@ -1627,7 +1627,7 @@ export default function MonthlyEstimator({ defaultAmount = 15000 }: { defaultAmo
             </div>
           </div>
 
-          <div className="rounded-2xl border border-blue-200 bg-white shadow-md">
+          <div className="rounded-xl border border-blue-200 bg-white shadow-md">
             <div className="text-center border-b border-blue-100 p-4 text-2xl font-semibold text-(--brand-blue)">
               <HandCoins className="h-6 w-6 mr-2 inline text-(--brand-blue)" />
               Illustrative Monthly Amounts

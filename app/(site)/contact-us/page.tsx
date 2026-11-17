@@ -40,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const contactInfoPillBase =
-  'btn btn-lg rounded-xl btn-brand-blue not-prose px-3 py-2 justify-start phone-affordance w-fit';
+  'btn btn-lg rounded-lg btn-brand-blue not-prose px-3 py-2 justify-start phone-affordance w-fit';
 const contactInfoIconStyles = 'h-5 w-5 inline mr-2 text-blue-50 h-6 w-6 phone-affordance-icon';
 
 export default async function Page() {
@@ -97,7 +97,7 @@ export default async function Page() {
 
             <div className="flex gap-6 mb-6 lg:hidden">
               {/* “You'll talk to…” human tile */}
-              <div className="not-prose rounded-3xl w-full border border-blue-200 bg-white p-6 shadow-xs max-w-full">
+              <div className="not-prose rounded-xl w-full border border-blue-200 bg-white p-6 shadow-xs max-w-full">
                 <div className="flex-col gap-6">
                   <div className="mb-4">
                     <OpenOrClosed
@@ -141,7 +141,7 @@ export default async function Page() {
 
             <Suspense
               fallback={
-                <div className="mx-auto w-full rounded-3xl border border-blue-100 bg-white p-6 shadow-xs">
+                <div className="mx-auto w-full rounded-xl border border-blue-100 bg-white p-6 shadow-xs">
                   <div className="h-6 w-32 animate-pulse rounded-md bg-slate-200" />
                   <div className="mt-4 space-y-3">
                     <div className="h-4 animate-pulse rounded-md bg-slate-200" />
@@ -159,7 +159,7 @@ export default async function Page() {
           <div className="lg:sticky top-16 self-start">
             <div className="hidden lg:flex gap-6 w-full mb-6">
               {/* “You'll talk to…” human tile */}
-              <div className="not-prose rounded-3xl border border-blue-200 bg-white p-6 shadow-xs max-w-full">
+              <div className="not-prose rounded-xl border border-blue-200 bg-white p-6 shadow-xs max-w-full">
                 <div className="flex-col gap-6">
                   <div className="mb-4">
                     <OpenOrClosed

@@ -343,7 +343,7 @@ function QuickQuoteLoadError() {
   return (
     <div
       role="alert"
-      className="mx-auto w-full max-w-[480px] rounded-[16px] border border-amber-200 bg-amber-50 px-5 pb-8 text-sm text-amber-950 shadow-[0_16px_36px_rgba(15,23,42,0.12)]"
+      className="mx-auto w-full max-w-[480px] rounded-xl border border-amber-200 bg-amber-50 px-5 pb-8 text-sm text-amber-950 shadow-[0_16px_36px_rgba(15,23,42,0.12)]"
     >
       The 60-sec quote form is taking longer than expected to load. Please refresh the page or call{' '}
       <SitePhoneLink className="font-semibold underline" />.
@@ -439,7 +439,7 @@ function LiveQuickQuoteWebForm() {
         />
       </div>
       <noscript>
-        <p className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           JavaScript is required to load the 60-sec quote form. Please call <SitePhoneLink /> for
           help.
         </p>

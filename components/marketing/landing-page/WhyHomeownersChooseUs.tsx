@@ -26,13 +26,13 @@ const FEATURE_PILL_ICON_CLASS_ORANGE = 'h-4 w-4 text-amber-500';
 const MOBILE_COLUMN_CLASS = 'md:hidden my-8 space-y-4';
 const GRID_LAYOUT_CLASS = 'mt-8 grid grid-cols-2 gap-5 items-start auto-rows-fr';
 const CARD_SHELL_BASE =
-  'overflow-hidden rounded-3xl bg-white/95 backdrop-blur-xs flex h-full flex-col';
+  'overflow-hidden rounded-xl bg-white/95 backdrop-blur-xs flex h-full flex-col';
 const ACCORDION_SHELL_BASE = `group ${CARD_SHELL_BASE}`;
 const CARD_SUMMARY_BASE =
-  'flex cursor-pointer select-none items-center justify-between gap-3 rounded-t-3xl px-6 py-5 text-left text-lg font-semibold text-slate-900 transition-colors';
+  'flex cursor-pointer select-none items-center justify-between gap-3 rounded-t-xl px-6 py-5 text-left text-lg font-semibold text-slate-900 transition-colors';
 const CARD_HEADER_BASE =
-  'flex items-center gap-3 rounded-t-4xl px-6 pt-6 pb-4 text-lg font-semibold text-slate-900';
-const CARD_BODY_BASE = 'flex-1 rounded-b-4xl md:text-lg px-6 pb-6 pt-4 leading-relaxed';
+  'flex items-center gap-3 rounded-t-xl px-6 pt-6 pb-4 text-lg font-semibold text-slate-900';
+const CARD_BODY_BASE = 'flex-1 rounded-b-xl md:text-lg px-6 pb-6 pt-4 leading-relaxed';
 const ICON_BASE = 'grid h-10 w-10 place-items-center rounded-md';
 const CHEVRON_BASE =
   'h-5 w-5 text-slate-500 transition-transform duration-300 group-open:rotate-180 group-open/accordion:rotate-180';
@@ -60,7 +60,7 @@ const CARD_THEMES: Record<
 > = {
   blue: {
     frame:
-      'rounded-3xl p-px bg-linear-to-r from-(--brand-blue) via-(--brand-blue)/80 to-(--brand-cyan) shadow-lg h-full',
+      'rounded-xl p-px bg-linear-to-r from-(--brand-blue) via-(--brand-blue)/80 to-(--brand-cyan) shadow-lg h-full',
     shell: 'ring-1 ring-blue-100/60',
     summary: 'bg-blue-10/80 group-open:bg-blue-10/80 border-b border-blue-100/60',
     body: 'bg-blue-10/10 text-slate-800',
@@ -70,7 +70,7 @@ const CARD_THEMES: Record<
   },
   orange: {
     frame:
-      'rounded-3xl p-px bg-linear-to-r from-(--brand-orange) via-amber-400 to-amber-300 shadow-lg',
+      'rounded-xl p-px bg-linear-to-r from-(--brand-orange) via-amber-400 to-amber-300 shadow-lg',
     shell: 'ring-1 ring-orange-200/70',
     summary: 'bg-orange-10/80 group-open:bg-orange-50 border-b border-orange-100/60',
     body: 'bg-orange-10/10 text-slate-800',

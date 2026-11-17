@@ -73,18 +73,18 @@ export default function ProgramCard({
   return (
     <div
       className={cn(
-        "rounded-2xl h-fit",
+        "rounded-xl h-fit",
         wrapperClass,
         isBluePrimary && "shadow-lg"
       )}
     >
       <section
         id={id}
-        className={cn("rounded-2xl bg-white h-full flex flex-col")}
+        className={cn("rounded-xl bg-white h-full flex flex-col")}
         aria-label={title}
       >
         {/* Distinct header bar with motif + optional badge */}
-        <div className={cn("rounded-t-2xl px-4 py-3 flex items-center justify-between", headerTint)}>
+        <div className={cn("rounded-t-xl px-4 py-3 flex items-center justify-between", headerTint)}>
           <div className="flex items-center gap-2">
             {motif}
             <h3 className="m-0 text-lg font-semibold text-slate-900">{title}</h3>

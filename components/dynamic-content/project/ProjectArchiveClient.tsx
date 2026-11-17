@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import InfiniteList from '@/components/dynamic-content/InfiniteList';
 import ResourceArchiveClient from '@/components/dynamic-content/ResourceArchiveClient';
+import { PROJECT_ARCHIVE_GRID_LAYOUT_CLASS } from '@/components/dynamic-content/card-utils';
 import { projectArchiveGroups } from '@/lib/ui/project-filters';
 import type { ProjectSearchResult, RoofColorTerm, TermLite } from '@/lib/content/project-types';
 
@@ -73,7 +74,7 @@ export default function ProjectArchiveClient({
           filters={listFilters}
           pageSize={pageSize}
           gridClass="mt-8"
-          gridLayoutClassName="grid-cols-1 gap-6"
+          gridLayoutClassName={PROJECT_ARCHIVE_GRID_LAYOUT_CLASS}
         />
       )}
     />

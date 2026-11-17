@@ -27,7 +27,7 @@ function NeighborCard({ person, next }: { person: PersonNavItem; next: boolean }
     <SmartLink
       href={buildPersonHref(person.slug)!}
       className={cn(
-        'group block min-w-0 rounded-3xl focus-visible:outline-hidden',
+        'group block min-w-0 rounded-xl focus-visible:outline-hidden',
         next && 'sm:col-start-2',
       )}
       data-icon-affordance={next ? 'right' : 'left'}

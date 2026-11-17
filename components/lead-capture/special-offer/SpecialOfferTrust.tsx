@@ -36,7 +36,7 @@ export default async function SpecialOfferTrust({ settings }: { settings: SiteSe
         ) : null}
       </div>
       {review && sourceUrl ? (
-        <figure className="rounded-2xl border border-blue-100 bg-white/80 p-5">
+        <figure className="rounded-xl border border-blue-100 bg-white/80 p-5">
           <ReviewStarRow rating={review.rating ?? 5} />
           <blockquote className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-700">
             {review.text}

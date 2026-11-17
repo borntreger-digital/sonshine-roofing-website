@@ -43,7 +43,7 @@ export default function ProjectTestimonial({
   return (
     <section
       className={cn(
-        "rounded-3xl border border-blue-200 bg-amber-50/50 p-6 shadow-md",
+        "rounded-xl border border-blue-200 bg-amber-50/50 p-6 shadow-md",
         className
       )}
     >

@@ -19,8 +19,8 @@ const SERVICE_CONFIG = getServicePageConfig(SERVICE_PATH);
 
 const TERMS_PATH = '/homeowner-referral-program/terms-and-conditions';
 
-const CARD_BASE = 'rounded-3xl border bg-white p-6 shadow-xs';
-const PANEL_BASE = 'rounded-3xl border bg-white shadow-xs';
+const CARD_BASE = 'rounded-xl border bg-white p-6 shadow-xs';
+const PANEL_BASE = 'rounded-xl border bg-white shadow-xs';
 const CARD_TITLE = 'mt-4 text-lg font-semibold text-slate-900';
 const CARD_TEXT = 'mt-2 text-sm leading-6 text-slate-600';
 const HERO_ACTION = 'btn btn-lg';
@@ -202,7 +202,7 @@ export default async function HomeownerReferralProgramPage() {
             <section id="referral-form" className="not-prose my-8 scroll-mt-24">
               <Suspense
                 fallback={
-                  <div className="mx-auto w-full rounded-3xl border border-blue-100 bg-white p-6 shadow-xs">
+                  <div className="mx-auto w-full rounded-xl border border-blue-100 bg-white p-6 shadow-xs">
                     <div className="h-6 w-32 animate-pulse rounded-md bg-slate-200" />
                     <div className="mt-4 space-y-3">
                       <div className="h-4 animate-pulse rounded-md bg-slate-200" />

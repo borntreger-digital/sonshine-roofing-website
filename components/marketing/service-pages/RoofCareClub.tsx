@@ -173,7 +173,7 @@ export default function RoofCareClub({ origin }: RoofCareClubProps = {}) {
           const selected = TERM_PLANS.find((plan) => plan.term === term) ?? TERM_PLANS[0];
           const savings = savingsVsOneYear(TERM_PLANS, term);
           return (
-            <div className="relative flex flex-col overflow-hidden rounded-3xl border border-blue-200 bg-white shadow-xs z-0">
+            <div className="relative flex flex-col overflow-hidden rounded-xl border border-blue-200 bg-white shadow-xs z-0">
               {/* Header */}
               <div className="not-prose px-6 py-5 bg-[#0045d7] text-white">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -265,7 +265,7 @@ export default function RoofCareClub({ origin }: RoofCareClubProps = {}) {
                             {benefit.label}
                           </h5>
                         }
-                        radius="2xl"
+                        radius="xl"
                         tone="soft"
                         size="md"
                         proseBody={false}
@@ -287,7 +287,7 @@ export default function RoofCareClub({ origin }: RoofCareClubProps = {}) {
                 <h4 className="text-lg font-semibold uppercase tracking-wide text-slate-700">
                   Term-based discounts
                 </h4>
-                <div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 text-lg">
+                <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 text-lg">
                   <div className="grid grid-cols-3 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
                     <div className="px-3 py-2">Term</div>
                     <div className="px-3 py-2">Repair discount</div>

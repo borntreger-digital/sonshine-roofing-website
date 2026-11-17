@@ -24,7 +24,7 @@ export function PartnershipGrid({ items }: { items: readonly PartnershipItem[] }
                   src={feature.featuredImage.url}
                   alt={feature.featuredImage.altText || `${feature.title ?? "Sponsor"} logo`}
                   fill
-                  className="rounded-xl border border-blue-200 bg-white object-contain"
+                  className="rounded-lg border border-blue-200 bg-white object-contain"
                   sizes="64px"
                   loading="lazy"
                 />

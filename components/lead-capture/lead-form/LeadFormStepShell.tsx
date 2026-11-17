@@ -24,7 +24,7 @@ export default function LeadFormStepShell({
   bottomSlot,
 }: LeadFormStepShellProps) {
   return (
-    <div className={cn('mx-auto w-full max-w-[1600px] overflow-hidden rounded-3xl border border-blue-200 bg-sky-50 shadow-xl', className)}>
+    <div className={cn('mx-auto w-full max-w-[1600px] overflow-hidden rounded-xl border border-blue-200 bg-sky-50 shadow-xl', className)}>
       <div className="border-b border-blue-100 bg-linear-to-l from-amber-100 via-amber-50 to-sky-50 p-6">
         <div className="flex items-center justify-between gap-4">
           <div>

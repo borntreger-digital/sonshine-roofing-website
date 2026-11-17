@@ -44,7 +44,7 @@ type Submission = 'idle' | 'submitting' | 'error';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const INPUT_BASE_CLASS =
-  'mt-2 w-full rounded-xl border border-blue-100 px-4 py-2 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30';
+  'mt-2 w-full rounded-lg border border-blue-100 px-4 py-2 text-base shadow-xs focus:border-(--brand-blue) focus:ring-2 focus:ring-(--brand-blue)/30';
 const INPUT_ERROR_CLASS = 'border-red-300 focus:border-red-400 focus:ring-red-200';
 const FIELD_ERROR_CLASS = 'mt-1 block text-xs text-red-600';
 
@@ -301,7 +301,7 @@ export default function SpecialOfferForm({
   };
 
   return (
-    <div className="not-prose rounded-3xl border border-blue-100 bg-white p-6 shadow-xs print:hidden sm:p-8">
+    <div className="not-prose rounded-xl border border-blue-100 bg-white p-6 shadow-xs print:hidden sm:p-8">
       <h2 className="text-2xl font-semibold text-slate-800">Redeem Offer</h2>
       <p className="mt-4 text-sm text-slate-600">
         Enter your details and we’ll email your coupon code and offer details. Our team will also

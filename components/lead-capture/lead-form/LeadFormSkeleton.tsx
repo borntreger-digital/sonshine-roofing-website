@@ -26,9 +26,9 @@ function NeedStepSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white px-4 py-5 shadow-xs"
+          className="flex h-full flex-col gap-4 rounded-xl border border-slate-200 bg-white px-4 py-5 shadow-xs"
         >
-          <Skeleton className="h-36 w-full rounded-2xl" />
+          <Skeleton className="h-36 w-full rounded-lg" />
           <Skeleton className="h-6 w-40 rounded-md" />
           <div className="space-y-3">
             <Skeleton className="h-6 w-48 rounded-lg" />
@@ -49,8 +49,8 @@ function ContextStepSkeleton() {
         <Skeleton className="h-4 w-64 rounded-lg" />
         <div className="grid gap-3 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-              <Skeleton className="h-32 w-full rounded-xl" />
+            <div key={i} className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-xs">
+              <Skeleton className="h-32 w-full rounded-md" />
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-2">
                   <Skeleton className="h-5 w-40 rounded-lg" />
@@ -71,10 +71,10 @@ function ContextStepSkeleton() {
         </div>
         <div className="space-y-3">
           <Skeleton className="h-4 w-56 rounded-lg" />
-          <Skeleton className="h-24 w-full rounded-3xl" />
+          <Skeleton className="h-24 w-full rounded-xl" />
         </div>
       </div>
-      <aside className="hidden gap-4 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-slate-600 lg:flex lg:flex-col">
+      <aside className="hidden gap-4 rounded-xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-slate-600 lg:flex lg:flex-col">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="flex items-start gap-3">
             <Skeleton className="mt-1 h-5 w-5 rounded-md" />
@@ -84,7 +84,7 @@ function ContextStepSkeleton() {
             </div>
           </div>
         ))}
-        <Skeleton className="hidden h-48 w-full rounded-2xl md:block" />
+        <Skeleton className="hidden h-48 w-full rounded-lg md:block" />
       </aside>
     </div>
   );
@@ -96,14 +96,14 @@ function ContactStepSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="h-4 w-32 rounded-lg" />
-          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full rounded-lg" />
         </div>
       ))}
       <div className="md:col-span-2 space-y-3">
         <Skeleton className="h-4 w-36 rounded-lg" />
         <div className="flex flex-wrap gap-3">
           {Array.from({ length: 2 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-36 rounded-xl" />
+            <Skeleton key={i} className="h-10 w-36 rounded-lg" />
           ))}
         </div>
       </div>
@@ -111,13 +111,13 @@ function ContactStepSkeleton() {
         <Skeleton className="h-4 w-44 rounded-lg" />
         <div className="flex flex-wrap gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-40 rounded-xl" />
+            <Skeleton key={i} className="h-10 w-40 rounded-lg" />
           ))}
         </div>
       </div>
       <div className="md:col-span-2 space-y-2">
         <Skeleton className="h-4 w-48 rounded-lg" />
-        <Skeleton className="h-28 w-full rounded-3xl" />
+        <Skeleton className="h-28 w-full rounded-xl" />
       </div>
       <div className="md:col-span-2">
         <Skeleton className="h-12 w-full rounded-3xl" />
@@ -145,7 +145,7 @@ function FooterSkeleton() {
       </div>
       <div className="mx-8 my-6 flex items-center justify-end gap-3">
         <Skeleton className="h-10 w-28 rounded-md" />
-        <Skeleton className="h-10 w-36 rounded-xl" />
+        <Skeleton className="h-10 w-36 rounded-lg" />
       </div>
     </>
   );
@@ -153,7 +153,7 @@ function FooterSkeleton() {
 
 export default function LeadFormSkeleton() {
   return (
-    <div className="overflow-hidden mx-2 rounded-3xl border border-blue-100 bg-white shadow-md">
+    <div className="overflow-hidden mx-2 rounded-xl border border-blue-100 bg-white shadow-md">
       <HeaderSkeleton />
       <div className="p-6 space-y-10">
         <NeedStepSkeleton />

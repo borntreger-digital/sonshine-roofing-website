@@ -151,7 +151,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ s
           </SmartLink>
         </nav>
 
-        <article className="rounded-2xl border border-blue-200 bg-white p-5 shadow-xs md:p-8">
+        <article className="rounded-xl border border-blue-200 bg-white p-5 shadow-xs md:p-8">
           <p className="mb-3 text-sm font-semibold text-slate-600">Roofing Glossary</p>
           <h1 className="wrap-break-word text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
             {term.title}
@@ -170,7 +170,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ s
               <SmartLink
                 href={`/roofing-glossary/${previous.slug}`}
                 rel="prev"
-                className="group inline-flex min-w-0 items-center justify-between gap-2 rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm text-(--brand-blue) hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
+                className="group inline-flex min-w-0 items-center justify-between gap-2 rounded-lg border border-blue-200 bg-white px-4 py-3 text-sm text-(--brand-blue) hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
                 aria-label={`Previous term: ${previous.title}`}
               >
                 <span aria-hidden>←</span>
@@ -184,7 +184,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ s
               <SmartLink
                 href={`/roofing-glossary/${next.slug}`}
                 rel="next"
-                className="group inline-flex min-w-0 items-center justify-between gap-2 rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm text-(--brand-blue) hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
+                className="group inline-flex min-w-0 items-center justify-between gap-2 rounded-lg border border-blue-200 bg-white px-4 py-3 text-sm text-(--brand-blue) hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
                 aria-label={`Next term: ${next.title}`}
               >
                 <span className="min-w-0 wrap-break-word">{next.title}</span>

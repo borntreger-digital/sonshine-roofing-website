@@ -30,8 +30,8 @@ export default function PersonProfile({
         >
           ← Back to all team members
         </SmartLink>
-        <div className="mx-auto max-w-2xl overflow-hidden rounded-3xl border border-blue-200 bg-white shadow-xs lg:grid lg:max-w-none lg:grid-cols-[320px_minmax(0,1fr)] lg:grid-rows-[max-content_1fr] lg:items-start lg:gap-x-8 lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:shadow-none xl:grid-cols-[352px_minmax(0,1fr)] xl:gap-x-12">
-          <header className="min-w-0 overflow-hidden bg-blue-50 lg:col-start-1 lg:row-start-1 lg:rounded-t-3xl lg:border lg:border-b-0 lg:border-blue-200 lg:bg-white">
+        <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border border-blue-200 bg-white shadow-xs lg:grid lg:max-w-none lg:grid-cols-[320px_minmax(0,1fr)] lg:grid-rows-[max-content_1fr] lg:items-start lg:gap-x-8 lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:shadow-none xl:grid-cols-[352px_minmax(0,1fr)] xl:gap-x-12">
+          <header className="min-w-0 overflow-hidden bg-blue-50 lg:col-start-1 lg:row-start-1 lg:rounded-t-xl lg:border lg:border-b-0 lg:border-blue-200 lg:bg-white">
             {person.featuredImage && (
               <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-100">
                 <Image
@@ -63,7 +63,7 @@ export default function PersonProfile({
             {person.howHelps.length > 0 && (
               <section
                 aria-labelledby="person-helps-heading"
-                className="lg:overflow-hidden lg:rounded-3xl lg:border lg:border-blue-200 lg:bg-blue-50"
+                className="lg:overflow-hidden lg:rounded-xl lg:border lg:border-blue-200 lg:bg-blue-50"
               >
                 <div className="bg-white px-5 pt-6 pb-2 sm:px-6 lg:py-5">
                   <h2 id="person-helps-heading" className="text-3xl leading-tight">
@@ -90,7 +90,7 @@ export default function PersonProfile({
             )}
             <section
               aria-labelledby="person-bio-heading"
-              className="p-5 sm:p-6 lg:rounded-3xl lg:border lg:border-blue-200 lg:bg-white lg:shadow-xs"
+              className="p-5 sm:p-6 lg:rounded-xl lg:border lg:border-blue-200 lg:bg-white lg:shadow-xs"
             >
               <h2 id="person-bio-heading" className="text-3xl leading-tight">
                 Meet {person.firstName}
@@ -102,7 +102,7 @@ export default function PersonProfile({
             </section>
           </div>
           <aside
-            className="min-w-0 border-t border-blue-200 bg-blue-50 p-5 sm:p-6 lg:col-start-1 lg:row-start-2 lg:rounded-b-3xl lg:border lg:shadow-xs"
+            className="min-w-0 border-t border-blue-200 bg-blue-50 p-5 sm:p-6 lg:col-start-1 lg:row-start-2 lg:rounded-b-xl lg:border lg:shadow-xs"
             aria-labelledby="person-contact-heading"
           >
             <h2

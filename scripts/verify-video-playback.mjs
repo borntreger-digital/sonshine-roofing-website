@@ -142,9 +142,15 @@ const mocks = {
   'next/dynamic': () =>
     loadSource(resolve(root, 'components/dynamic-content/video/VideoModal.tsx')).default,
   'framer-motion': { AnimatePresence: ({ children }) => children, motion: { div: motionDiv } },
-  'next/image': () => null,
+  'next/image': function FixtureImage(props) {
+    const attributes = Object.fromEntries(Object.entries(props).filter(([key]) => !['fill', 'priority'].includes(key)));
+    return React.createElement('img', attributes);
+  },
   'lucide-react': new Proxy({}, { get: () => () => null }),
-  '@/components/utils/SmartLink': element('a'),
+  '@/components/utils/SmartLink': function FixtureLink({ children, ...props }) {
+    const attributes = Object.fromEntries(Object.entries(props).filter(([key]) => !['unstyled', 'proseGuard', 'prefetch'].includes(key)));
+    return React.createElement('a', attributes, children);
+  },
   '@/components/dynamic-content/blog/BlogArchiveCard': () => null,
   '@/components/dynamic-content/project/ProjectArchiveCard': () => null,
   '@/components/layout/Section': element('section'),
@@ -204,6 +210,11 @@ function loadSource(filename) {
   }).outputText;
   const localRequire = (id) => {
     if (Object.hasOwn(mocks, id)) return mocks[id];
+    if (id.endsWith('.module.css')) {
+      const stylesheet = id.startsWith('@/') ? resolve(root, id.slice(2)) : resolve(dirname(filename), id);
+      const classes = [...readFileSync(stylesheet, 'utf8').matchAll(/\.([a-zA-Z_][\w-]*)\s*(?=[{,:.#\s])/g)].map((match) => match[1]);
+      return Object.fromEntries(classes.map((name) => [name, name]));
+    }
     if (id.endsWith('.css')) return {};
     if (id.startsWith('@/') || id.startsWith('.')) {
       const base = id.startsWith('@/')
@@ -282,27 +293,44 @@ test('the project route uses independent video copy and omits a draft video play
   }
 });
 
-test('project cards share photo-first presentation, labeled facts and verified neighborhood text', async () => {
+test('project cards share dossier presentation, labeled facts and verified neighborhood text', async () => {
   const ProjectCard = loadSource(resolve(root, 'components/dynamic-content/project/ProjectArchiveCard.tsx')).default;
+  const longReview = 'The team explained the materials, kept us informed throughout the work, and carefully cleaned the property after the installation was finished. We appreciated having every question answered before making a decision.\nThe final walkthrough gave us a clear understanding of our completed roof.';
   const fixture = { ...project, neighborhood: { id: 'fixture-neighborhood', name: 'Verified Neighborhood', slug: 'verified' },
+    heroImage: { url: 'https://images.test/card-roof.jpg', altText: 'Synthetic completed metal roof' },
     serviceAreas: [{ name: 'Fixture City', slug: 'fixture-city' }],
     materialTypes: [{ name: 'Metal', slug: 'metal' }],
     roofColors: [{ name: 'Silver', slug: 'silver', materialTypeSlug: 'metal' }],
+    reviewSnippet: longReview,
   };
   await act(async () => mounted?.unmount());
   mounted = createRoot(document.getElementById('root'));
   await act(async () => mounted.render(React.createElement(ProjectCard, { project: fixture })));
   const card = document.querySelector('.proj-card');
-  assert.equal(card.firstElementChild.style.aspectRatio, '16 / 10', 'photo is the first card region');
+  const photo = card.querySelector('.photo');
+  assert.equal(photo.querySelector('img').getAttribute('src'), fixture.heroImage.url);
+  assert.equal(photo.querySelector('img').getAttribute('alt'), fixture.heroImage.altText);
   assert.equal(card.querySelector('h3').nextElementSibling.textContent, fixture.neighborhood.name);
   assert.equal(card.querySelectorAll('[data-project-neighborhood]').length, 1);
-  assert.deepEqual([...card.querySelectorAll('dt')].map(node => node.textContent), ['Location', 'Material', 'Color']);
-  assert.deepEqual([...card.querySelectorAll('dd')].map(node => node.textContent), ['Fixture City', 'Metal', 'Silver']);
+  assert.deepEqual([...card.querySelectorAll('dt')].map(node => node.textContent), ['Material', 'Color', 'Location']);
+  assert.deepEqual([...card.querySelectorAll('dd')].map(node => node.textContent), ['Metal', 'Silver', 'Fixture City']);
   assert.equal(card.querySelectorAll('a').length, 0, 'facts and neighborhood do not nest links inside the linked card');
   assert.equal(card.closest('a').getAttribute('href'), '/project/alpha-project');
-  await act(async () => mounted.render(React.createElement(ProjectCard, { project: { ...fixture, neighborhood: null, roofColors: [] } })));
+  const previewReview = card.querySelector('blockquote p').textContent;
+  assert.ok(previewReview.length < longReview.length, 'linked preview cards keep a short review excerpt');
+  assert.ok(previewReview.endsWith('…”'), 'a shortened preview indicates the remaining review text');
+  await act(async () => mounted.render(React.createElement(ProjectCard, { project: { ...fixture, heroImage: null, neighborhood: null, roofColors: [] } })));
+  assert.equal(document.querySelector('.proj-card img'), null);
+  assert.ok(document.querySelector('[role="img"][aria-label="Project photo unavailable"]'));
   assert.equal(document.querySelector('[data-project-neighborhood]'), null, 'unknown neighborhood has no label or placeholder');
-  assert.deepEqual([...document.querySelectorAll('dt')].map(node => node.textContent), ['Location', 'Material']);
+  assert.deepEqual([...document.querySelectorAll('dt')].map(node => node.textContent), ['Material', 'Location']);
+  await act(async () => mounted.render(React.createElement(ProjectCard, { project: fixture, linked: false, reviewDisplay: 'full' })));
+  const staticCard = document.querySelector('.proj-card');
+  assert.equal(staticCard.tagName, 'ARTICLE');
+  assert.equal(staticCard.querySelector('blockquote p').textContent, `“${longReview}”`, 'static landing proof cards preserve the complete review and line breaks');
+  assert.equal(staticCard.closest('a'), null);
+  assert.equal(staticCard.querySelector('a'), null);
+  assert.equal(staticCard.querySelector('.footer'), null, 'a static proof card does not offer a project CTA');
 });
 
 test('project detail uses one facts block, its hero subtitle, and only the flat project gallery', async () => {
@@ -432,7 +460,7 @@ test('only public project relationships expose a project link, independently of 
   }
 });
 
-test('Play and Watch video each update sharing once, preserving filters and hash', async () => {
+test('thumbnail playback updates sharing once, preserving filters and hash', async () => {
   await mount('?bk=roofing-project&utm_source=test#videos');
   writes.length = 0;
   requests.length = 0;
@@ -454,7 +482,8 @@ test('Play and Watch video each update sharing once, preserving filters and hash
   assert.equal(selected(), null);
   assert.equal(dialog(), null);
   assert.equal(document.getElementById('video-share-url'), null);
-  await click('Watch video');
+  assert.equal([...document.querySelectorAll('button')].some(button => button.textContent.includes('Watch video')), false);
+  await click('Play Video alpha');
   assert.equal(selected(), 'alpha');
   assert.equal(writes.length, 3);
 });

@@ -260,7 +260,7 @@ function DesktopMenu({
                 {/* ANIM: Panel fade+lift speed — edit PANEL_DURATION_MS (and/or Tailwind 'duration-150') */}
                 <div
                   className={cn(
-                    "absolute left-0 top-full mt-2 min-w-[300px] rounded-3xl border bg-white border-blue-200 shadow-lg origin-top",
+                    "absolute left-0 top-full mt-2 min-w-[300px] rounded-xl border bg-white border-blue-200 shadow-lg origin-top",
                     ENTRY_MOTION_CLASS,
                     enteredPanel ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-1 scale-[0.98]"
                   )}
@@ -351,7 +351,7 @@ function MenuLevel({ items, level, parentLabel }: { items: Item[]; level: number
             ) : (
               <button
                 type="button"
-                className="w-full text-left flex items-center justify-between gap-2 px-3 py-2 text-xl text-slate-700 hover:bg-slate-50 hover:text-brand-blue rounded-xl"
+                className="w-full text-left flex items-center justify-between gap-2 px-3 py-2 text-xl text-slate-700 hover:bg-slate-50 hover:text-brand-blue rounded-lg"
                 aria-haspopup={hasKids ? "menu" : undefined}
                 aria-expanded={openIndex === i || undefined}
                 onClick={() => holdOpen(i)}
@@ -383,7 +383,7 @@ function MenuLevel({ items, level, parentLabel }: { items: Item[]; level: number
                   className={cn(
                     "md:absolute md:left-full md:top-0",
                     "md:pl-2",
-                    "min-w-[240px] rounded-3xl border bg-white shadow-lg origin-top-left",
+                    "min-w-[240px] rounded-xl border bg-white shadow-lg origin-top-left",
                     ENTRY_MOTION_CLASS,
                     entered ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-1 scale-[0.98]"
                   )}
@@ -575,7 +575,7 @@ function MobileMenu({ navigation }: { navigation: Item[] }) {
         role="menu"
         aria-label="Main"
         className="fixed left-2 right-2 z-61
-                   rounded-3xl border border-blue-200 bg-white shadow-xl p-2
+                   rounded-xl border border-blue-200 bg-white shadow-xl p-2
                    top-[calc(var(--header-h,56px)+8px)]
                    max-h-[calc(100vh-var(--header-h,56px)-24px)] overflow-auto overscroll-contain"
       >
@@ -590,7 +590,7 @@ function MobileMenu({ navigation }: { navigation: Item[] }) {
           >
             <SmartLink
               href={ROUTES.home}
-              className="flex w-full px-3 py-2 rounded-2xl text-slate-800 hover:bg-slate-200"
+              className="flex w-full px-3 py-2 rounded-lg text-slate-800 hover:bg-slate-200"
               onClick={() => setOpen(false)}
             >
               <LabelWithIcon label="Home" />
@@ -613,7 +613,7 @@ function MobileMenu({ navigation }: { navigation: Item[] }) {
                 {!hasChildren && item.href ? (
                   <SmartLink
                     href={item.href}
-                    className="flex w-full items-center justify-between px-3 py-2 rounded-2xl text-slate-800 hover:bg-slate-200"
+                    className="flex w-full items-center justify-between px-3 py-2 rounded-lg text-slate-800 hover:bg-slate-200"
                     onClick={() => setOpen(false)}
                   >
                     <LabelWithIcon label={item.label} />
@@ -623,7 +623,7 @@ function MobileMenu({ navigation }: { navigation: Item[] }) {
                     {item.href ? (
                       <SmartLink
                         href={item.href}
-                        className="block flex-1 min-w-0 text-left px-3 py-2 rounded-2xl text-slate-800 hover:bg-slate-200"
+                        className="block flex-1 min-w-0 text-left px-3 py-2 rounded-lg text-slate-800 hover:bg-slate-200"
                         onClick={() => setOpen(false)}
                       >
                         <LabelWithIcon label={item.label} />
@@ -634,7 +634,7 @@ function MobileMenu({ navigation }: { navigation: Item[] }) {
                         onClick={() => toggle(k)}
                         aria-expanded={!!expanded[k]}
                         aria-controls={`section-${k}`}
-                        className="px-3 py-2 rounded-2xl text-slate-800 hover:bg-slate-200 text-left flex-1"
+                        className="px-3 py-2 rounded-lg text-slate-800 hover:bg-slate-200 text-left flex-1"
                       >
                         <LabelWithIcon label={item.label} />
                       </button>
@@ -679,7 +679,7 @@ function MobileMenu({ navigation }: { navigation: Item[] }) {
                           {c.href ? (
                             <SmartLink
                               href={c.href}
-                              className="flex w-full items-center justify-between px-3 py-2 rounded-2xl text-slate-700 hover:bg-slate-200"
+                              className="flex w-full items-center justify-between px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-200"
                               data-icon-affordance={showChevron ? "right" : undefined}
                               onClick={() => setOpen(false)}
                             >
@@ -727,7 +727,7 @@ function MobileMenu({ navigation }: { navigation: Item[] }) {
       <button
         type="button"
         ref={buttonRef}
-        className="flex items-center gap-2 rounded-xl border px-4 py-2 text-white bg-(--brand-blue)"
+        className="flex items-center gap-2 rounded-lg border px-4 py-2 text-white bg-(--brand-blue)"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls="mobile-nav"

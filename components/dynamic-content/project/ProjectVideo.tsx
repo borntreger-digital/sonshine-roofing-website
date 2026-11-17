@@ -133,7 +133,7 @@ export default function ProjectVideo({ title, videoId, className, posterUrl, pos
         type="button"
         aria-label={`Play video: ${title}`}
         onClick={() => setOpen(true)}
-        className={`relative block w-full shadow-blue-500 shadow-md overflow-hidden mt-4 rounded-2xl ${className ?? ""}`}
+        className={`relative block w-full shadow-blue-500 shadow-md overflow-hidden mt-4 rounded-xl ${className ?? ""}`}
       >
         <Image
           src={facadeSrc}
@@ -182,7 +182,7 @@ export default function ProjectVideo({ title, videoId, className, posterUrl, pos
                   type="button"
                   aria-label="Close"
                   onClick={(e) => { e.stopPropagation(); setOpen(false); }}
-                  className="fixed z-50 top-[max(0.75rem,env(safe-area-inset-top))] right-[max(0.75rem,env(safe-area-inset-right))] md:top-[max(1.25rem,env(safe-area-inset-top))] md:right-[max(1.25rem,env(safe-area-inset-right))] border border-blue-200 rounded-xl hover:bg-white/80 bg-white/40 text-blue-200 hover:text-red-600 p-2.5 shadow-lg backdrop-blur-xs transition focus:outline-hidden focus-visible:ring-2"
+                  className="fixed z-50 top-[max(0.75rem,env(safe-area-inset-top))] right-[max(0.75rem,env(safe-area-inset-right))] md:top-[max(1.25rem,env(safe-area-inset-top))] md:right-[max(1.25rem,env(safe-area-inset-right))] border border-blue-200 rounded-lg hover:bg-white/80 bg-white/40 text-blue-200 hover:text-red-600 p-2.5 shadow-lg backdrop-blur-xs transition focus:outline-hidden focus-visible:ring-2"
                 >
                   <X className="h-5 w-5" aria-hidden="true" />
                 </button>
@@ -195,7 +195,7 @@ export default function ProjectVideo({ title, videoId, className, posterUrl, pos
                 >
                   <motion.div
                     ref={modalRef}
-                    className="relative aspect-video w-full cursor-auto overflow-hidden rounded-2xl bg-black shadow-2xl"
+                    className="relative aspect-video w-full cursor-auto overflow-hidden rounded-xl bg-black shadow-2xl"
                     initial={A.modal.initial}
                     animate={A.modal.animate}
                     exit={A.modal.exit}

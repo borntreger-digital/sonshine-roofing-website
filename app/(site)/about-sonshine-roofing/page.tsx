@@ -117,7 +117,7 @@ export default async function Page() {
               icon={<UserRoundSearch className="h-5 w-5 text-(--brand-blue)" aria-hidden="true" />}
               summary={<h2 className="text-2xl">What we do</h2>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               defaultOpen
               contentClassName="text-lg bg-amber-50/50/25 leading-loose"
@@ -153,7 +153,7 @@ export default async function Page() {
               icon={<MapPin className="h-5 w-5" aria-hidden="true" />}
               summary={<h2 className="text-2xl">Local &amp; Family-owned</h2>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               defaultOpen
               summaryClassName="bg-sky-50"

@@ -11,6 +11,8 @@ type GridLoadingStateProps = Omit<React.ComponentProps<typeof Grid>, "children">
   bodyLines?: CardSkeletonProps["bodyLines"];
   showMeta?: CardSkeletonProps["showMeta"];
   variant?: "blog" | "video" | "project";
+  blogVariant?: CardSkeletonProps["blogVariant"];
+  projectVariant?: CardSkeletonProps["projectVariant"];
   mode?: Mode;
   message?: string;
 };
@@ -30,6 +32,8 @@ export default function GridLoadingState({
   bodyLines = 2,
   showMeta = true,
   variant,
+  projectVariant,
+  blogVariant,
   mode = "skeleton",
   message = "Loading…",
   ...gridProps
@@ -38,8 +42,8 @@ export default function GridLoadingState({
     if (imageAspectClass) return imageAspectClass;
     switch (variant) {
       case "project":
-        return "aspect-4/3";
       case "blog":
+        return undefined;
       case "video":
       default:
         return "aspect-video";
@@ -66,6 +70,8 @@ export default function GridLoadingState({
         <CardSkeleton
           key={i}
           variant={variant}
+          projectVariant={projectVariant}
+          blogVariant={blogVariant}
           withImage={withImage}
           imageAspectClass={resolvedAspect}
           bodyLines={bodyLines}

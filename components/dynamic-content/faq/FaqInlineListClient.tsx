@@ -99,7 +99,7 @@ export default function FaqInlineListClient({ heading, highlightText, descriptio
         <button
           type="button"
           onClick={handleToggleAll}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-(--brand-blue) bg-white px-4 py-2 text-sm font-semibold text-(--brand-blue) transition hover:bg-(--brand-blue)/10 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue) focus-visible:ring-offset-2 sm:w-auto"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-(--brand-blue) bg-white px-4 py-2 text-sm font-semibold text-(--brand-blue) transition hover:bg-(--brand-blue)/10 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue) focus-visible:ring-offset-2 sm:w-auto"
         >
           {allOpen ? (
             <>
@@ -146,7 +146,7 @@ const FaqItem = forwardRef<HTMLDetailsElement, FaqItemProps>(function FaqItem(
       summary={<h3 className="text-base md:text-xl font-normal text-slate-800">{title}</h3>}
       size="md"
       tone="soft"
-      radius="2xl"
+      radius="xl"
       proseBody={false}
     >
       <div

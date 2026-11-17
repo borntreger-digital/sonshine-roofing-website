@@ -76,7 +76,7 @@ export function mountFaqSearch({ ids, urlKeys, minQueryLen = 2 }: MountOptions) 
       const link = document.createElement('a');
       link.href = `/faq#${answer.id}`;
       link.className =
-        'inline-flex rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm text-(--brand-blue) hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)';
+        'inline-flex rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-(--brand-blue) hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)';
       link.textContent = answer.dataset.title || '';
       li.append(link);
       suggestionList?.append(li);

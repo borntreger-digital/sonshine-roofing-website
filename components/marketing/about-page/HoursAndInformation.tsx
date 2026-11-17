@@ -61,7 +61,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<Clock className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Hours of Operation</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           defaultOpen
           tone="soft"
@@ -81,7 +81,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<MapPin className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Service Areas</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           tone="soft"
         >
@@ -91,7 +91,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<Tag className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Brands</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           tone="soft"
         >
@@ -101,7 +101,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<Users className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Associations</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           tone="soft"
         >
@@ -111,7 +111,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<CreditCard className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Payment Types</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           tone="soft"
         >
@@ -121,7 +121,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<Hammer className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Roofing Services</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           tone="soft"
         >
@@ -131,7 +131,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<Languages className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Languages</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           tone="soft"
         >
@@ -145,7 +145,7 @@ export async function HoursAndInformation() {
         <Accordion
           icon={<BadgePercent className="h-5 w-5" aria-hidden="true" />}
           summary={<h3 className="text-2xl">Discounts</h3>}
-          radius="2xl"
+          radius="xl"
           proseBody={false}
           tone="soft"
         >

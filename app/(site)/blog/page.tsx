@@ -78,7 +78,7 @@ export default async function BlogArchivePage() {
 
               <Suspense
                 fallback={
-                  <div className="rounded-2xl border border-blue-100 bg-white/90 p-4 text-sm text-slate-600">
+                  <div className="rounded-xl border border-blue-100 bg-white/90 p-4 text-sm text-slate-600">
                     Loading posts...
                   </div>
                 }

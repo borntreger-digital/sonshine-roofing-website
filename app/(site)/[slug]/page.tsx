@@ -331,7 +331,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
         {/* Featured image */}
         {post.featuredImage?.url ? (
-          <div className="mt-5 overflow-hidden rounded-2xl bg-neutral-100">
+          <div className="mt-5 overflow-hidden rounded-xl bg-neutral-100">
             <Image
               src={post.featuredImage.url}
               alt={post.featuredImage.altText || post.title}
@@ -370,9 +370,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
         {/* Prev / Next */}
         {(prev || next) && (
-          <nav className="grid gap-4 p-4 mt-12 bg-white border shadow-xs rounded-2xl border-blue-200 sm:grid-cols-2">
+          <nav className="grid gap-4 p-4 mt-12 bg-white border shadow-xs rounded-xl border-blue-200 sm:grid-cols-2">
             {prev ? (
-              <SmartLink href={`/${prev.slug}`} className="block p-3 rounded-xl hover:bg-slate-50">
+              <SmartLink href={`/${prev.slug}`} className="block p-3 rounded-lg hover:bg-slate-50">
                 <div className="text-xs tracking-wide uppercase text-slate-500">Previous</div>
                 <div className="mt-1 font-medium text-slate-900">{prev.title}</div>
               </SmartLink>
@@ -382,7 +382,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             {next ? (
               <SmartLink
                 href={`/${next.slug}`}
-                className="block p-3 text-right rounded-xl hover:bg-slate-50"
+                className="block p-3 text-right rounded-lg hover:bg-slate-50"
               >
                 <div className="text-xs tracking-wide uppercase text-slate-500">Next</div>
                 <div className="mt-1 font-medium text-slate-900">{next.title}</div>

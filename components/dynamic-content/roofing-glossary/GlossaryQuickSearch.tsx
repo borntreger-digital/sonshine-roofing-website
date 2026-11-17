@@ -104,7 +104,7 @@ export default function GlossaryQuickSearch({ terms }: { terms: GlossaryItem[] }
                 key={letter}
                 id={anchor}
                 aria-labelledby={`${anchor}-heading`}
-                className="scroll-mt-28 overflow-hidden rounded-2xl border border-blue-200 bg-white shadow-xs"
+                className="scroll-mt-28 overflow-hidden rounded-xl border border-blue-200 bg-white shadow-xs"
               >
                 <ResourceGroupHeading
                   title={letter === '#' ? '0–9 & symbols' : letter}
@@ -117,7 +117,7 @@ export default function GlossaryQuickSearch({ terms }: { terms: GlossaryItem[] }
                       <SmartLink
                         href={`/roofing-glossary/${term.slug}`}
                         aria-label={term.title}
-                        className="flex h-full items-center justify-between gap-3 rounded-xl border border-blue-100 px-4 py-4 text-base font-medium text-(--brand-blue) hover:border-blue-300 hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
+                        className="flex h-full items-center justify-between gap-3 rounded-lg border border-blue-100 px-4 py-4 text-base font-medium text-(--brand-blue) hover:border-blue-300 hover:bg-blue-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
                       >
                         <span className="min-w-0 wrap-break-word">{term.title}</span>
                         <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -129,7 +129,7 @@ export default function GlossaryQuickSearch({ terms }: { terms: GlossaryItem[] }
             );
           })}
         {!filtered.length && (
-          <div className="rounded-2xl border border-blue-200 bg-white p-5">
+          <div className="rounded-xl border border-blue-200 bg-white p-5">
             <p className="text-slate-700">
               No matches for <strong>“{deferredQuery}”</strong>.
             </p>
@@ -145,7 +145,7 @@ export default function GlossaryQuickSearch({ terms }: { terms: GlossaryItem[] }
                       <SmartLink
                         href={`/roofing-glossary/${term.slug}`}
                         aria-label={term.title}
-                        className="inline-flex rounded-xl border border-blue-200 px-3 py-2 text-sm text-(--brand-blue) hover:bg-blue-50"
+                        className="inline-flex rounded-md border border-blue-200 px-3 py-2 text-sm text-(--brand-blue) hover:bg-blue-50"
                       >
                         {term.title}
                       </SmartLink>

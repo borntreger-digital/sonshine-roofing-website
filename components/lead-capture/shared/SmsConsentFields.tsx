@@ -53,7 +53,7 @@ const DISCLOSURE_TEXT =
 const DEFAULT_CLASS_NAMES: SmsConsentFieldsClassNames = {
   root: 'space-y-4',
   cards: 'space-y-4',
-  card: 'rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4',
+  card: 'rounded-lg border border-slate-200 bg-slate-50 px-4 py-4',
   cardError: 'border-red-300',
   sectionEyebrow: 'text-xs font-semibold uppercase tracking-[0.18em] text-(--brand-blue)',
   sectionTitle: 'text-lg font-semibold text-slate-900',
