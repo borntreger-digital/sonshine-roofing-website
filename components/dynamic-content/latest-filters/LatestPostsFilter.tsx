@@ -39,6 +39,7 @@ function buildCardLookup(posts: PostCard[]): CardLookup {
       <BlogArchiveCard
         key={post.slug}
         post={post}
+        variant="standard"
         imageSizes={CONTENT_PREVIEW_IMAGE_SIZES}
       />
     );

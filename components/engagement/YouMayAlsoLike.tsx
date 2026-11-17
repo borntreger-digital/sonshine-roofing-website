@@ -1,7 +1,7 @@
 import BlogArchiveCard from "@/components/dynamic-content/blog/BlogArchiveCard";
 import ProjectArchiveCard from "@/components/dynamic-content/project/ProjectArchiveCard";
 import { CONTENT_PREVIEW_LIMIT } from "@/lib/content/preview-selection";
-import { CONTENT_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES, PROJECT_PREVIEW_GRID_CLASS } from "@/components/dynamic-content/card-utils";
+import { BLOG_PREVIEW_GRID_CLASS, CONTENT_PREVIEW_IMAGE_SIZES, PROJECT_PREVIEW_GRID_CLASS } from "@/components/dynamic-content/card-utils";
 import type { PostCard } from "@/lib/content/content-types";
 import type { ProjectSummary } from "@/lib/content/project-types";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -130,12 +130,13 @@ export default function YouMayAlsoLike(props: Props) {
         </div>
       </div>
 
-      <div className={CONTENT_PREVIEW_GRID_CLASS}>
+      <div className={BLOG_PREVIEW_GRID_CLASS}>
         {blogItems.map((item, index) => (
           <BlogArchiveCard
             key={item.slug}
             post={item}
-            imageSizes={CONTENT_PREVIEW_IMAGE_SIZES}
+            variant="compact"
+            imageSizes="76px"
             className="h-full motion-safe:animate-lp-fade-in"
             style={{ animationDelay: `${index * 60}ms` }}
           />

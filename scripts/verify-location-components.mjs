@@ -143,7 +143,7 @@ check('coverage records need a real name and omit every absent detail', () => {
   const doc = render(Coverage, { areaId: page.id, locationName: page.name, mapImage: null, neighborhoods: [neighborhood(), neighborhood({ id: 'blank', name: ' ' }), neighborhood({ id: 'other-area', name: 'Other place', serviceAreaId: 'other' })], projects: [] });
   assert.deepEqual([...doc.querySelectorAll('h3')].map((node) => node.textContent), ['Fixture Neighborhood']);
   assert.equal(doc.querySelectorAll('img, details, ul, figcaption').length, 0);
-  assert.equal(doc.querySelectorAll('h4').length, 0);
+  assert.equal(doc.querySelectorAll('h4, [data-neighborhood-projects]').length, 0);
   assert.doesNotMatch(doc.body.textContent, /ZIP|landmarks|No map|No description|Other place|Neighborhood 2/);
 });
 check('coverage links only verified published project matches, including projects outside recent six', () => {
@@ -154,12 +154,29 @@ check('coverage links only verified published project matches, including project
   const links = [...doc.querySelectorAll('[aria-labelledby="location-coverage"] a')].map((node) => node.getAttribute('href'));
   assert.deepEqual(links, ['/project/older-match']);
   const projectHeading = doc.querySelector('[aria-labelledby="location-coverage"] h4');
-  assert.equal(projectHeading.textContent, 'Featured Projects:');
-  assert.equal(projectHeading.nextElementSibling.tagName, 'UL');
-  assert.equal(projectHeading.nextElementSibling.getAttribute('role'), 'list');
-  assert.equal(projectHeading.nextElementSibling.querySelectorAll('li').length, 1);
-  assert.equal(projectHeading.nextElementSibling.querySelector('li h5').textContent, matching.project.title);
+  assert.equal(projectHeading.textContent, 'Roofing projects');
+  const projectList = projectHeading.closest('[data-neighborhood-projects]').querySelector('ul');
+  assert.equal(projectList.getAttribute('role'), 'list');
+  assert.equal(projectList.querySelectorAll('li').length, 1);
+  assert.equal(projectList.querySelector('li h5').textContent, matching.project.title);
   assert.equal(doc.querySelectorAll('a[href^="/neighborhood"]').length, 0);
+});
+check('neighborhood disclosures retain the complete overview and every eligible project', () => {
+  const description = 'A complete synthetic neighborhood overview with useful local context. '.repeat(8);
+  const matches = ['first', 'second', 'third'].map(id => project(id, {
+    neighborhood: { id: 'neighborhood-one', name: 'Fixture Neighborhood', slug: 'fixture-neighborhood' },
+  }));
+  const doc = render(Coverage, { areaId: page.id, locationName: page.name, mapImage: null,
+    neighborhoods: [neighborhood({ description })], projects: [...matches,
+      { ...matches[0], id: 'private', status: 'draft' },
+      { ...matches[1], id: 'another-area', serviceAreaIds: ['other'] }] });
+  const card = doc.querySelector('[data-neighborhood-card]');
+  assert.equal(card.querySelector('details [data-neighborhood-description]').textContent, description.trim());
+  const projects = card.querySelector('[data-neighborhood-projects]');
+  assert.equal(projects.querySelector(':scope > ul a').getAttribute('href'), '/project/first');
+  assert.deepEqual([...projects.querySelectorAll('details a')].map(a => a.getAttribute('href')), ['/project/second', '/project/third']);
+  assert.equal(projects.querySelector('details').hasAttribute('open'), false);
+  assert.equal(projects.querySelectorAll('a').length, 3);
 });
 check('coverage maps preserve verified descriptions and never add customer pins', () => {
   const doc = render(Coverage, { areaId: page.id, locationName: page.name, mapImage: { url: 'https://example.com/coverage.png', altText: 'Verified coverage outline for Fixture City' }, neighborhoods: [neighborhood({ mapImage: { url: 'https://example.com/neighborhood.png', altText: 'Verified neighborhood coverage outline' } })], projects: [] });

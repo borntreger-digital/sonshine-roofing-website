@@ -1,0 +1,307 @@
+.standard {
+  isolation: isolate;
+}
+.shell {
+  container-type: inline-size;
+  container-name: blog-card;
+  display: grid;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+}
+.card {
+  --blog-ink: #153653;
+  --blog-muted: #53677c;
+  --blog-blue: #0758c8;
+  --blog-line: #dbe5ee;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'photo' 'heading' 'facts' 'description' '.' 'footer';
+  grid-template-rows: auto auto auto auto 1fr auto;
+  min-width: 0;
+  height: 100%;
+  color: var(--blog-ink);
+  background: #fff;
+  border: 1px solid #cad8e5;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 2px 5px #183f6508;
+  font-family: var(--font-inter), Arial, sans-serif;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+.card:hover {
+  border-color: #79a8dc;
+  box-shadow: 0 5px 16px #184d7e12;
+}
+.card:focus-visible {
+  outline: 3px solid var(--blog-blue);
+  outline-offset: 4px;
+  border-color: var(--blog-blue);
+}
+.photo {
+  grid-area: photo;
+  align-self: start;
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 16/10;
+  margin: 0;
+  overflow: hidden;
+  background: #e6edf4;
+}
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photoMissing {
+  display: flex;
+  height: 100%;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  color: #486783;
+  background: linear-gradient(150deg, #edf3f8, #dfe9f2);
+}
+.photoMissing svg {
+  width: 42px;
+  height: 38px;
+}
+.photoMissing span {
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+.heading {
+  grid-area: heading;
+  min-width: 0;
+  margin: 19px 20px 0;
+}
+.title {
+  margin: 0;
+  color: var(--blog-ink);
+  font-family: var(--font-candara), var(--font-inter), Arial, sans-serif;
+  font-size: 26px;
+  line-height: 1.13;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.facts {
+  grid-area: facts;
+  min-width: 0;
+  margin: 17px 20px 0;
+  padding: 0;
+  border-top: 1px solid var(--blog-line);
+}
+.fact {
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr);
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid #e8eef4;
+  line-height: 1.5;
+}
+.fact dt {
+  font-size: 12px;
+  font-weight: 400;
+  color: #5e7387;
+}
+.fact dd {
+  margin: 0;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #203d57;
+  overflow-wrap: anywhere;
+}
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 6px;
+}
+.separator {
+  color: #90a7bb;
+  font-weight: 400;
+}
+.description {
+  grid-area: description;
+  /* A clamped paragraph must not stretch with its archive grid track. */
+  align-self: start;
+  min-width: 0;
+  margin: 14px 20px 16px;
+  color: var(--blog-muted);
+  font-size: 14px;
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.footer {
+  grid-area: footer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin: 0 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--blog-line);
+  color: var(--blog-blue);
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.noSummary .footer {
+  margin-top: 17px;
+}
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--blog-blue);
+  background: #edf4fb;
+  border: 1px solid #d4e4f5;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+}
+.arrow svg {
+  width: 16px;
+  height: 16px;
+}
+.card:hover .arrow,
+.card:focus-visible .arrow {
+  background: var(--blog-blue);
+  color: #fff;
+  border-color: var(--blog-blue);
+}
+.compact {
+  grid-template-columns: 76px minmax(0, 1fr);
+  grid-template-areas: 'photo heading' 'facts facts' 'footer footer';
+  grid-template-rows: auto 1fr auto;
+  gap: 0 12px;
+  padding: 14px 14px 0;
+}
+.compact .photo {
+  width: 76px;
+  border-radius: calc(var(--radius) - 2px);
+}
+.compact .heading {
+  margin: 0;
+}
+.compact .title {
+  font-size: 22px;
+  line-height: 1.15;
+}
+.compact .facts {
+  align-self: start;
+  margin: 14px 0 0;
+}
+.compact .fact {
+  padding: 7px 0;
+}
+.compact .fact dt {
+  font-size: 11px;
+}
+.compact .fact dd {
+  font-size: 12px;
+}
+.compact .footer {
+  margin: 9px 0 0;
+  border-top: 0;
+  font-size: 13px;
+  padding: 12px 0;
+}
+.compact.noFacts .footer {
+  grid-column: 1/-1;
+  margin-top: 14px;
+  border-top: 1px solid var(--blog-line);
+}
+.compact .photoMissing {
+  padding: 8px;
+}
+.compact .photoMissing svg {
+  width: 25px;
+  height: 25px;
+}
+.compact .photoMissing span {
+  display: none;
+}
+@container blog-card (min-width: 620px) {
+  .archive {
+    grid-template-columns: minmax(0, 0.44fr) minmax(0, 0.56fr);
+    grid-template-areas: 'photo heading' 'photo facts' 'photo description' '. .' 'footer footer';
+    grid-template-rows: auto auto auto 1fr auto;
+  }
+  .archive .photo {
+    margin: 20px 0 20px 20px;
+    border-radius: calc(var(--radius) - 2px);
+  }
+  .archive .heading {
+    margin-top: 22px;
+  }
+  .archive .title {
+    font-size: 29px;
+  }
+  .archive .facts {
+    margin-top: 15px;
+  }
+  .archive .description {
+    margin-bottom: 20px;
+  }
+}
+@container blog-card (max-width: 359px) {
+  .heading {
+    margin: 17px 17px 0;
+  }
+  .title {
+    font-size: 25px;
+  }
+  .facts,
+  .description,
+  .footer {
+    margin-left: 17px;
+    margin-right: 17px;
+  }
+  .fact {
+    grid-template-columns: 62px minmax(0, 1fr);
+    gap: 9px;
+  }
+  .compact {
+    grid-template-columns: 64px minmax(0, 1fr);
+    padding: 12px 12px 0;
+    gap: 0 11px;
+  }
+  .compact .photo {
+    width: 64px;
+  }
+  .compact .heading {
+    margin: 0;
+  }
+  .compact .title {
+    font-size: 21px;
+  }
+  .compact .facts,
+  .compact .footer {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .arrow {
+    transition: none;
+  }
+}

@@ -16,7 +16,8 @@ export const lineClampStyle: CSSProperties = {
   textOverflow: "ellipsis",
 };
 
-export const BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS = "blog-preview-card-min-h";
+export const BLOG_PREVIEW_GRID_CLASS = "grid min-w-0 grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3";
+export const BLOG_ARCHIVE_GRID_LAYOUT_CLASS = "grid-cols-1 items-stretch gap-6";
 export const CONTENT_PREVIEW_GRID_CLASS = "grid min-w-0 auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3";
 export const PROJECT_PREVIEW_GRID_CLASS = "grid min-w-0 grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3";
 export const PROJECT_ARCHIVE_GRID_LAYOUT_CLASS = "grid-cols-1 items-stretch gap-6";

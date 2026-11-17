@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, MouseEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { PageResult, ResourceKind, ResourceQuery } from "@/lib/ui/pagination";
 import type { PostCard } from "@/lib/content/content-types";
 import type { VideoItem } from "@/lib/content/video-types";
@@ -14,15 +13,8 @@ import Grid from "@/components/layout/Grid";
 import BlogArchiveCard from "@/components/dynamic-content/blog/BlogArchiveCard";
 import ProjectArchiveCard from "@/components/dynamic-content/project/ProjectArchiveCard";
 
-import SmartLink from "@/components/utils/SmartLink";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
-import { lineClampStyle, PROJECT_ARCHIVE_GRID_LAYOUT_CLASS, truncateText } from "@/components/dynamic-content/card-utils";
-import { buildProjectHref } from "@/lib/routes";
-
-const smallPillClass =
-    "inline-flex min-w-0 max-w-full items-center rounded-xl font-semibold tracking-tight bg-blue-100 px-2.5 py-1 text-[0.75rem] sm:text-xs text-slate-800 sm:px-3 sm:py-1 sm:text-sm";
-const pillLabelClass = "block max-w-full truncate";
+import VideoArchiveCard from "@/components/dynamic-content/video/VideoArchiveCard";
+import { BLOG_ARCHIVE_GRID_LAYOUT_CLASS, PROJECT_ARCHIVE_GRID_LAYOUT_CLASS } from "@/components/dynamic-content/card-utils";
 
 type Props<T> = {
     kind: ResourceKind;
@@ -40,155 +32,13 @@ type Props<T> = {
 
 type RenderFn<T> = (item: T, index: number) => ReactNode;
 
-const Frame: React.FC<{
-    src?: string;
-    alt?: string;
-    ratio?: `${number} / ${number}`;
-    className?: string;
-    sizes?: string;
-    priority?: boolean;
-}> = ({ src, alt = "", ratio = "16 / 9", className, sizes, priority }) => {
-    const style: CSSProperties = { aspectRatio: ratio };
-    if (!src) return <div className={className} style={style} />;
-    const wrapperClass = ["relative overflow-hidden bg-blue-100", className]
-        .filter(Boolean)
-        .join(" ");
-
-    return (
-        <div className={wrapperClass} style={style}>
-            <Image
-                fill
-                src={src}
-                alt={alt}
-                sizes={sizes}
-                priority={priority}
-                className="object-cover"
-            />
-        </div>
-    );
-};
-
-const renderBlogItem = (post: PostCard): ReactNode => <BlogArchiveCard post={post} />;
+const renderBlogItem = (post: PostCard): ReactNode => <BlogArchiveCard post={post} variant="archive" />;
 
 const renderVideoItem = (
     video: VideoItem,
     index: number,
     onVideoOpen?: (item: VideoItem) => void
-): ReactNode => {
-    const safeKey = video.id ?? video.slug ?? video.youtubeId ?? index;
-    const safeSlug = String(safeKey);
-    const categories = video.categories ?? [];
-    const catNames = categories.map((category) => category.name).filter(Boolean).join(", ");
-    const bucketSlugs = categories
-        .map((category) => category.slug ?? category.name ?? "")
-        .filter((value) => value.length > 0)
-        .join(",");
-    const materialSlugs = (video.materialTypes ?? [])
-        .map((term) => term.slug ?? "")
-        .filter(Boolean)
-        .join(",");
-    const serviceSlugs = (video.serviceAreas ?? [])
-        .map((term) => term.slug ?? "")
-        .filter(Boolean)
-        .join(",");
-    const description = truncateText(String(video.excerpt ?? ""), 220);
-
-    const handleOpen = (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        onVideoOpen?.(video);
-    };
-
-    return (
-        <div className="vid-item block" data-video-slug={safeSlug}>
-            <Card
-                className="vid-card overflow-hidden"
-                data-title={video.title}
-                data-cats={catNames}
-                data-bucket={bucketSlugs}
-                data-mt={materialSlugs}
-                data-sa={serviceSlugs}
-            >
-                <CardHeader>
-                    <CardTitle className="text-xl font-bold">{video.title}</CardTitle>
-                </CardHeader>
-
-                <button
-                    type="button"
-                    aria-label={`Play ${video.title || "video"}`}
-                    onClick={handleOpen}
-                    data-video-slug={safeSlug}
-                    className="group/video-play relative block w-full focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--brand-blue)"
-                >
-                    <div
-                        className="relative w-full overflow-hidden bg-blue-200"
-                    >
-                        <Frame
-                            src={video.thumbnailUrl}
-                            alt={video.title}
-                            ratio="16 / 9"
-                            className="object-cover w-full transition-transform duration-300 motion-reduce:transition-none motion-safe:group-hover/video-play:scale-[1.06]"
-                            sizes="(min-width: 1024px) 50vw, 100vw"
-                        />
-                    </div>
-                    <span className="absolute inset-0 grid place-items-center bg-black/0 transition group-hover/video-play:bg-black/15">
-                        <span className="grid place-items-center rounded-xl bg-white/90 p-4 shadow-md">
-                            <svg viewBox="0 0 24 24" aria-hidden="true" className="w-6 fill-slate-900">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                        </span>
-                    </span>
-                </button>
-
-                <CardContent className="px-5 pb-4 pt-5 sm:px-6 sm:pb-6">
-                    {description && (
-                        <p className="text-sm text-slate-600" style={lineClampStyle}>
-                            {description}
-                        </p>
-                    )}
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {categories.map((category) => (
-                            <span
-                                key={`${safeKey}-${category.slug ?? category.name}`}
-                                className={smallPillClass}
-                            >
-                                <span className={pillLabelClass}>{category.name}</span>
-                            </span>
-                        ))}
-                    </div>
-
-                    {video.projectSlug ? (
-                        <div className="mt-3">
-                            <SmartLink
-                                href={buildProjectHref(video.projectSlug)!}
-                                className="text-sm font-medium text-[#0045d7] hover:underline"
-                            >
-                                See full project details
-                            </SmartLink>
-                        </div>
-                    ) : null}
-                </CardContent>
-                <CardFooter className="flex justify-end border-t border-blue-200 bg-blue-50 font-semibold px-5 py-4 text-slate-700 sm:px-6">
-                    <button
-                        type="button"
-                        onClick={handleOpen}
-                        data-video-slug={safeSlug}
-                        className="items-center gap-2 text-base font-semibold tracking-wide"
-                        data-icon-affordance="right"
-                    >
-                        Watch video
-                        <ArrowRight className="inline ml-2 icon-affordance h-4 w-4" aria-hidden="true" />
-                    </button>
-                </CardFooter>
-            </Card>
-
-            <template className="vid-body-src" suppressHydrationWarning>
-                {String(video.excerpt ?? "")}
-            </template>
-        </div>
-    );
-};
+): ReactNode => <VideoArchiveCard video={video} index={index} onVideoOpen={onVideoOpen} />;
 
 const renderProjectItem = (project: ProjectSummary): ReactNode => <ProjectArchiveCard project={project} variant="archive" />;
 
@@ -214,10 +64,13 @@ function InfiniteListQuery<T>({
     const baseQuery: ResourceQuery = useMemo(() => ({ first: pageSize, filters }), [pageSize, filters]);
     const initialPages = useMemo(() => [initial], [initial]);
     const effectiveGridClassName = useMemo(
-        () => [kind === "project" ? "items-stretch" : "auto-rows-fr", gridClass].filter(Boolean).join(" "),
-        [gridClass, kind]
+        () => ["items-stretch", gridClass].filter(Boolean).join(" "),
+        [gridClass]
     );
-    const effectiveGridLayoutClassName = gridLayoutClassName ?? (kind === "project" ? PROJECT_ARCHIVE_GRID_LAYOUT_CLASS : undefined);
+    const effectiveGridLayoutClassName = gridLayoutClassName ?? (
+        kind === "project" ? PROJECT_ARCHIVE_GRID_LAYOUT_CLASS :
+        kind === "blog" ? BLOG_ARCHIVE_GRID_LAYOUT_CLASS : undefined
+    );
 
     const [pages, setPages] = useState<PageResult<T>[]>(initialPages);
     const [loading, setLoading] = useState(false);
@@ -365,6 +218,7 @@ function InfiniteListQuery<T>({
             {loading && (
                 <GridLoadingState
                     variant={loaderVariant}
+                    blogVariant={kind === "blog" ? "archive" : undefined}
                     projectVariant={kind === "project" ? "archive" : undefined}
                     count={skeletonCountEff}
                     className={effectiveGridClassName}

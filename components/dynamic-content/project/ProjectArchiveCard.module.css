@@ -228,7 +228,7 @@
 }
 .compact {
   grid-template-columns: 68px minmax(0, 1fr);
-  grid-template-areas: 'photo heading' '. facts' '. footer';
+  grid-template-areas: 'photo heading' 'facts facts' 'footer footer';
   grid-template-rows: auto auto 1fr;
   column-gap: 12px;
   padding: 14px;

@@ -460,7 +460,7 @@ test('only public project relationships expose a project link, independently of 
   }
 });
 
-test('Play and Watch video each update sharing once, preserving filters and hash', async () => {
+test('thumbnail playback updates sharing once, preserving filters and hash', async () => {
   await mount('?bk=roofing-project&utm_source=test#videos');
   writes.length = 0;
   requests.length = 0;
@@ -482,7 +482,8 @@ test('Play and Watch video each update sharing once, preserving filters and hash
   assert.equal(selected(), null);
   assert.equal(dialog(), null);
   assert.equal(document.getElementById('video-share-url'), null);
-  await click('Watch video');
+  assert.equal([...document.querySelectorAll('button')].some(button => button.textContent.includes('Watch video')), false);
+  await click('Play Video alpha');
   assert.equal(selected(), 'alpha');
   assert.equal(writes.length, 3);
 });

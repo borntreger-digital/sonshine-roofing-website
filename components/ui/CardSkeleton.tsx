@@ -1,9 +1,7 @@
 import * as React from "react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS,
-  CONTENT_PREVIEW_MEDIA_CLASS,
-} from "@/components/dynamic-content/card-utils";
+import type { BlogCardVariant } from "@/components/dynamic-content/blog/BlogArchiveCard";
+import blogStyles from "@/components/dynamic-content/blog/BlogArchiveCard.module.css";
+import videoStyles from "@/components/dynamic-content/video/VideoArchiveCard.module.css";
 import type { ProjectCardVariant } from "@/components/dynamic-content/project/ProjectArchiveCard";
 import projectStyles from "@/components/dynamic-content/project/ProjectArchiveCard.module.css";
 import { cn } from "@/lib/utils";
@@ -12,6 +10,8 @@ import Skeleton from "@/components/ui/Skeleton";
 export type CardSkeletonProps = React.HTMLAttributes<HTMLDivElement> & {
   /** Which card layout to mirror. Defaults to the blog card. */
   variant?: "blog" | "project" | "video";
+  /** Blog placement to mirror when variant is blog. */
+  blogVariant?: BlogCardVariant;
   /** Project placement to mirror when variant is project. */
   projectVariant?: ProjectCardVariant;
   /** Show an image block that matches the card media slot. */
@@ -24,13 +24,12 @@ export type CardSkeletonProps = React.HTMLAttributes<HTMLDivElement> & {
   showMeta?: boolean;
 };
 
-const DEFAULT_CHIP_COUNT = 3;
-
 const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(function CardSkeleton(
   {
     className,
     variant = "blog",
     projectVariant = "standard",
+    blogVariant = "standard",
     withImage = true,
     imageAspectClass,
     bodyLines = 2,
@@ -40,21 +39,6 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
   ref
 ) {
   const lines = Math.max(0, bodyLines | 0);
-  const resolvedAspect =
-    imageAspectClass ?? "aspect-video";
-
-  const cardClassName = cn(
-    variant === "video"
-      ? "vid-card overflow-hidden"
-      : "flex h-full flex-col overflow-hidden",
-    variant === "blog" && BLOG_PREVIEW_CARD_MIN_HEIGHT_CLASS,
-    className
-  );
-  const headerClassName = variant === "video" ? undefined : "px-5 pb-5 pt-5 sm:px-6 sm:pt-6";
-  const contentClassName = "flex flex-1 flex-col px-5 pb-4 pt-5 sm:px-6 sm:pb-6";
-  const footerClassName =
-    "mt-auto flex items-center justify-between border-t border-slate-100/60 bg-slate-50/40 px-5 py-4 text-[#0045d7] sm:px-6";
-
   const renderBodyLines = (wrapperClassName?: string) => {
     if (lines === 0) return null;
     return (
@@ -73,29 +57,6 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
       </div>
     );
   };
-
-  const renderChipRow = (
-    count: number,
-    containerClassName?: string
-  ) => {
-    return (
-      <div className={cn("flex gap-2", containerClassName)}>
-        {Array.from({ length: count }).map((_, i) => (
-          <Skeleton key={`chip-${i}`} className="h-6 w-16 rounded-md" />
-        ))}
-      </div>
-    );
-  };
-
-  const renderBlogTopics = () => (
-    <div className="relative -mx-5 mt-3 min-h-11 sm:-mx-6">
-      <div className="flex flex-nowrap gap-2 overflow-x-auto px-5 pb-2 scrollbar-none sm:px-6">
-        {renderChipRow(DEFAULT_CHIP_COUNT)}
-      </div>
-      <div className="pointer-events-none absolute inset-y-1 left-0 w-6 bg-linear-to-r from-white to-transparent" />
-      <div className="pointer-events-none absolute inset-y-1 right-0 w-6 bg-linear-to-l from-white to-transparent" />
-    </div>
-  );
 
   if (variant === "project") {
     const hasDescription = lines > 0 && (projectVariant === "standard" || projectVariant === "archive");
@@ -134,71 +95,55 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
     );
   }
 
-  const header = (
-    <CardHeader className={headerClassName}>
-      <CardTitle
-        className={cn(
-          variant === "video" ? "font-medium" : "font-semibold",
-          variant === "blog" && "min-h-12",
-        )}
-      >
-        <Skeleton className="h-6 w-3/4" />
-      </CardTitle>
-    </CardHeader>
-  );
-
-  const media = withImage && (
-    <div className={cn(CONTENT_PREVIEW_MEDIA_CLASS, resolvedAspect)}>
-      <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
-      {variant === "video" && (
-        <span className="pointer-events-none absolute inset-0 grid place-items-center">
-          <span className="grid place-items-center rounded-xl bg-white/90 p-4 shadow-md">
-            <span className="h-4 w-4 rounded-sm bg-slate-300" />
-          </span>
-        </span>
-      )}
+  const styles = variant === "video" ? videoStyles : blogStyles;
+  const hasDescription = lines > 0 && (variant === "video" || blogVariant !== "compact");
+  const facts = showMeta ? (
+    <div className={styles.facts}>
+      {Array.from({ length: 2 }).map((_, i) => (
+        <div key={`fact-${i}`} className={styles.fact}>
+          <Skeleton className="h-4 w-14" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
+      ))}
     </div>
-  );
+  ) : null;
+  const media = withImage ? (
+    <div className={cn(variant === "video" ? videoStyles.media : blogStyles.photo, imageAspectClass)}>
+      <Skeleton className="absolute inset-0 h-full w-full rounded-none" />
+      {variant === "video" && <span className={videoStyles.play}><Skeleton className="h-5 w-5" /></span>}
+    </div>
+  ) : null;
 
   return (
-    <Card ref={ref} className={cardClassName} {...props}>
-      {header}
-      {media}
-
-      <CardContent className={contentClassName}>
-        {variant === "blog" && (
+    <div ref={ref} className={cn("not-prose", styles.shell, className)} aria-hidden="true" {...props}>
+      <div className={cn(
+        styles.card,
+        variant === "video" ? videoStyles.standard : blogStyles[blogVariant],
+        variant === "blog" && blogVariant === "compact" ? "rounded-lg" : "rounded-xl",
+        variant === "blog" && !hasDescription && blogStyles.noSummary,
+        variant === "blog" && !showMeta && blogStyles.noFacts,
+      )}>
+        {media}
+        {variant === "video" ? (
+          <div className={videoStyles.body}>
+            <Skeleton className="h-7 w-3/4" />
+            {facts}
+            {hasDescription && <div className={videoStyles.description}>{renderBodyLines()}</div>}
+            <div className={videoStyles.project}><Skeleton className="h-4 w-40" /></div>
+          </div>
+        ) : (
           <>
-            {showMeta && (
-              <div className="flex min-h-5 items-center text-sm text-slate-600">
-                <Skeleton className="h-4 w-24" />
-              </div>
-            )}
-
-            <div className="mt-3 min-h-18">
-              {renderBodyLines(showMeta ? undefined : "mt-2")}
-            </div>
-            {renderBlogTopics()}
-          </>
-        )}
-
-        {variant === "video" && (
-          <>
-            {renderBodyLines()}
-            {renderChipRow(DEFAULT_CHIP_COUNT, "mt-3")}
-            <div className="mt-3">
-              <Skeleton className="h-4 w-40" />
+            <div className={blogStyles.heading}><Skeleton className="h-7 w-3/4" /></div>
+            {facts}
+            {hasDescription && <div className={blogStyles.description}>{renderBodyLines()}</div>}
+            <div className={blogStyles.footer}>
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-7 w-7 rounded-md" />
             </div>
           </>
         )}
-      </CardContent>
-
-      <CardFooter className={footerClassName}>
-        <div className="inline-flex items-center gap-2">
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-4 w-4 rounded-sm" />
-        </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 });
 
