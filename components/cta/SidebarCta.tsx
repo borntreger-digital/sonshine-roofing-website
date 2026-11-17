@@ -20,7 +20,7 @@ export default async function SidebarCta({ embedded = false }: { embedded?: bool
     <div
       className={cn(
         'not-prose',
-        !embedded && 'mt-4 rounded-3xl border border-blue-200 bg-white p-4 shadow-xs',
+        !embedded && 'mt-4 rounded-xl border border-blue-200 bg-white p-4 shadow-xs',
       )}
     >
       <OpenOrClosed

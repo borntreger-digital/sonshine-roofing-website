@@ -13,7 +13,7 @@ export default function ReviewsCarouselView({ reviews }: { reviews: CarouselRevi
     <div className="relative w-full text-left not-prose" data-reviews-carousel>
       <div id={fallbackId} className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reviews-fallback>
         {reviews.map(review => (
-          <article key={review.id} className="flex h-full flex-col rounded-3xl border border-slate-200 bg-white/80 p-6 text-left shadow-xs">
+          <article key={review.id} className="flex h-full flex-col rounded-xl border border-slate-200 bg-white/80 p-6 text-left shadow-xs">
             <ReviewAttribution review={review} />
             <blockquote className="mt-4 flex-1 whitespace-pre-line text-base leading-7 text-slate-700">{review.text}</blockquote>
             {review.sourceUrl ? (

@@ -159,7 +159,7 @@ Example usage:
   defaultOpen
   size="md"
   tone="soft"
-  radius="2xl"
+  radius="xl"
 >
   <p>
     Bring documents that show licensure, insurance, and workmanship guarantees before you sign.

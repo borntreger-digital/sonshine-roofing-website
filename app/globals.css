@@ -236,7 +236,7 @@
 @utility btn {
   /* Base button reset */
   @apply inline-flex items-center justify-center
-           rounded-xl font-semibold
+           rounded-lg font-semibold
            transition duration-300 ease-in-out
            focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-0
            disabled:pointer-events-none disabled:opacity-50;
@@ -279,27 +279,27 @@
 
 @utility btn-hero {
   /* Sizes */
-  @apply h-16 px-8 text-3xl;
+  @apply h-16 rounded-xl px-8 text-3xl;
 }
 
 @utility btn-xl {
-  @apply h-14 px-6 text-2xl;
+  @apply h-14 rounded-xl px-6 text-2xl;
 }
 
 @utility btn-lg {
-  @apply h-11 px-6 text-lg;
+  @apply h-11 rounded-lg px-6 text-lg;
 }
 
 @utility btn-md {
-  @apply h-10 px-4 text-base;
+  @apply h-10 rounded-lg px-4 text-base;
 }
 
 @utility btn-sm {
-  @apply h-9  px-3 text-sm;
+  @apply h-9 rounded-md px-3 text-sm;
 }
 
 @utility btn-xs {
-  @apply h-7 px-2 text-xs;
+  @apply h-7 rounded-md px-2 text-xs;
 }
 
 @utility btn-press {
@@ -489,7 +489,7 @@
   h4 { @apply text-base md:text-lg lg:text-2xl leading-relaxed; }
 
   /* Cards */
-  .card { @apply rounded-2xl border border-blue-200 bg-amber-50/50; box-shadow: var(--elev-1); }
+  .card { @apply rounded-xl border border-blue-200 bg-amber-50/50; box-shadow: var(--elev-1); }
 
   /* Badges */
   .badge { @apply inline-block border border-(--brand-orange) rounded-md bg-slate-100 px-2.5 py-1 text-xs sm:text-sm text-slate-700; }
@@ -642,7 +642,7 @@
     background: linear-gradient(90deg, var(--brand-blue), var(--brand-cyan));
   }
   .prose img {
-    @apply rounded-2xl;
+    @apply rounded-xl;
   }
   .prose :where(.blog-inline-lightbox-wrap) {
     position: relative;
@@ -653,7 +653,7 @@
     position: relative;
     max-width: 100%;
     cursor: zoom-in;
-    border-radius: 1rem;
+    @apply rounded-xl;
     overflow: hidden;
   }
   .prose :where(.blog-inline-lightbox-image) {
@@ -699,7 +699,7 @@
     display: block;
     width: 2.75rem;
     height: 2.75rem;
-    @apply rounded-xl;
+    @apply rounded-lg;
     background: rgb(255 255 255 / 0.9);
     box-shadow: 0 8px 24px rgb(15 23 42 / 0.3);
     transition: transform 200ms ease-out;
@@ -808,7 +808,7 @@
 
   /* Project page niceties */
   .project-hero {
-    @apply rounded-2xl bg-neutral-50;
+    @apply rounded-xl bg-neutral-50;
     box-shadow: var(--elev-1);
   }
   .project-badges {

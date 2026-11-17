@@ -43,7 +43,7 @@ export default function VideoShareBar({ collectionUrl }: Props) {
   };
 
   return (
-    <div className="rounded-md border border-blue-300 bg-white p-3">
+    <div className="rounded-lg border border-blue-300 bg-white p-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <label htmlFor="video-share-url" className="text-sm font-medium text-slate-700">Share this video</label>
         <div className="flex w-full min-w-0 items-center gap-2">

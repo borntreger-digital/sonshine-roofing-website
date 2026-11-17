@@ -38,7 +38,7 @@ export default function ServiceAreaSection({ areaId, locationName, overviewHtml,
           <Image src={mapImage.url} alt={mapImage.altText}
             width={mapImage.width || 1080} height={mapImage.height || 907}
             sizes="(max-width: 1024px) 100vw, 896px"
-            className="h-auto w-full rounded-3xl border border-blue-200" />
+            className="h-auto w-full rounded-xl border border-blue-200" />
           <figcaption className="text-sm text-slate-600">{locationName} service coverage map</figcaption>
         </figure>
       ) : null}
@@ -71,7 +71,7 @@ export default function ServiceAreaSection({ areaId, locationName, overviewHtml,
                   {neighborhood.mapImage ? (
                     <Image src={neighborhood.mapImage.url} alt={neighborhood.mapImage.altText}
                       width={neighborhood.mapImage.width || 960} height={neighborhood.mapImage.height || 540}
-                      sizes={CONTENT_PREVIEW_IMAGE_SIZES} className="h-auto w-full rounded-xl" />
+                      sizes={CONTENT_PREVIEW_IMAGE_SIZES} className="h-auto w-full rounded-lg" />
                   ) : null}
                 </CardContent>
                 <CardFooter className="block border-t border-blue-200 bg-blue-50 p-6" data-neighborhood-projects>

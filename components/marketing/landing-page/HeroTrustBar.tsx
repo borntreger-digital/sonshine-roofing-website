@@ -35,7 +35,7 @@ type HeroTrustBarProps = {
 
 // REVIEW LINK STYLES
 const REVIEW_SMARTLINK_CONTAINER_STYLES =
-  'h-full w-full group inline-flex w-full mx-auto items-start gap-4 rounded-3xl border border-blue-100 bg-white/80 px-4 py-4 text-left shadow-lg transition hover:border-(--brand-cyan) hover:shadow-xl focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand-cyan)';
+  'h-full w-full group inline-flex w-full mx-auto items-start gap-4 rounded-xl border border-blue-100 bg-white/80 px-4 py-4 text-left shadow-lg transition hover:border-(--brand-cyan) hover:shadow-xl focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--brand-cyan)';
 const REVIEW_SMARTLINK_ARROWUPRIGHT_STYLES =
   'icon-affordance text-(--brand-blue) absolute h-4 w-4 top-0 right-0';
 const REVIEW_LINK_TITLE_BAR = 'mb-2 flex flex-col px-2 justify-start';
@@ -56,7 +56,7 @@ const REVIEW_COUNT = 'text-xs text-slate-500 mb-2';
 const BADGE_TITLE_STYLES = 'text-xl text-slate-800';
 const BADGE_SUBTITLE_STYLES = 'text-slate-600 text-base mb-4';
 const BADGE_CARD_STYLES =
-  'flex-col items-center gap-2 rounded-2xl border border border-blue-100 bg-[#fb9216]/5 p-6 text-center shadow-inner transition hover:-translate-y-1 hover:border-(--brand-blue)/40 hover:shadow-lg';
+  'flex-col items-center gap-2 rounded-xl border border border-blue-100 bg-[#fb9216]/5 p-6 text-center shadow-inner transition hover:-translate-y-1 hover:border-(--brand-blue)/40 hover:shadow-lg';
 const BADGE_IMAGE_WRAPPER = 'relative flex h-32 w-full items-center justify-center';
 const BADGE_IMAGE_CLASS = 'h-full w-auto max-w-[300px] object-contain drop-shadow-xs';
 const BADGE_IMAGE_SIZES =
@@ -218,7 +218,7 @@ export default async function HeroTrustBar({
   return (
     <section aria-label="Trust indicators and recognitions" className="py-12">
       <div className="relative mx-auto flex max-w-[1280px] flex-col gap-6 px-4">
-        <div className="rounded-3xl border border-blue-100 bg-blue-50 p-4 md:p-6 lg:p-8 shadow-xl">
+        <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 md:p-6 lg:p-8 shadow-xl">
           <div className="flex flex-col gap-4 lg:grid md:grid md:grid-cols-2 lg:grid-cols-3 lg:items-center lg:justify-between">
             <div className="max-w-3xl text-center lg:text-left">
               <p className="text-xs md:text-base font-semibold uppercase tracking-wider text-slate-500">

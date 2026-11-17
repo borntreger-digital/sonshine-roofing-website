@@ -41,7 +41,7 @@ export async function LandingHero({
           </div>
           <p className="mt-3 text-sm text-slate-500">For homes in Sarasota, Manatee &amp; Charlotte counties.</p>
         </div>
-        <div className="relative aspect-video overflow-hidden rounded-2xl shadow-xs md:aspect-4/3">
+        <div className="relative aspect-video overflow-hidden rounded-xl shadow-xs md:aspect-4/3">
           <StaticImage src={`static:${imageKey.replace(/^static:/, '')}`} fill crop className="object-cover" sizes="(min-width: 768px) 50vw, 100vw" priority />
         </div>
       </div>
@@ -105,7 +105,7 @@ export function LandingFaq({ items }: { items: { question: string; answer: React
     <div className="grid w-full grid-cols-1 gap-4 text-left" data-landing-faq>
       {items.map(({ question, answer }) => (
         <Accordion key={question} summary={<h3 className="text-base font-normal text-slate-800 md:text-xl">{question}</h3>}
-          size="md" tone="soft" radius="2xl" proseBody={false}>
+          size="md" tone="soft" radius="xl" proseBody={false}>
           <div className="faq-answer text-base leading-loose text-slate-700">{answer}</div>
         </Accordion>
       ))}

@@ -176,7 +176,7 @@ export default async function SpecialOfferPage({ params }: { params: Promise<{ s
 
       <Section className="pb-20">
         <div className="mx-auto max-w-3xl space-y-8 px-2">
-          <article className="prose prose-slate max-w-none rounded-3xl border border-blue-100 bg-white p-6 shadow-xs sm:p-8">
+          <article className="prose prose-slate max-w-none rounded-xl border border-blue-100 bg-white p-6 shadow-xs sm:p-8">
             <h2 className="mt-0">Offer Details</h2>
             <div dangerouslySetInnerHTML={{ __html: offer.descriptionHtml }} />
             {offer.legalDisclaimer ? (
@@ -193,7 +193,7 @@ export default async function SpecialOfferPage({ params }: { params: Promise<{ s
             {!expired && offer.offerCode ? (
               <Suspense
                 fallback={
-                  <div className="rounded-3xl border border-blue-100 bg-white p-6 text-sm text-slate-600">
+                  <div className="rounded-xl border border-blue-100 bg-white p-6 text-sm text-slate-600">
                     Loading coupon form...
                   </div>
                 }
@@ -208,7 +208,7 @@ export default async function SpecialOfferPage({ params }: { params: Promise<{ s
                 />
               </Suspense>
             ) : (
-              <div className="rounded-3xl border border-blue-100 bg-white p-6 shadow-xs">
+              <div className="rounded-xl border border-blue-100 bg-white p-6 shadow-xs">
                 <h2 className="text-xl font-semibold text-slate-900">
                   {expired ? 'This offer has expired' : 'This offer is unavailable'}
                 </h2>

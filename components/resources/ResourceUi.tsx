@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 export function ResourceSearchPanel({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-blue-200 bg-white p-4 shadow-xs md:p-5">
+    <div className="rounded-xl border border-blue-200 bg-white p-4 shadow-xs md:p-5">
       {children}
     </div>
   );

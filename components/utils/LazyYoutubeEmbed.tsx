@@ -97,7 +97,7 @@ export default function LazyYoutubeEmbed({
     <div
       ref={containerRef}
       className={clsx(
-        "relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-900/20 shadow-lg",
+        "relative aspect-video w-full overflow-hidden rounded-xl bg-slate-900/20 shadow-lg",
         className
       )}
     >

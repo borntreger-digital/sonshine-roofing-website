@@ -262,7 +262,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                   width={1280}
                   height={720}
                   sizes="(max-width: 1280px) 100vw, 768px"
-                  className="rounded-2xl bg-neutral-50"
+                  className="rounded-xl bg-neutral-50"
                   priority
                   fetchPriority="high"
                   loading="eager"
@@ -283,8 +283,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </div>
 
           {/* Right column: Project Details + Products */}
-          <div className="sticky top-16 bg-amber-50/50 shadow-xs rounded-3xl border border-blue-200">
-            <div className="rounded-t-3xl px-6 border-b border-blue-200 overflow-hidden bg-blue-50">
+          <div className="sticky top-16 bg-amber-50/50 shadow-xs rounded-xl border border-blue-200">
+            <div className="rounded-t-xl px-6 border-b border-blue-200 overflow-hidden bg-blue-50">
               <h3 className="text-2xl mt-6 mb-4">About This Project</h3>
             </div>
             <div className="px-6 py-5">
@@ -299,7 +299,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
             {project.productLinks?.length > 0 && (
               <>
-                <div className="rounded-b-3xl px-6 border-t border-blue-200 overflow-hidden bg-blue-50">
+                <div className="rounded-b-xl px-6 border-t border-blue-200 overflow-hidden bg-blue-50">
                   <h4 className="mt-4 mb-2 text-xl text-slate-600">
                     <List className="text-(--brand-blue) mr-2 inline h-4 w-4" />
                     Products Used

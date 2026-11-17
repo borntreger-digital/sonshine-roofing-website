@@ -187,7 +187,7 @@ export default async function Page() {
               icon={<ShieldCheck className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className="text-xl text-slate-800">Know Your Contractor</h3>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               open
             >
@@ -199,7 +199,7 @@ export default async function Page() {
               </p>
 
               <figure className={figureStyles}>
-                <div className="relative aspect-4/3 overflow-hidden rounded-3xl">
+                <div className="relative aspect-4/3 overflow-hidden rounded-xl">
                   <StaticImage
                     src={nathanImage.url}
                     alt={nathanImage.altText}
@@ -233,7 +233,7 @@ export default async function Page() {
               icon={<Layers className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className="text-xl text-slate-800">Know What Materials You Need</h3>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
             >
               <p>
@@ -250,7 +250,7 @@ export default async function Page() {
               </p>
 
               <figure className={figureStyles}>
-                <div className="relative aspect-4/3 overflow-hidden rounded-3xl">
+                <div className="relative aspect-4/3 overflow-hidden rounded-xl">
                   <StaticImage crop
                     src="static:tile-shingle-metal-roof-comparison"
                     fill
@@ -276,7 +276,7 @@ export default async function Page() {
                 </h3>
               }
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
             >
               <p>
@@ -289,7 +289,7 @@ export default async function Page() {
               <h4>Workmanship Warranty</h4>
               {/* Inline callout (#6) */}
               <div
-                className="my-4 rounded-3xl border border-[#fb9216]/30 bg-[#fb9216]/5 p-4"
+                className="my-4 rounded-xl border border-[#fb9216]/30 bg-[#fb9216]/5 p-4"
                 role="note"
                 aria-label="Important"
               >
@@ -346,7 +346,7 @@ export default async function Page() {
                 <h3 className="text-xl text-slate-800">Know the Importance of Roof Maintenance</h3>
               }
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
             >
               <p>
@@ -359,7 +359,7 @@ export default async function Page() {
               </p>
 
               <figure className={figureStyles}>
-                <div className="relative aspect-4/3 overflow-hidden rounded-3xl">
+                <div className="relative aspect-4/3 overflow-hidden rounded-xl">
                   <StaticImage crop
                     src="static:clearing-leaves-from-roof-gutter"
                     fill
@@ -385,7 +385,7 @@ export default async function Page() {
 
               {/* Inline callout (#6) */}
               <div
-                className="my-4 rounded-3xl border border-[#fb9216]/30 bg-[#fb9216]/5 p-4"
+                className="my-4 rounded-xl border border-[#fb9216]/30 bg-[#fb9216]/5 p-4"
                 role="note"
                 aria-label="Pro tip"
               >
@@ -403,7 +403,7 @@ export default async function Page() {
             <Accordion
               icon={<ListChecks className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className="text-xl text-slate-800">Know What to Expect</h3>}
-              radius="2xl"
+              radius="xl"
               proseBody={false}
             >
               {/* Stepper timeline (#4) */}

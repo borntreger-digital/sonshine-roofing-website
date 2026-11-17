@@ -45,7 +45,7 @@ const HERO_INPUT_BASE_CLASS =
   'mt-2 w-full rounded-xl border border-white/12 bg-white/80 px-4 py-3 text-base text-slate-900 shadow-none placeholder:text-slate-500 focus:border-(--brand-orange) focus:ring-4 focus:ring-(--brand-orange)/15';
 const INPUT_ERROR_CLASS = 'border-red-300 focus:border-red-400 focus:ring-red-200';
 const HERO_PANEL_CLASS =
-  'mt-8 sm:mt-0 rounded-3xl border border-blue-100/50 bg-[#0045d7]/5 p-5 shadow-none ring-1 ring-white/5 backdrop-blur-xl sm:p-6';
+  'mt-8 sm:mt-0 rounded-xl border border-blue-100/50 bg-[#0045d7]/5 p-5 shadow-none ring-1 ring-white/5 backdrop-blur-xl sm:p-6';
 const HERO_SMS_CLASS_NAMES = {
   root: 'space-y-5',
   cards: 'space-y-3',
@@ -54,7 +54,7 @@ const HERO_SMS_CLASS_NAMES = {
   label: 'text-sm font-semibold leading-6 text-slate-300',
   options: 'mt-4 flex flex-wrap gap-3',
   optionLabel:
-    'inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/4 px-4 py-2.5 text-slate-300 focus-within:ring-2 focus-within:ring-(--brand-orange)',
+    'inline-flex items-center gap-2 rounded-lg border border-white/12 bg-white/4 px-4 py-2.5 text-slate-300 focus-within:ring-2 focus-within:ring-(--brand-orange)',
   optionLabelSelected: 'border-slate-200 bg-(--brand-orange) text-slate-200',
   radio: 'sr-only',
   optionText: 'text-sm font-semibold leading-none',
@@ -487,7 +487,7 @@ export default function LeadForm({ restoredSuccess, variant = 'default' }: LeadF
           title={renderedFormHeading}
           description="FREE ESTIMATE"
           headerFooter={
-            <div className="mt-6 flex items-start gap-3 rounded-2xl border border-blue-100 bg-white/70 px-4 py-4">
+            <div className="mt-6 flex items-start gap-3 rounded-lg border border-blue-100 bg-white/70 px-4 py-4">
               <div>
                 <p className="font-semibold text-slate-800">Need help right now?</p>
                 <p className="mt-1 text-sm text-slate-600">

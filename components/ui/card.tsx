@@ -16,7 +16,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(function Card(
     <div
       ref={ref}
       className={cn(
-        "not-prose rounded-3xl overflow-hidden",
+        "not-prose rounded-xl overflow-hidden",
         "border border-blue-200 bg-white text-slate-900 shadow-xs md:shadow-md",
         interactive && [
           "group/interactive-card transition-[border-color,box-shadow,scale] duration-300",

@@ -43,7 +43,7 @@ export default function BlogArchiveCard({ post, style, className, imageSizes = "
     <div className={cn("min-w-0 h-full", className)} style={style}>
       <SmartLink
         href={href}
-        className="group block h-full min-w-0 rounded-3xl focus-visible:outline-hidden"
+        className="group block h-full min-w-0 rounded-xl focus-visible:outline-hidden"
         title={post.title}
         data-icon-affordance="right"
       >

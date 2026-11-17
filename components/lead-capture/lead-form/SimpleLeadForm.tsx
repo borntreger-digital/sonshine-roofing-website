@@ -387,8 +387,8 @@ export default function SimpleLeadForm({
         {/* SECRET CIA HONEYPOT */}
         <input type="text" name="company" className="hidden" tabIndex={-1} autoComplete="off" />
         {/* OK, BACK TO THE SHOW */}
-        <div className="mx-auto w-full rounded-3xl border border-blue-100 bg-white shadow-md">
-          <div className="border-b rounded-t-3xl border-blue-100 bg-linear-to-r from-sky-50 via-white to-amber-50 p-6">
+        <div className="mx-auto w-full rounded-xl border border-blue-100 bg-white shadow-md">
+          <div className="border-b rounded-t-xl border-blue-100 bg-linear-to-r from-sky-50 via-white to-amber-50 p-6">
             <h2 className="flex items-center text-3xl font-bold gap-2">
               <Mail className="h-6 w-6 text-(--brand-blue)" aria-hidden="true" />
               <span>{renderHighlight('Contact Our Office', 'Our Office')}</span>
@@ -614,7 +614,7 @@ export default function SimpleLeadForm({
                         type="button"
                         onClick={() => setField('roofAge', value)}
                         className={cn(
-                          'font-medium text-slate-600 rounded-xl border px-4 py-2 transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2',
+                          'font-medium text-slate-600 rounded-lg border px-4 py-2 transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2',
                           selected
                             ? 'border-(--brand-blue) bg-(--brand-blue) text-white shadow-sm'
                             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300',
@@ -645,14 +645,14 @@ export default function SimpleLeadForm({
                         type="button"
                         onClick={() => setField('roofType', value)}
                         className={cn(
-                          'group flex flex-col gap-3 rounded-2xl border px-4 py-4 text-left transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2',
+                          'group flex flex-col gap-3 rounded-lg border px-4 py-4 text-left transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2',
                           selected
                             ? 'border-(--brand-blue) bg-(--brand-blue)/5 shadow-[0_8px_20px_rgba(15,76,129,0.12)]'
                             : 'border-slate-200 bg-white hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md',
                         )}
                         aria-pressed={selected}
                       >
-                        <div className="relative w-full overflow-hidden rounded-xl bg-slate-100 aspect-5/2">
+                        <div className="relative w-full overflow-hidden rounded-md bg-slate-100 aspect-5/2">
                           <StaticImage
                             src={imageSrc}
                             alt="" decorative crop

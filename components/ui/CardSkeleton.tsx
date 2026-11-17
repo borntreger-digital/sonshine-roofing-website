@@ -104,6 +104,7 @@ const CardSkeleton = React.forwardRef<HTMLDivElement, CardSkeletonProps>(functio
         <div className={cn(
           projectStyles.card,
           projectStyles[projectVariant],
+          projectVariant === "compact" ? "rounded-lg" : "rounded-xl",
           hasDescription ? projectStyles.hasProse : projectStyles.noDescription,
         )}>
           {withImage && (

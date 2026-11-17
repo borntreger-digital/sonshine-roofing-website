@@ -18,7 +18,7 @@ export default function PersonGrid({ people }: { people: Person[] }) {
             <li key={p.slug} className="min-w-0 h-full">
               <SmartLink
                 href={buildPersonHref(p.slug) ?? ROUTES.about}
-                className="group block h-full rounded-2xl focus-visible:outline-hidden"
+                className="group block h-full rounded-xl focus-visible:outline-hidden"
                 data-icon-affordance="right"
               >
                 <Card interactive className="flex h-full flex-col overflow-hidden">

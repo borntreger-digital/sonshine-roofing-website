@@ -249,7 +249,7 @@ export default function ReferralForm() {
 
   if (status === 'success') {
     return (
-      <div className="rounded-3xl border border-emerald-200 bg-white p-6 shadow-xs">
+      <div className="rounded-xl border border-emerald-200 bg-white p-6 shadow-xs">
         <div className="flex items-start gap-4">
           <CheckCircle2 className="mt-1 h-7 w-7 shrink-0 text-emerald-600" aria-hidden="true" />
           <div>
@@ -265,7 +265,7 @@ export default function ReferralForm() {
     <form className="not-prose" onSubmit={handleSubmit} noValidate>
       <input type="text" name="company" className="hidden" tabIndex={-1} autoComplete="off" />
 
-      <div className="rounded-3xl border border-blue-100 bg-white shadow-md">
+      <div className="rounded-xl border border-blue-100 bg-white shadow-md">
         <div className="border-b border-blue-100 bg-linear-to-r from-sky-50 via-white to-amber-50 p-6">
           <div className="flex items-center gap-3">
             <Contact className="h-6 w-6 text-(--brand-blue)" aria-hidden="true" />

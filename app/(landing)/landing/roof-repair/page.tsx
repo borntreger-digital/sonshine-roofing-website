@@ -108,7 +108,7 @@ export default function RoofRepairLandingPage() {
           {REPAIR_CONCERNS.map(({ imageKey, title, description }) => (
             <article
               key={title}
-              className="overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-xs"
+              className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-xs"
             >
               <div className="relative aspect-4/3 bg-slate-100">
                 {imageKey ? (
@@ -160,7 +160,7 @@ export default function RoofRepairLandingPage() {
                 'We explain the findings and recommended work. Review your free estimate and decide how you want to proceed.',
             },
           ].map(({ title, description }, index) => (
-            <li key={title} className="rounded-3xl border border-blue-100 bg-white p-6">
+            <li key={title} className="rounded-xl border border-blue-100 bg-white p-6">
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 font-semibold text-(--brand-blue)">
                   {index + 1}

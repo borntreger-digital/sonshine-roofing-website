@@ -68,7 +68,7 @@ export default function NotFound() {
             <SmartLink
               key={href}
               href={href}
-              className="group flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-xs transition hover:-translate-y-0.5 hover:border-(--brand-blue)/70 hover:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue) focus-visible:ring-offset-2"
+              className="group flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-xs transition hover:-translate-y-0.5 hover:border-(--brand-blue)/70 hover:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue) focus-visible:ring-offset-2"
               data-icon-affordance="right"
             >
               <div className="flex items-center gap-3">

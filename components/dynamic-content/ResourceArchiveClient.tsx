@@ -217,7 +217,7 @@ export default function ResourceArchiveClient<Item>({
     <div>
       <div
         ref={filtersRef}
-        className="scroll-mt-28 rounded-3xl border border-blue-300 bg-white p-4 shadow-md md:p-6"
+        className="scroll-mt-28 rounded-xl border border-blue-300 bg-white p-4 shadow-md md:p-6"
         role="search"
         aria-label={`Search ${labels.itemPlural}`}
       >
@@ -402,7 +402,7 @@ export default function ResourceArchiveClient<Item>({
             });
             searchRef.current?.focus({ preventScroll: true });
           }}
-          className="pointer-events-auto inline-flex min-h-12 items-center gap-2 rounded-xl bg-(--brand-blue) px-4 py-2 text-sm font-semibold text-white shadow-lg focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan) focus:ring-offset-2"
+          className="pointer-events-auto inline-flex min-h-12 items-center gap-2 rounded-lg bg-(--brand-blue) px-4 py-2 text-sm font-semibold text-white shadow-lg focus:outline-hidden focus:ring-2 focus:ring-(--brand-cyan) focus:ring-offset-2"
         >
           To Filters <ArrowUp className="h-4 w-4" aria-hidden="true" />
         </button>

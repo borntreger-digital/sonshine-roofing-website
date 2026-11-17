@@ -73,6 +73,7 @@ export default function ProjectArchiveCard({
   ].filter(([, value]) => value);
   const cardClassName = cn(
     'proj-card',
+    variant === 'compact' ? 'rounded-lg' : 'rounded-xl',
     styles.card,
     styles[variant],
     linked ? styles.interactive : styles.staticCard,

@@ -262,14 +262,14 @@ export default function SpecialOfferPopup({ offer }: Props) {
           aria-modal="true"
           aria-labelledby={titleId}
           aria-describedby={descriptionId}
-          className="relative flex max-h-[calc(100svh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl outline-hidden sm:rounded-3xl"
+          className="relative flex max-h-[calc(100svh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl outline-hidden"
           tabIndex={-1}
         >
           <button
             ref={closeButtonRef}
             type="button"
             aria-label="Close special offer"
-            className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 bg-white/95 text-slate-800 shadow-lg transition hover:bg-white focus:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
+            className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-white/80 bg-white/95 text-slate-800 shadow-lg transition hover:bg-white focus:outline-hidden focus-visible:ring-2 focus-visible:ring-(--brand-blue)"
             onClick={dismiss}
           >
             <X className="h-5 w-5" aria-hidden="true" />

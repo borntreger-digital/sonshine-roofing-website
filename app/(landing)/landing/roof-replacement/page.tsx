@@ -172,7 +172,7 @@ export default async function RoofReplacementLandingPage() {
       >
         <div className="grid gap-6 md:grid-cols-3">
           {steps.map(({ title, description }) => (
-            <div key={title} className="rounded-2xl border border-slate-200 bg-white p-6">
+            <div key={title} className="rounded-xl border border-slate-200 bg-white p-6">
               <h3 className="mb-3 text-xl font-semibold text-slate-900">{title}</h3>
               <p className="text-slate-600">{description}</p>
             </div>
@@ -198,7 +198,7 @@ export default async function RoofReplacementLandingPage() {
               ))}
             </ul>
           </div>
-          <div className="relative aspect-4/3 overflow-hidden rounded-2xl">
+          <div className="relative aspect-4/3 overflow-hidden rounded-xl">
             <StaticImage
               src="static:tile-shingle-metal-roof-comparison"
               fill

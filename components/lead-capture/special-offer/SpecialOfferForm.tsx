@@ -301,7 +301,7 @@ export default function SpecialOfferForm({
   };
 
   return (
-    <div className="not-prose rounded-3xl border border-blue-100 bg-white p-6 shadow-xs print:hidden sm:p-8">
+    <div className="not-prose rounded-xl border border-blue-100 bg-white p-6 shadow-xs print:hidden sm:p-8">
       <h2 className="text-2xl font-semibold text-slate-800">Redeem Offer</h2>
       <p className="mt-4 text-sm text-slate-600">
         Enter your details and we’ll email your coupon code and offer details. Our team will also

@@ -21,7 +21,6 @@
   color: var(--project-ink);
   background: #fff;
   border: 1px solid #cad8e5;
-  border-radius: 10px;
   text-decoration: none;
   overflow: hidden;
   box-shadow: 0 2px 5px #183f6508;
@@ -43,6 +42,7 @@
 }
 .photo {
   grid-area: photo;
+  align-self: start;
   position: relative;
   min-width: 0;
   margin: 0;
@@ -137,6 +137,8 @@
 }
 .description {
   grid-area: description;
+  /* Grid stretching can expose part of a fourth line below the clamp. */
+  align-self: start;
   min-width: 0;
   margin: 14px 20px 16px;
   color: #53677c;
@@ -209,7 +211,7 @@
   color: var(--project-blue);
   background: #edf4fb;
   border: 1px solid #d4e4f5;
-  border-radius: 6px;
+  border-radius: calc(var(--radius) - 2px);
   transition:
     background 0.16s ease,
     color 0.16s ease;
@@ -224,9 +226,6 @@
   background: var(--project-blue);
   border-color: var(--project-blue);
 }
-.related .photo {
-  aspect-ratio: 16/9;
-}
 .compact {
   grid-template-columns: 68px minmax(0, 1fr);
   grid-template-areas: 'photo heading' '. facts' '. footer';
@@ -237,8 +236,7 @@
 .compact .photo {
   align-self: start;
   width: 68px;
-  aspect-ratio: 4/3;
-  border-radius: 5px;
+  border-radius: calc(var(--radius) - 2px);
 }
 .compact .heading {
   margin: 0;
@@ -298,12 +296,8 @@
   }
   .archive .photo {
     align-self: start;
-    aspect-ratio: 16/10;
     margin: 20px 0 0 20px;
-    border-radius: 6px;
-  }
-  .archive .image {
-    object-fit: contain;
+    border-radius: calc(var(--radius) - 2px);
   }
   .archive .heading {
     margin-top: 22px;
@@ -410,8 +404,7 @@
     }
     .related .photo {
       align-self: start;
-      aspect-ratio: 4/3;
-      border-radius: 5px;
+      border-radius: calc(var(--radius) - 2px);
     }
     .related .heading {
       margin: 0;

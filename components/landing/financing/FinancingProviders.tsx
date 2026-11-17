@@ -65,10 +65,10 @@ export default function FinancingProviders() {
         {providers.map((provider) => (
           <article
             key={provider.name}
-            className={`min-w-0 rounded-2xl bg-linear-to-r p-[2px] shadow-xs ${provider.borderClassName}`}
+            className={`min-w-0 rounded-xl bg-linear-to-r p-[2px] shadow-xs ${provider.borderClassName}`}
           >
-            <div className="flex h-full flex-col rounded-2xl bg-white">
-              <div className={`rounded-t-2xl p-6 md:px-8 ${provider.tintClassName}`}>
+            <div className="flex h-full flex-col rounded-xl bg-white">
+              <div className={`rounded-t-xl p-6 md:px-8 ${provider.tintClassName}`}>
                 <div className="mb-6 flex h-16 items-center">
                   <StaticImage
                     src={provider.logo}

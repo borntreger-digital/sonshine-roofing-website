@@ -195,7 +195,7 @@ export default async function Page() {
               icon={<Layers className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className={ACCORDION_TITLE}>Curling Shingles</h3>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               defaultOpen
             >
@@ -234,7 +234,7 @@ export default async function Page() {
               icon={<Droplets className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className={ACCORDION_TITLE}>Water Damage</h3>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               defaultOpen
             >
@@ -267,7 +267,7 @@ export default async function Page() {
               icon={<Bug className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className={ACCORDION_TITLE}>Insect Damage</h3>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               defaultOpen
             >
@@ -303,7 +303,7 @@ export default async function Page() {
               icon={<Hammer className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className={ACCORDION_TITLE}>Worn Out or Damaged Flashings</h3>}
               className="mb-4"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               defaultOpen
             >
@@ -344,7 +344,7 @@ export default async function Page() {
               icon={<PanelRight className="h-7 w-7" aria-hidden="true" />}
               summary={<h3 className={ACCORDION_TITLE}>Rotting Fascia</h3>}
               className="mb-6"
-              radius="2xl"
+              radius="xl"
               proseBody={false}
               defaultOpen
             >

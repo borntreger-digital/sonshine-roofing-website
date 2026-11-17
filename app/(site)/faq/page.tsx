@@ -106,7 +106,7 @@ export default async function FAQArchivePage() {
       </ResourceSearchPanel>
       <div
         id="faq-no-results"
-        className="mt-6 hidden rounded-2xl border border-blue-200 bg-white p-5"
+        className="mt-6 hidden rounded-xl border border-blue-200 bg-white p-5"
       >
         <p className="text-slate-700">
           No results for <span id="faq-query" className="font-semibold" />.
@@ -124,7 +124,7 @@ export default async function FAQArchivePage() {
               key={key}
               id={`topic-${key}`}
               aria-labelledby={`topic-heading-${key}`}
-              className="faq-topic overflow-hidden rounded-2xl border border-blue-200 bg-white shadow-xs"
+              className="faq-topic overflow-hidden rounded-xl border border-blue-200 bg-white shadow-xs"
             >
               <ResourceGroupHeading
                 title={title}

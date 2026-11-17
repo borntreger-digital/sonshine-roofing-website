@@ -20,7 +20,7 @@ type LeadFormSuccessProps = {
 const INFO_BADGE_CLASS =
   'inline-flex items-center gap-2 rounded-md border border-slate-200 px-3 py-1';
 const SUCCESS_LINK_CARD_CLASS =
-  'group flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-xs transition hover:-translate-y-0.5 hover:border-(--brand-blue) hover:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-(--brand-blue)';
+  'group flex h-full flex-col justify-between rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-xs transition hover:-translate-y-0.5 hover:border-(--brand-blue) hover:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-(--brand-blue)';
 const SUCCESS_LINK_ICON_WRAPPER_CLASS =
   'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--brand-blue)/10 text-(--brand-blue)';
 
@@ -47,7 +47,7 @@ export default function LeadFormSuccess({
     variant === 'default' && 'mt-8',
   );
   const panelClassName = cn(
-    'w-full mx-auto rounded-3xl p-8',
+    'w-full mx-auto rounded-xl p-8',
     isHeroEmbedded
       ? 'border border-white/15 bg-slate-950/72 text-white shadow-[0_30px_90px_rgba(0,0,0,0.4)] backdrop-blur-xl'
       : 'border border-emerald-200 bg-white/95 shadow-md',
@@ -60,8 +60,8 @@ export default function LeadFormSuccess({
     ? 'mt-3 max-w-xl text-sm text-blue-50/85'
     : 'mt-3 max-w-xl text-sm text-slate-600';
   const detailsCardClassName = isHeroEmbedded
-    ? 'mt-6 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left'
-    : 'mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-left';
+    ? 'mt-6 w-full rounded-lg border border-white/10 bg-white/5 px-5 py-4 text-left'
+    : 'mt-6 w-full rounded-lg border border-slate-200 bg-slate-50 px-5 py-4 text-left';
   const detailsHeadingClassName = isHeroEmbedded
     ? 'text-sm font-semibold uppercase tracking-wide text-blue-100/80'
     : 'text-sm font-semibold uppercase tracking-wide text-slate-600';
