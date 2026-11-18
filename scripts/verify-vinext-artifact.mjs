@@ -4,6 +4,8 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { verifyDeploymentSnapshot } from '../lib/content/deployment-snapshot.mjs';
+import { getOutputPath } from 'vinext/internal/utils/prerender-output-paths';
+import { expectedVideoSchemaPages, verifyVideoSchemaHtml } from './lib/video-schema.mjs';
 
 export function verifyVinextArtifact(root = process.cwd()) {
   const { snapshots } = verifyDeploymentSnapshot(root);
@@ -50,6 +52,18 @@ export function verifyVinextArtifact(root = process.cwd()) {
   const prerender = JSON.parse(readFileSync(resolve(root, 'dist/server/vinext-prerender.json'), 'utf8'));
   const rendered = prerender.routes.filter(route => route.status === 'rendered');
   const paths = new Set(rendered.map(route => route.path ?? route.route));
+  let videoSchemas = 0;
+  if (config.env.NEXT_PUBLIC_ENV?.value === 'production') {
+    const videoPages = expectedVideoSchemaPages(snapshots['projects.json']);
+    for (const path of videoPages.keys()) assert.ok(paths.has(path), `Missing video page prerender: ${path}`);
+    for (const route of rendered.filter(route => route.router === 'app')) {
+      const path = route.path ?? route.route;
+      // The personal truck page is code-owned and intentionally noindex.
+      if (path === '/truck-for-sale') continue;
+      const html = readFileSync(resolve(root, 'dist/server/prerendered-routes', getOutputPath(path, prerender.trailingSlash ?? false)), 'utf8');
+      videoSchemas += verifyVideoSchemaHtml(html, path, videoPages.get(path));
+    }
+  }
   const editorial = snapshots['editorial.json'];
   for (const [records, prefix] of [
     [editorial.posts, '/'], [editorial.persons, '/person/'],
@@ -77,7 +91,7 @@ export function verifyVinextArtifact(root = process.cwd()) {
   }
   const modules = globSync('**/*.js', { cwd: resolve(output, 'bundle') });
   const gzipBytes = modules.reduce((total, path) => total + gzipSync(readFileSync(resolve(output, 'bundle', path))).length, 0);
-  const result = { prerendered: rendered.length, cacheEntries: Object.keys(cache).length, workerModules: modules.length, summedModuleGzipBytes: gzipBytes };
+  const result = { prerendered: rendered.length, videoSchemas, cacheEntries: Object.keys(cache).length, workerModules: modules.length, summedModuleGzipBytes: gzipBytes };
   return { result, output, config, prerender, snapshots };
 }
 

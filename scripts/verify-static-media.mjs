@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import ts from 'typescript';
 import { fetchStaticMediaSnapshot, mapStaticImage } from '../lib/content/directus-static-media.mjs';
 import { STATIC_IMAGE_FILES, STATIC_IMAGE_FOLDER } from '../lib/content/static-image-files.mjs';
+import { verifyVideoSchemaHtml } from './lib/video-schema.mjs';
 const require = createRequire(import.meta.url), root = resolve(import.meta.dirname, '..');
 const React = require('react'), { renderToStaticMarkup } = require('react-dom/server');
 const fixture = { url: 'https://images.test/original', description: 'Reviewed image description', type: 'image/webp', width: 400, height: 200, focalPoint: { x: 100, y: 150 } };
@@ -70,14 +71,21 @@ test('build batches exactly the allowlisted images and rejects incomplete result
   assert.equal(Object.keys(snapshot.images).length, ids.length); assert.equal(requests.length, Math.ceil(ids.length / 50));
   await assert.rejects(fetchStaticMediaSnapshot(env, async () => ({ ok: true, json: async () => ({ data: [] }) })), /incomplete/);
 });
-test('snapshot video has a crawler-visible player and no watch-page content URL or runtime fallback', () => {
+test('snapshot video renders its verified upload date without a runtime lookup', () => {
   const { SnapshotVideoWithSchema } = load(resolve(root, 'components/utils/SnapshotVideoWithSchema.tsx'));
-  const html = render(SnapshotVideoWithSchema, { video: { youtubeId: 'abcdefghijk', title: 'CMS title', excerpt: 'CMS description', thumbnailUrl: 'https://i.ytimg.com/vi/abcdefghijk/hqdefault.jpg', uploadDate: null }, canonicalUrl: '/about-sonshine-roofing', schemaId: 'test-video' });
+  const video = { youtubeId: 'abcdefghijk', title: 'CMS title', excerpt: 'CMS description', thumbnailUrl: 'https://i.ytimg.com/vi/abcdefghijk/hqdefault.jpg', uploadDate: '2019-04-01T08:00:00-04:00' };
+  const html = render(SnapshotVideoWithSchema, { video, canonicalUrl: '/about-sonshine-roofing', schemaId: 'test-video' });
   assert.match(html, /<iframe[^>]*src="https:\/\/www.youtube-nocookie.com\/embed\/abcdefghijk\?/);
   assert.match(html, /autoplay=0/); assert.match(html, /tabindex="-1"/); assert.match(html, /Play CMS title/);
   assert.match(html, /"name":"CMS title"/); assert.match(html, /"description":"CMS description"/);
   assert.match(html, /"embedUrl":"https:\/\/www.youtube-nocookie.com\/embed\/abcdefghijk"/);
-  assert.doesNotMatch(html, /"contentUrl"|"uploadDate"/);
+  assert.doesNotMatch(html, /"contentUrl"/);
+  assert.equal(verifyVideoSchemaHtml(html, '/about-sonshine-roofing', [video]), 1);
+  for (const uploadDate of [null, 'invalid']) {
+    const broken = render(SnapshotVideoWithSchema, { video: { ...video, uploadDate }, canonicalUrl: '/', schemaId: 'test-video' });
+    assert.throws(() => verifyVideoSchemaHtml(broken, '/', [video]), /uploadDate/u,
+      'the production artifact gate must reject the original missing-date rendering');
+  }
 });
 test('legacy truck player retains click/viewport initial markup', () => {
   const Player = load(resolve(root, 'components/utils/LazyYoutubeEmbed.tsx')).default;

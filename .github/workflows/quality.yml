@@ -75,7 +75,7 @@ jobs:
       - name: Verify editorial date rules in PostgreSQL
         run: npm run verify:editorial-dates && node scripts/location-model/verify-sql.mjs
       - name: Verify video pipeline
-        run: npm run verify:video-pipeline
+        run: npm run verify:video-pipeline && npm run verify:video-schema
       - name: Verify static media metadata and rendering
         run: npm run verify:static-media
       - name: Verify location tooling and page contracts

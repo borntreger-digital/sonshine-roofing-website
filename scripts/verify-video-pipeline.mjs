@@ -160,7 +160,41 @@ assert.deepEqual(queryVideoSnapshot(noVideos).pageInfo, { hasNextPage: false, en
 assert.equal(queryVideoSnapshot(noVideos).total, 0);
 
 let youtubeCalls = 0;
-const withUploadDates = await fetchDirectusContentSnapshot({ ...env, YOUTUBE_API_KEY: 'synthetic-key' }, async (url, options) => {
+const productionEnv = { ...env, NEXT_PUBLIC_ENV: 'production' };
+await assert.rejects(fetchDirectusContentSnapshot(productionEnv, sourceFetcher()), /YOUTUBE_API_KEY.*required/u,
+  'production must not silently publish video schema without upload dates');
+await assert.rejects(fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: '   ' }, sourceFetcher()), /YOUTUBE_API_KEY.*required/u);
+assert.equal((await fetchDirectusContentSnapshot(productionEnv, sourceFetcher({ ...source, videos: [], video_category_assignments: [] }))).videos.length, 0,
+  'an empty published video inventory needs no YouTube key');
+
+const youtubeFetcher = (respond) => async (url, options) => {
+  if (url.hostname !== 'www.googleapis.com') return sourceFetcher()(url, options);
+  return respond(url.searchParams.get('id').split(','), url, options);
+};
+const uploadItems = (ids) => ids.map(id => ({ id, snippet: { publishedAt: '2010-01-01T00:00:00Z' } }));
+const response = (items) => ({ ok: true, json: async () => ({ items }) });
+for (const items of [[], uploadItems([sourceVideos[0].youtube_id])]) {
+  await assert.rejects(fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: 'synthetic-key' }, youtubeFetcher(() => response(items))), /missing.*clip-/u,
+    'successful empty or partial API responses must name the affected video slugs');
+}
+for (const publishedAt of [null, '', 'not-a-date', '123', '2020-01-01']) {
+  await assert.rejects(fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: 'synthetic-key' }, youtubeFetcher(ids => response(
+    uploadItems(ids).map((item, index) => index === 0 ? { ...item, snippet: { publishedAt } } : item),
+  ))), /clip-0.*valid.*timestamp/u);
+}
+await assert.rejects(fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: 'synthetic-key' }, youtubeFetcher(ids => response([
+  ...uploadItems(ids), uploadItems(ids)[0],
+]))), /duplicate/u);
+await assert.rejects(fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: 'synthetic-key' }, youtubeFetcher(ids => response([
+  ...uploadItems(ids.slice(1)), ...uploadItems([sourceVideos[250].youtube_id]),
+]))), /unexpected identity/u, 'an ID from another batch cannot satisfy this batch');
+await assert.rejects(fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: 'synthetic-key' }, youtubeFetcher(() => ({ ok: false, status: 403 }))), /HTTP 403/u);
+await assert.rejects(fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: 'synthetic-key' }, youtubeFetcher(() => {
+  throw new Error('Request failed: https://www.googleapis.com/youtube/v3/videos?key=synthetic-key');
+})), error => /lookup.*failed/u.test(error.message) && !/synthetic-key|https:|cause/u.test(String(error.stack)) && !error.cause,
+  'network errors must not expose a key-bearing request URL');
+
+const withUploadDates = await fetchDirectusContentSnapshot({ ...productionEnv, YOUTUBE_API_KEY: 'synthetic-key' }, async (url, options) => {
   if (url.hostname !== 'www.googleapis.com') return sourceFetcher()(url, options);
   youtubeCalls += 1;
   assert.equal(options.cache, 'no-store');
@@ -198,6 +232,9 @@ try {
   await assert.rejects(writeContentSnapshot(filename, async () => { throw new Error('Interrupted source read'); }), /Interrupted/u);
   assert.throws(() => readVideoSnapshot(filename), /unavailable/u, 'failed refresh cannot reuse the previous artifact');
   assert.deepEqual(await readdir(directory), [], 'failed refresh leaves no partial output');
+  await writeContentSnapshot(filename, async () => snapshot);
+  await assert.rejects(writeContentSnapshot(filename, () => fetchDirectusContentSnapshot(productionEnv, sourceFetcher())), /YOUTUBE_API_KEY.*required/u);
+  assert.throws(() => readVideoSnapshot(filename), /unavailable/u, 'missing production metadata cannot reuse a previous candidate');
   await writeContentSnapshot(filename, async () => snapshot);
   const serialized = await readFile(filename, 'utf8');
   await writeContentSnapshot(filename, async () => snapshot);

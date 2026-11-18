@@ -359,13 +359,19 @@ runtime and two-release acceptance gates.
   destination becomes the library selection URL. Unpublishing a video removes
   it from the library and project player while leaving the project page intact.
 - `published_at` controls newest-first website chronology. True YouTube upload
-  dates are separate metadata; absence of a verified upload date never causes
-  the website timestamp to be presented as YouTube's upload date.
+  dates are separate metadata. Production capture requires `YOUTUBE_API_KEY`
+  and a valid, timezone-qualified YouTube publication timestamp for every
+  published video. Missing keys, unavailable videos, incomplete API results,
+  and invalid timestamps stop the candidate build. Never substitute the website
+  timestamp for YouTube's publication date. Non-production captures may omit
+  the key; if provided, its lookup must still be complete and valid.
 - Home/About select their required published entries through `getPageVideo`.
   Directus owns their names and descriptions. About's September 21, 2026
   `published_at` records its new library admission, not its historical first use
-  on the About page. YouTube upload dates use the existing batched build lookup;
-  missing optional metadata never starts a runtime metadata fetch.
+  on the About page. YouTube upload dates use the batched build lookup;
+  missing metadata never starts a runtime metadata fetch. Production Workers
+  artifact verification checks required VideoObject fields in rendered HTML,
+  including nested project markup, and compares dates with the captured values.
 - These supporting placements emit an initial player iframe and matching
   `VideoObject` with an embed URL, omitting `contentUrl` because YouTube watch
   pages are not video-byte URLs. Playback preserves muted viewport autoplay,

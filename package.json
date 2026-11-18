@@ -35,6 +35,7 @@
     "verify:archive-controls": "node scripts/verify-archive-controls.mjs",
     "verify:content-previews": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/verify-content-previews.mjs",
     "verify:video-playback": "node scripts/verify-video-playback.mjs",
+    "verify:video-schema": "node scripts/verify-video-schema.mjs",
     "verify:video-pipeline": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types ./scripts/verify-video-pipeline.mjs",
     "verify:location-selection": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/verify-location-selection.mjs",
     "verify:location-components": "node scripts/verify-location-components.mjs",
