@@ -133,7 +133,9 @@ assert.deepEqual(
 assert.equal(doc.querySelectorAll('[onerror], script').length, 0);
 assert.equal(doc.querySelectorAll('h1').length, 1);
 assert.equal(doc.querySelector('h1').textContent, person.title);
-assert.equal(doc.querySelectorAll('a[href="/about-sonshine-roofing#meet-our-team"]').length, 2);
+const teamLinks = [...doc.querySelectorAll('a[href="/about-sonshine-roofing#meet-our-team"]')];
+assert.equal(teamLinks.length, 1);
+assert.equal(teamLinks[0].textContent.trim(), '← Back to all team members');
 const biography = doc.querySelector('[aria-labelledby="person-bio-heading"]');
 assert.equal(biography.querySelector('.prose').innerHTML, person.contentHtml);
 const contact = doc.querySelector('[aria-labelledby="person-contact-heading"]');
