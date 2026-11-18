@@ -10,7 +10,7 @@ type Props = {
   className?: string;
 };
 
-/** All metadata is deployment-frozen. Missing optional upload dates stay absent. */
+/** Metadata is deployment-frozen; production capture and artifact checks require upload dates. */
 export function SnapshotVideoWithSchema({ video, canonicalUrl, schemaId, className }: Props) {
   const embedUrl = `https://www.youtube-nocookie.com/embed/${video.youtubeId}`;
   const schema = videoObjectSchema({

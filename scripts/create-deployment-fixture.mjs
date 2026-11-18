@@ -68,23 +68,25 @@ const project = mapDirectusProject(
   },
   config,
 );
-const videos = ['sonshine-roofing-best-of-the-best-2023', 'sonshine-roofing-introduction'].map(
-  (slug) => ({
+const videos = ['sonshine-roofing-best-of-the-best-2023', 'sonshine-roofing-introduction', 'fixture-project-video'].map(
+  (slug, index) => ({
     id: slug,
     slug,
     title: 'Synthetic video',
     excerpt: 'Synthetic video description',
     date: '2020-01-01T12:00:00Z',
-    youtubeId: 'abcdefghijk',
+    youtubeId: ['abcdefghijk', 'lmnopqrstuv', 'v0000000000'][index],
     thumbnailUrl: 'https://i.ytimg.com/vi/abcdefghijk/hqdefault.jpg',
     legacyIds: [],
     categories: [],
     materialTypes: [],
     serviceAreas: [],
     projectSlug: null,
-    uploadDate: null,
+    uploadDate: '2019-04-01T12:00:00Z',
   }),
 );
+project.videoId = videos[2].id;
+Object.assign(videos[2], { projectSlug: project.slug, projectUri: project.uri, projectNoindex: true });
 const projects = {
   version: 3,
   clientSlug: config.clientSlug,

@@ -54,8 +54,11 @@ older `npx wrangler deploy` command. `npm run build` and the Docker validation
 remain available for the historical Next.js application and compatibility checks.
 
 Configure `DIRECTUS_URL` and `DIRECTUS_CLIENT_SLUG=sonshine-roofing` as build
-variables and `DIRECTUS_TOKEN` as an encrypted build secret. Optional
-`YOUTUBE_API_KEY` enrichment is also a build secret. Production public settings
+variables and `DIRECTUS_TOKEN` as an encrypted build secret. Add
+`YOUTUBE_API_KEY` as an encrypted variable under **Settings → Builds → Variables
+and secrets**. Production captures with published videos require it; a runtime
+secret binding does not supply the build environment. Missing or incomplete
+YouTube publication dates stop the candidate build. Production public settings
 include `NEXT_PUBLIC_ENV=production`, `NEXT_PUBLIC_BASE_URL` and
 `NEXT_PUBLIC_SITE_URL` set to `https://sonshineroofing.com`, the production
 `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, and the existing `NEXT_PUBLIC_GTM_ID`,
@@ -67,7 +70,10 @@ into the build environment. Preserve the Images and Assets bindings.
 
 Every ordinary Workers build runs the existing prebuild checks, captures fresh
 CMS content, produces the Worker artifact and checks that private build inputs
-are absent from it. Run `npm run verify:vinext-runtime` against that artifact for
+are absent from it. Artifact verification also checks required VideoObject
+properties in rendered HTML, including nested project objects, against the
+captured YouTube dates. The code-owned, noindex truck page is excluded from this
+video requirement. Run `npm run verify:vinext-runtime` against that artifact for
 isolated route, image and synthetic lead checks. CI's
 `npm run verify:vinext-releases` exercises two synthetic releases and rollback
 without CMS credentials. After the authorized main push, verify the corresponding
@@ -125,7 +131,7 @@ is for local/CI compatibility checks, not an active Coolify deployment.
 | `DIRECTUS_URL`                      | Build-time CMS endpoint.                                                         |
 | `DIRECTUS_CLIENT_SLUG`              | Build-time tenant scope.                                                         |
 | `DIRECTUS_TOKEN`                    | Server-only build credential.                                                    |
-| `YOUTUBE_API_KEY`                   | Optional server-only metadata enrichment during the build; currently configured. |
+| `YOUTUBE_API_KEY`                   | Encrypted build input; required for production captures with published videos. |
 | `N8N_WEBHOOK_URL`                   | Runtime lead-delivery endpoint.                                                  |
 | `N8N_WEBHOOK_SECRET`                | Runtime lead-delivery credential.                                                |
 | `TURNSTILE_SECRET_KEY`              | Runtime form-token verification credential.                                      |
@@ -152,8 +158,8 @@ Publish CMS changes with a successful build and deployment.
 The committed Dockerfile is retained for local and CI compatibility checks.
 Production uses Workers Builds as documented above. Docker checks require a
 BuildKit secret named `build_env`, containing
-`DIRECTUS_TOKEN` and optionally `YOUTUBE_API_KEY` in dotenv format. Its loader
-imports only those two keys into the build subprocess. Do not configure private
+`DIRECTUS_TOKEN` and, for production captures with videos, `YOUTUBE_API_KEY` in
+dotenv format. Its loader imports only those two keys into the build subprocess. Do not configure private
 credentials as Docker build arguments. Public URLs, tenant scope and
 `NEXT_PUBLIC_*` values remain ordinary build arguments. Runtime webhook and
 Turnstile secrets remain runtime configuration only.
