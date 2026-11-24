@@ -25,7 +25,7 @@ export default function ProjectInlineVideo({ title, videoId, posterUrl, posterAl
     <section className="w-full max-w-3xl" aria-label={`Drone video: ${title}`}>
       <h2 className="mb-3 text-2xl leading-tight md:text-3xl">See the finished roof</h2>
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="relative aspect-video min-h-[200px] w-full min-w-0 bg-slate-950">
+        <div className="relative aspect-video min-h-50 w-full min-w-0 bg-slate-950">
           {playing ? (
             <iframe
               ref={playerRef}
@@ -55,9 +55,6 @@ export default function ProjectInlineVideo({ title, videoId, posterUrl, posterAl
                 <span className="grid size-14 place-items-center rounded-xl border border-white bg-white/95 text-(--brand-blue) shadow-md motion-safe:transition-transform motion-safe:group-hover:scale-105 md:size-16">
                   <Play className="ml-1 size-6 fill-current" />
                 </span>
-              </span>
-              <span className="pointer-events-none absolute bottom-4 left-4 rounded-md border border-white/20 bg-slate-900/85 px-3 py-1.5 text-xs font-semibold" aria-hidden="true">
-                Play drone video
               </span>
               <span className="pointer-events-none absolute inset-0 group-focus-visible:ring-4 group-focus-visible:ring-inset group-focus-visible:ring-(--brand-orange)" aria-hidden="true" />
             </button>
