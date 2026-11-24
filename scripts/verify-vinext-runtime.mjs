@@ -18,6 +18,13 @@ let mf;
 let imageFetches = 0;
 const imageFixture = readFileSync('public/og-default.png');
 const imageOrigin = new URL(snapshots['editorial.json'].assetOrigin).origin;
+const rejectedImageFixtures = [
+  { name: 'svg', type: 'image/svg+xml', prefix: '' },
+  ...['avif', 'heic'].flatMap(brand => [
+    { name: `${brand}-binary`, type: 'application/octet-stream', prefix: `<!--ftyp${brand}-->` },
+    { name: `${brand}-text`, type: 'text/plain', prefix: `<!--ftyp${brand}-->` },
+  ]),
+];
 try {
   // Only the distributable artifact: no source tree, CMS credentials or files.
   await cp(output, scratch, { recursive: true });
@@ -57,6 +64,12 @@ try {
       }
       if (url.origin === imageOrigin && url.pathname === '/assets/vinext-non-image') {
         return new Response('<html>not an image</html>', { headers: { 'content-type': 'text/html' } });
+      }
+      const rejectedImage = rejectedImageFixtures.find(fixture => url.pathname === '/assets/vinext-' + fixture.name);
+      if (url.origin === imageOrigin && rejectedImage) {
+        return new Response(`${rejectedImage.prefix}<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>`, {
+          headers: { 'content-type': rejectedImage.type },
+        });
       }
       if (url.origin === imageOrigin && url.pathname === '/assets/vinext-large-image') {
         return new Response('too large', { headers: { 'content-type': 'image/png', 'content-length': String(21 * 1024 * 1024) } });
@@ -209,10 +222,10 @@ try {
     { url: 'http://127.0.0.1/private', w: '384', q: '75' },
     { url: sourceUrl, w: '777', q: '75' },
     { url: sourceUrl, w: '384', q: '99' },
-    ...['redirect', 'non-image', 'large-image'].map(kind => ({ url: imageOrigin + '/assets/vinext-' + kind, w: '384', q: '75' })),
+    ...['redirect', 'non-image', 'large-image', ...rejectedImageFixtures.map(fixture => fixture.name)].map(kind => ({ url: imageOrigin + '/assets/vinext-' + kind, w: '384', q: '75' })),
   ]) {
     const response = await get('/_next/image?' + new URLSearchParams(query));
-    assert.equal(response.status, 400, 'Reject invalid image source or transform');
+    assert.equal(response.status, 400, `Reject invalid image source or transform: ${query.url}`);
     assert.equal(response.headers.get('x-sonshine-image-cache'), null);
   }
   const asset = html.match(/src="(\/_next\/static\/[^"?]+\.js)"/)?.[1];

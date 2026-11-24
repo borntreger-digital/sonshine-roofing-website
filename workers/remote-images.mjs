@@ -1,4 +1,4 @@
-import { handleImageOptimization } from 'vinext/server/image-optimization';
+import { handleImageOptimization, isSafeImageContentType } from 'vinext/server/image-optimization';
 import { validateRemoteUrl } from 'vinext/shims/image-props';
 import createImageOptimizer from '@vinext/cloudflare/images/images-optimizer.runtime';
 
@@ -19,7 +19,10 @@ async function fetchPublicImage(source) {
       url = new URL(location, url);
       continue;
     }
-    if (!response.ok || !response.body || Number(response.headers.get('content-length')) > MAX_SOURCE_BYTES) {
+    // Preserve the remote-source MIME boundary before vinext's type sniffing.
+    // Non-image responses must not be promoted by image-like bytes in text.
+    if (!response.ok || !response.body || !isSafeImageContentType(response.headers.get('content-type'))
+      || Number(response.headers.get('content-length')) > MAX_SOURCE_BYTES) {
       await response.body?.cancel();
       return new Response(null, { status: 400 });
     }

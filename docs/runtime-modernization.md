@@ -107,12 +107,12 @@ latency benchmark and does not establish a production performance benefit. The
 stable and Rust compilers remain disabled. No demonstrated benefit justifies the
 other disk-cache, lazy-import or worker-thread experiments.
 
-## November 17 dependency advisory
+## November 17 dependency advisory (historical decision)
 
 The Next 16.4.6 update clears the Next advisories reported against 16.4.3.
 The same-day GitHub review of [GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf)
-reports a picomatch ReDoS affecting every published version through 4.0.7,
-with no patched release. Both full and production-only npm audits report its
+reported a picomatch ReDoS affecting every published version through 4.0.7,
+with no patched release. Both full and production-only npm audits reported its
 transitive dependency chains, including the Workers build tools. On November 17,
 the owner approved a temporary exception for only this advisory and findings
 whose entire dependency chain resolves exclusively to it. No dependency
@@ -121,7 +121,7 @@ November 24 in America/New_York (`2026-11-25T05:00:00Z`). Both complete and
 production-only audits still reject every other advisory, malformed or
 inconsistent report, unresolved/cyclic chain, and audit service failure.
 After expiration, this finding blocks the release gate again; it does not stop
-an already deployed site. Remove the exception when an upstream fix is available.
+an already deployed site. This applies only if the audit still reports the finding.
 
 The application does not directly import the affected matchers. A static scan
 of the 352 generated Worker modules found no identifying matcher strings;
@@ -130,6 +130,20 @@ non-exploitability. The exception accepts the remaining availability risk,
 rather than claiming the vulnerability has been fixed. Tests cover direct and
 transitive findings, mixed advisories, invalid graphs/counts, and the exact
 expiration boundary.
+
+### November 21 audit follow-up
+
+GitHub withdrew [GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf)
+on November 18. On November 21, fresh full and production-only npm audits against
+npm’s registry used the exact manifest and lockfile from `e117a2a049585d98d04c8bcbb1b527e44ecc2661`.
+Both exited 0 with zero findings. The current policy accepted both reports without
+the exception, including with a simulated post-expiry clock. The sandbox used
+Node 24.22.3 and npm 11.19.1, with `--force` only to bypass the pinned toolchain
+check for the read-only audit. This was not a CI rerun.
+
+The exception remains in code. It was not needed for these reports, and a valid
+clean audit still passes after expiry. Recheck fresh reports before removing the
+exception; this documentation update does not change the release gate or deploy anything.
 
 ## Verification and remaining release checks
 
