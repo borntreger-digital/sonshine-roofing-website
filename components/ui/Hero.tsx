@@ -15,6 +15,7 @@ type HeroProps = {
   imageSrc?: string;
   imagePosition?: string;
   justifyStart?: boolean
+  showReviewSummary?: boolean;
   badges?: HeroBadge[];
   className?: string;
   children?: ReactNode;
@@ -36,6 +37,7 @@ export default function Hero({
   imageSrc = FALLBACK_IMAGE,
   imagePosition,
   justifyStart = false,
+  showReviewSummary = true,
   badges,
   className,
   children,
@@ -94,7 +96,9 @@ export default function Hero({
               </p>
             ) : null}
 
-            <ReviewSummary tone="inverse" className={justifyStart ? 'justify-start' : 'justify-center'} />
+            {showReviewSummary ? (
+              <ReviewSummary tone="inverse" className={justifyStart ? 'justify-start' : 'justify-center'} />
+            ) : null}
 
             {badges?.length ? (
               <div className={BADGE_CONTAINER}>
