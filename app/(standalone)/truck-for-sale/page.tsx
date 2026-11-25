@@ -7,8 +7,8 @@ import { VideoWithSchema } from '@/components/utils/VideoWithSchema';
 import ProjectGallery from '@/components/dynamic-content/project/ProjectGallery';
 import { staticImage } from '@/lib/content/static-media';
 
-// The owner requested that exact prices stay off this listing; buyers should
-// contact the seller. To display a price again, confirm the current amount and
+// The owner requested that the asking price stay out of the page copy and
+// metadata; buyers should contact the seller. To display a price again, confirm it and
 // use one PRICE constant in the hero and sale terms, then update the standalone
 // layout's metadata descriptions at the same time.
 const TRUCK_TITLE = '2020 GMC Sierra 1500 Denali';
@@ -97,9 +97,9 @@ const truckGalleryImages = [
   'static:pickup-truck-drivetrain-underbody',
   'static:pickup-truck-underbody-side',
   'static:pickup-truck-drag-racing-time-slips',
-  // The window sticker includes MSRP and option prices. Restore this entry only
-  // when displaying exact prices is approved again; the original asset is retained.
-  // 'static:gmc-sierra-denali-window-sticker',
+  // The owner approved keeping the window sticker, including its printed prices,
+  // as an exception to removing exact prices from the page copy and metadata.
+  'static:gmc-sierra-denali-window-sticker',
   'static:dynamometer-results-monitor',
 ].map((key) => {
   const media = staticImage(key);
