@@ -181,7 +181,7 @@ function ProjectImageViewer({ image, projectTitle, activeIndex, totalImages, ope
       <div ref={backdropRef} className={styles.backdrop}>
         <div className={styles.panel}>
           <div className={styles.header}>
-            <h2 id={`${id}-title`} className={styles.title}>Project photo viewer</h2>
+            <h2 id={`${id}-title`} className={styles.title}>Photo gallery</h2>
             <button ref={closeRef} type="button" onClick={onClose} aria-label="Close image viewer" className={styles.control}>
               <X className="h-6 w-6" aria-hidden="true" />
             </button>

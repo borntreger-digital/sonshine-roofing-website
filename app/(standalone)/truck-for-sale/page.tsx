@@ -7,7 +7,10 @@ import { VideoWithSchema } from '@/components/utils/VideoWithSchema';
 import ProjectGallery from '@/components/dynamic-content/project/ProjectGallery';
 import { staticImage } from '@/lib/content/static-media';
 
-const PRICE = '$52,500';
+// The owner requested that exact prices stay off this listing; buyers should
+// contact the seller. To display a price again, confirm the current amount and
+// use one PRICE constant in the hero and sale terms, then update the standalone
+// layout's metadata descriptions at the same time.
 const TRUCK_TITLE = '2020 GMC Sierra 1500 Denali';
 
 const comparisonRows = [
@@ -94,7 +97,9 @@ const truckGalleryImages = [
   'static:pickup-truck-drivetrain-underbody',
   'static:pickup-truck-underbody-side',
   'static:pickup-truck-drag-racing-time-slips',
-  'static:gmc-sierra-denali-window-sticker',
+  // The window sticker includes MSRP and option prices. Restore this entry only
+  // when displaying exact prices is approved again; the original asset is retained.
+  // 'static:gmc-sierra-denali-window-sticker',
   'static:dynamometer-results-monitor',
 ].map((key) => {
   const media = staticImage(key);
@@ -105,12 +110,14 @@ export default async function Page() {
   return (
     <>
       <div id="truck-offer" className="scroll-mt-24">
+        {/* Roofing reviews do not describe this personal truck sale. Other heroes keep them. */}
         <Hero
           title="Performance Truck for Sale"
           subtitle="Real-world 800-wheel-horsepower GMC Sierra Denali that can be driven every day—comfort, 4WD traction, and a professionally built ProCharged 6.2L."
           eyelash="The 'Frankenstein Truck'"
           imageSrc="static:black-gmc-denali-front-quarter-view"
           justifyStart
+          showReviewSummary={false}
           badges={[
             { icon: Map, label: '53,334 chassis miles' },
             { icon: Truck, label: '4WD' },
@@ -120,11 +127,7 @@ export default async function Page() {
         >
           <div className="flex gap-6 flex-wrap max-w-3xl">
             <div>
-              <p className="italic text-xl text-slate-300">
-                Current Price{' '}
-                <span className="text-slate-400 not-italic text-sm">(Cash only, no trades)</span>
-              </p>
-              <p className="text-blue-400 mt-2 text-5xl">{PRICE}</p>
+              <p className="text-xl text-slate-300">Cash only, no trades</p>
               <p className="mt-6 text-2xl font-semibold">
                 Interested? Call or Text Nathan Borntreger:{' '}
                 <SmartLink href="tel:+19417354947" className="text-blue-400 font-bold">
@@ -249,10 +252,10 @@ export default async function Page() {
 
           <div className="sticky top-8 self-start min-w-0 space-y-6">
             <div className="rounded-xl border border-slate-200 bg-slate-900 p-6 text-white shadow-xs">
-              <h2 className="text-3xl text-white font-semibold mb-2">Price & terms</h2>
+              <h2 className="text-3xl text-white font-semibold mb-2">Sale terms</h2>
               <p className="text-xl font-semibold mb-2 text-slate-200">Serious interest only.</p>
               <p className="text-slate-200 text-lg">
-                {`Asking ${PRICE} — cash only — no trades. Vehicle is sold as-is.`}
+                Cash only — no trades. Vehicle is sold as-is.
               </p>
               <p className="mt-6 text-xl text-white font-semibold">Interested?</p>
               <p className="mt-3 text-slate-300 font-semibold text-lg">
@@ -275,7 +278,7 @@ export default async function Page() {
         <div className="flex flex-col items-center gap-4 text-center text-white">
           <p className="text-lg font-semibold">Ready to feel 800 wheel horsepower again?</p>
           <p className="text-sm text-slate-200">
-            Jump back to the price and contact details at the top.
+            Jump back to the contact details at the top.
           </p>
           <SmartLink
             href="#truck-offer"
